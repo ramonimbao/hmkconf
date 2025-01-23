@@ -4,6 +4,7 @@ import {
   QueryClient,
   QueryClientProvider as TanstackQueryClientProvider,
 } from "@tanstack/react-query"
+import { ReactNode } from "react"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,7 +16,7 @@ const queryClient = new QueryClient({
 
 export function QueryClientProvider({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{ children: ReactNode }>) {
   return (
     <TanstackQueryClientProvider client={queryClient}>
       {children}
