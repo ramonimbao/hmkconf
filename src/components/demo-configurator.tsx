@@ -8,10 +8,10 @@ import { ConfiguratorLayout } from "./configurator/layout"
 const useDemoConfigurator = createConfigurator()
 
 export function DemoConfigurator() {
-  const configuator = useDemoConfigurator()
+  const configurator = useDemoConfigurator()
 
   return (
-    <ConfiguratorProvider configurator={configuator}>
+    <ConfiguratorProvider configurator={configurator}>
       <ConfiguratorLayout>
         <Configurator />
       </ConfiguratorLayout>
