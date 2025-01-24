@@ -9,6 +9,7 @@ import {
   ArrowUp,
   Bookmark,
   Calculator,
+  CircleDashed,
   Earth,
   FolderClosed,
   Grid3X3,
@@ -43,6 +44,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
   {
     id: "∇",
     tooltip: "Fallback to the highest active layer with a non-transparent key",
+    display: <CircleDashed />,
     keycode: Keycode.KC_TRANSPARENT,
     webCodes: [],
     category: "Extended",
