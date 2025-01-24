@@ -43,7 +43,7 @@ export function KeyboardEditorHeader({
   return (
     <header
       className={cn(
-        "flex h-14 w-full items-center justify-between px-4",
+        "flex h-14 w-full items-center justify-between gap-4 px-4",
         className,
       )}
       {...props}

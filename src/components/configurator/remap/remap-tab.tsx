@@ -1,9 +1,13 @@
 "use client"
 
 import { useConfigurator } from "@/components/configurator-provider"
+import { useDevice } from "@/components/device-provider"
+import { Button } from "@/components/ui/button"
 import { useGetKeymap } from "@/hooks/use-get-keymap"
+import { useSetKeymap } from "@/hooks/use-set-keymap"
 import { KEYCODE_TO_METADATA } from "@/lib/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
+import { produce } from "immer"
 import {
   KeyboardEditor,
   KeyboardEditorHeader,
@@ -19,14 +23,36 @@ export function RemapTab() {
     profileNum,
     remap: { layer, key, setKey },
   } = useConfigurator()
+  const { metadata } = useDevice()
 
   const { isSuccess, data: keymap } = useGetKeymap(profileNum)
+  const { mutate: setKeymap } = useSetKeymap(profileNum)
+
+  const resetThisLayerKeymap = () => {
+    if (!isSuccess) {
+      return
+    }
+
+    setKeymap(
+      produce(keymap, (draft) => {
+        draft[layer] = metadata.defaultKeymap[layer]
+      }),
+    )
+    setKey(null)
+  }
 
   return (
     <KeyboardEditor>
       <KeyboardEditorLayout>
         <KeyboardEditorHeader>
           <LayerSelector />
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={resetThisLayerKeymap}
+          >
+            Reset This Layer
+          </Button>
         </KeyboardEditorHeader>
         {!isSuccess ? (
           <KeyboardEditorSkeleton />

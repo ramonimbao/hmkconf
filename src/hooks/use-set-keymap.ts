@@ -2,7 +2,7 @@ import { useDevice } from "@/components/device-provider"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useSetKeymap(profileNum: number) {
-  const { id, metadata, setKeymap } = useDevice()
+  const { id, setKeymap } = useDevice()
 
   const queryClient = useQueryClient()
   const queryKey = [id, "keymap", profileNum]
@@ -11,8 +11,7 @@ export function useSetKeymap(profileNum: number) {
     mutationFn: (keymap: number[][]) => setKeymap(profileNum, keymap),
     onMutate: async (keymap) => {
       await queryClient.cancelQueries({ queryKey })
-      const previousKeymap =
-        queryClient.getQueryData<number[][]>(queryKey) ?? metadata.defaultKeymap
+      const previousKeymap = queryClient.getQueryData<number[][]>(queryKey)
       queryClient.setQueryData(queryKey, keymap)
 
       return { previousKeymap }
