@@ -3,9 +3,9 @@
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
+import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { useGetKeymap } from "@/hooks/use-get-keymap"
 import { useSetKeymap } from "@/hooks/use-set-keymap"
-import { KEYCODE_TO_METADATA } from "@/lib/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import {

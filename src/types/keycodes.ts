@@ -1,4 +1,4 @@
-import { KEYCODE_CATEGORIES } from "@/lib/keycodes"
+import { KEYCODE_CATEGORIES } from "@/constants/keycodes"
 import { ReactNode } from "react"
 
 export enum Keycode {
