@@ -25,7 +25,6 @@ export const deviceMetadataSchema = z
   })
   .refine(
     (data) =>
-      data.layout.flat().length === data.numKeys &&
       data.defaultKeymap.length === NUM_LAYERS &&
       data.defaultKeymap.every((layer) => layer.length === data.numKeys),
   )
