@@ -5,13 +5,15 @@ const keyboardLayoutSchema = z.array(
   z.array(
     z.object({
       key: z.number().int().min(0).max(255),
-      w: z.number().min(1),
-      h: z.number().min(1),
-      x: z.number(),
-      y: z.number(),
+      w: z.number().min(1).default(1),
+      h: z.number().min(1).default(1),
+      x: z.number().default(0),
+      y: z.number().default(0),
     }),
   ),
 )
+
+export type KeyboardLayout = z.infer<typeof keyboardLayoutSchema>
 
 export const deviceMetadataSchema = z
   .object({

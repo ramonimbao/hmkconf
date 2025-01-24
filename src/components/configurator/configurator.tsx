@@ -1,3 +1,5 @@
+import { TabsContent } from "@radix-ui/react-tabs"
+import { RemapTab } from "./remap/remap-tab"
 import { ConfiguratorSidebar } from "./sidebar"
 
 export function Configurator() {
@@ -6,7 +8,11 @@ export function Configurator() {
       <aside>
         <ConfiguratorSidebar />
       </aside>
-      <div></div>
+      <div>
+        <TabsContent value="remap">
+          <RemapTab />
+        </TabsContent>
+      </div>
     </div>
   )
 }
