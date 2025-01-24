@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function isWebUsbSupported() {
   return !!navigator.usb
 }
+
+export function distanceToActuationPoint(distance: number) {
+  return Math.round((distance * 255) / 40)
+}

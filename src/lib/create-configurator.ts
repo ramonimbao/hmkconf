@@ -7,7 +7,7 @@ const initialState: ConfiguratorState = {
 }
 
 export function createConfigurator() {
-  return create<Configurator>((set) => ({
+  return create<Configurator>()((set) => ({
     ...initialState,
 
     reset: () => set(initialState),

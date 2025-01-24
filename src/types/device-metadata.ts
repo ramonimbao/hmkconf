@@ -1,4 +1,4 @@
-import { NUM_LAYERS } from "@/constants/device-metadata"
+import { NUM_LAYERS } from "@/constants/devices"
 import { z } from "zod"
 
 const keyboardLayoutSchema = z.array(
