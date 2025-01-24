@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { useGetKeymap } from "@/hooks/use-get-keymap"
 import { useSetKeymap } from "@/hooks/use-set-keymap"
+import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import {
@@ -16,6 +17,7 @@ import {
   KeyboardEditorSkeleton,
 } from "../common/keyboard-editor"
 import { KeycodeButton } from "../common/keycode-button"
+import { KeycodeSelector } from "../common/keycode-selector"
 import { LayerSelector } from "./layer-selector"
 
 export function RemapTab() {
@@ -41,9 +43,22 @@ export function RemapTab() {
     setKey(null)
   }
 
+  const setKeycode = (key: number, keycode: number) => {
+    if (!isSuccess) {
+      return
+    }
+
+    setKeymap(
+      produce(keymap, (draft) => {
+        draft[layer][key] = keycode
+      }),
+    )
+    setKey(null)
+  }
+
   return (
     <KeyboardEditor>
-      <KeyboardEditorLayout>
+      <KeyboardEditorLayout horizontal>
         <KeyboardEditorHeader>
           <LayerSelector />
           <Button
@@ -70,6 +85,10 @@ export function RemapTab() {
                 <ToggleGroupItem value={key.toString()} asChild>
                   <KeycodeButton
                     keycodeMetadata={KEYCODE_TO_METADATA[keymap[layer][key]]}
+                    onContextMenu={(e) => {
+                      e.preventDefault()
+                      setKeycode(key, Keycode.KC_NO)
+                    }}
                     className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                   />
                 </ToggleGroupItem>
@@ -78,7 +97,16 @@ export function RemapTab() {
           </ToggleGroup>
         )}
       </KeyboardEditorLayout>
-      <div></div>
+      <KeyboardEditorLayout>
+        <div className="mx-auto w-full max-w-7xl p-4">
+          <KeycodeSelector
+            disabled={!isSuccess || key === null}
+            onKeycodeSelected={(keycode) =>
+              key !== null && setKeycode(key, keycode)
+            }
+          />
+        </div>
+      </KeyboardEditorLayout>
     </KeyboardEditor>
   )
 }

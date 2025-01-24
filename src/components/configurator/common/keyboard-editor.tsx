@@ -21,16 +21,21 @@ export function KeyboardEditor({
   )
 }
 
+interface KeyboardEditorLayoutProps extends ComponentProps<typeof ScrollArea> {
+  horizontal?: boolean
+}
+
 export function KeyboardEditorLayout({
+  horizontal,
   className,
   children,
   ...props
-}: ComponentProps<typeof ScrollArea>) {
+}: KeyboardEditorLayoutProps) {
   return (
     <ScrollArea className={cn("max-h-[50%] w-full", className)} {...props}>
       <div className="flex flex-col">{children}</div>
       <ScrollBar orientation="vertical" />
-      <ScrollBar orientation="horizontal" />
+      {horizontal && <ScrollBar orientation="horizontal" />}
     </ScrollArea>
   )
 }
