@@ -444,8 +444,8 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     id: "'\"",
     display: (
       <>
-        <p>"</p>
-        <p>'</p>
+        <p>&quot;</p>
+        <p>&apos;</p>
       </>
     ),
     keycode: Keycode.KC_QUOTE,
