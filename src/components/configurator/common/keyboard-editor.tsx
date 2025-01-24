@@ -2,6 +2,7 @@
 
 import { useDevice } from "@/components/device-provider"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { ComponentProps, HTMLAttributes, ReactNode, useMemo } from "react"
 
@@ -86,7 +87,7 @@ export function KeyboardEditorKeyboard({
         keys.push(
           <div
             key={keys.length}
-            className="absolute"
+            className="absolute p-0.5"
             style={{
               width: w * size,
               height: h * size,
@@ -127,5 +128,22 @@ export function KeyboardEditorKeyboard({
         {keys}
       </div>
     </main>
+  )
+}
+
+interface KeyboardEditorSkeletonProps extends HTMLAttributes<HTMLDivElement> {
+  size?: number
+}
+
+export function KeyboardEditorSkeleton({
+  size,
+  ...props
+}: KeyboardEditorSkeletonProps) {
+  return (
+    <KeyboardEditorKeyboard
+      size={size}
+      elt={() => <Skeleton className="size-full rounded-sm" />}
+      {...props}
+    />
   )
 }
