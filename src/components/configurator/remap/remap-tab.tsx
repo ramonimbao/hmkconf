@@ -58,7 +58,7 @@ export function RemapTab() {
 
   return (
     <KeyboardEditor>
-      <KeyboardEditorLayout horizontal>
+      <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
           <LayerSelector />
           <Button

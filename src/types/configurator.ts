@@ -5,6 +5,10 @@ export type ConfiguratorState = {
     layer: number
     key: number | null
   }
+  performance: {
+    keys: number[]
+    showKeymap: boolean
+  }
 }
 
 export type ConfiguratorAction = {
@@ -14,6 +18,10 @@ export type ConfiguratorAction = {
   remap: {
     setLayer(layer: number): void
     setKey(key: number | null): void
+  }
+  performance: {
+    setKeys(keys: number[]): void
+    setShowKeymap(showKeymap: boolean): void
   }
 }
 

@@ -9,6 +9,10 @@ const initialState: ConfiguratorState = {
     layer: 0,
     key: null,
   },
+  performance: {
+    keys: [],
+    showKeymap: false,
+  },
 }
 
 export function createConfigurator() {
@@ -35,6 +39,19 @@ export function createConfigurator() {
         setKey: (key) =>
           set((state) => {
             state.remap.key = key
+          }),
+      },
+
+      performance: {
+        ...initialState.performance,
+
+        setKeys: (keys) =>
+          set((state) => {
+            state.performance.keys = keys
+          }),
+        setShowKeymap: (showKeymap) =>
+          set((state) => {
+            state.performance.showKeymap = showKeymap
           }),
       },
     })),

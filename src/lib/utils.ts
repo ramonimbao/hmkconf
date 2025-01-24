@@ -13,6 +13,14 @@ export function isWebUsbSupported() {
   return !!navigator.usb
 }
 
-export function distanceToActuationPoint(distance: number) {
+export function switchDistanceToDistance(distance: number) {
   return Math.round((distance * 255) / 40)
+}
+
+export function distanceToSwitchDistance(distance: number) {
+  return Math.round((distance * 40) / 255)
+}
+
+export function displayDistance(distance: number) {
+  return (distanceToSwitchDistance(distance) / 10).toFixed(1)
 }
