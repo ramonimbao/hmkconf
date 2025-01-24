@@ -1,7 +1,7 @@
 "use client"
 
-import { useConfigurator } from "@/components/configurator-provider"
-import { useDevice } from "@/components/device-provider"
+import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { useGetKeymap } from "@/hooks/use-get-keymap"
 import { useSetKeymap } from "@/hooks/use-set-keymap"

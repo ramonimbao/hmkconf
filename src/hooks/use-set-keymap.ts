@@ -1,4 +1,4 @@
-import { useDevice } from "@/components/device-provider"
+import { useDevice } from "@/components/providers/device-provider"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useSetKeymap(profileNum: number) {

@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ReactNode } from "react"
-import { useConfigurator } from "../configurator-provider"
+import { useConfigurator } from "../providers/configurator-provider"
 import { ThemeSwitcher } from "../theme-switcher"
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs"
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useDevice } from "@/components/device-provider"
+import { useDevice } from "@/components/providers/device-provider"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"

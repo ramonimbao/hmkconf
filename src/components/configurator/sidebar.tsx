@@ -9,8 +9,8 @@ import {
 } from "@radix-ui/react-radio-group"
 import { ChevronsUpDown, Circle } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useConfigurator } from "../configurator-provider"
-import { useDevice } from "../device-provider"
+import { useConfigurator } from "../providers/configurator-provider"
+import { useDevice } from "../providers/device-provider"
 import { Button } from "../ui/button"
 import {
   DropdownMenu,

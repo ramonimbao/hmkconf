@@ -2,9 +2,9 @@
 
 import { useDemoDevice } from "@/hooks/use-demo-device"
 import { createConfigurator } from "@/lib/create-configurator"
+import { Configurator } from "../configurator/configurator"
+import { ConfiguratorLayout } from "../configurator/layout"
 import { ConfiguratorProvider } from "./configurator-provider"
-import { Configurator } from "./configurator/configurator"
-import { ConfiguratorLayout } from "./configurator/layout"
 import { DeviceProvider } from "./device-provider"
 
 const useDemoConfigurator = createConfigurator()

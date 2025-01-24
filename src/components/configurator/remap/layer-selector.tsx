@@ -1,6 +1,6 @@
 "use client"
 
-import { useConfigurator } from "@/components/configurator-provider"
+import { useConfigurator } from "@/components/providers/configurator-provider"
 import { buttonVariants } from "@/components/ui/button"
 import { NUM_LAYERS } from "@/constants/devices"
 import { cn } from "@/lib/utils"
