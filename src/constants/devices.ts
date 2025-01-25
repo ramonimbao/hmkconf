@@ -1,10 +1,11 @@
-import { switchDistanceToDistance } from "@/lib/utils"
 import { DeviceActuation, DeviceAKC, DeviceAKCType } from "@/types/devices"
+
+export const SWITCH_DISTANCE = 80
 
 export const NUM_PROFILES = 4
 export const NUM_LAYERS = 4
 
-export const DEFAULT_ACTUATION_POINT = switchDistanceToDistance(20)
+export const DEFAULT_ACTUATION_POINT = 128
 
 export const DEFAULT_ACTUATION: DeviceActuation = {
   actuationPoint: DEFAULT_ACTUATION_POINT,

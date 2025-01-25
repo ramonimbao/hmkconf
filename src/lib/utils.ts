@@ -1,3 +1,4 @@
+import { SWITCH_DISTANCE } from "@/constants/devices"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -14,13 +15,13 @@ export function isWebUsbSupported() {
 }
 
 export function switchDistanceToDistance(distance: number) {
-  return Math.round((distance * 255) / 40)
+  return Math.round((distance * 255) / SWITCH_DISTANCE)
 }
 
 export function distanceToSwitchDistance(distance: number) {
-  return Math.round((distance * 40) / 255)
+  return Math.round((distance * SWITCH_DISTANCE) / 255)
 }
 
 export function displayDistance(distance: number) {
-  return (distanceToSwitchDistance(distance) / 10).toFixed(1)
+  return (distanceToSwitchDistance(distance) / 20).toFixed(2)
 }
