@@ -1,16 +1,24 @@
 import { useDevice } from "@/components/providers/device-provider"
 import { NUM_LAYERS } from "@/constants/devices"
-import { DeviceAKCType } from "@/types/devices"
+import { DeviceAKC, DeviceAKCType } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
 import { produce } from "immer"
 import { useGetAKC } from "./use-get-akc"
 import { useGetKeymap } from "./use-get-keymap"
 
-export function useGetKeymapWithAKC(
-  profileNum: number,
-):
-  | { isSuccess: false; keymap?: undefined; akcIndices?: undefined }
-  | { isSuccess: true; keymap: number[][]; akcIndices: (number | null)[][] } {
+export function useGetKeymapWithAKC(profileNum: number):
+  | {
+      isSuccess: false
+      keymap?: undefined
+      akc?: undefined
+      akcIndices?: undefined
+    }
+  | {
+      isSuccess: true
+      keymap: number[][]
+      akc: DeviceAKC[]
+      akcIndices: (number | null)[][]
+    } {
   const { metadata } = useDevice()
 
   const { isSuccess: isKeymapSuccess, data: keymap } = useGetKeymap(profileNum)
@@ -27,7 +35,10 @@ export function useGetKeymapWithAKC(
     for (let i = 0; i < akc.length; i++) {
       const { layer, key, akc: akConfig } = akc[i]
 
-      akcIndices[layer][key] = i + 1
+      if (akConfig.type !== DeviceAKCType.AKC_NONE) {
+        akcIndices[layer][key] = i
+      }
+
       switch (akConfig.type) {
         case DeviceAKCType.AKC_NULL_BIND:
           draft[layer][key] = Keycode.KC_NULL_BIND_PRIMARY
@@ -56,6 +67,7 @@ export function useGetKeymapWithAKC(
   return {
     isSuccess: true,
     keymap: keymapWithAKC,
+    akc,
     akcIndices,
   }
 }

@@ -35,7 +35,7 @@ export const KEYCODE_CATEGORIES = [
   "Basic",
   "Extended",
   "Special",
-  "Unknown",
+  "AKC",
 ] as const
 
 export const KEYCODE_METADATA: KeycodeMetadata[] = [
@@ -1419,7 +1419,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     ),
     keycode: Keycode.KC_NULL_BIND_PRIMARY,
     webCodes: [],
-    category: "Unknown",
+    category: "AKC",
     highlight: true,
   },
   {
@@ -1432,14 +1432,14 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     ),
     keycode: Keycode.KC_NULL_BIND_SECONDARY,
     webCodes: [],
-    category: "Unknown",
+    category: "AKC",
     highlight: true,
   },
   {
     id: "DKS",
     keycode: Keycode.KC_DKS,
     webCodes: [],
-    category: "Unknown",
+    category: "AKC",
     highlight: true,
   },
   {
@@ -1452,14 +1452,14 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     ),
     keycode: Keycode.KC_TAP_HOLD,
     webCodes: [],
-    category: "Unknown",
+    category: "AKC",
     highlight: true,
   },
   {
     id: "TGL",
     keycode: Keycode.KC_TOGGLE,
     webCodes: [],
-    category: "Unknown",
+    category: "AKC",
     highlight: true,
   },
 ]

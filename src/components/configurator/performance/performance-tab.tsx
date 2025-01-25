@@ -101,7 +101,9 @@ export function PerformanceTab() {
           <ToggleGroup
             type="multiple"
             value={keys.map((key) => key.toString())}
-            onValueChange={(value) => setKeys(value.map((key) => Number(key)))}
+            onValueChange={(value) =>
+              setKeys(value.map((key) => parseInt(key)))
+            }
             asChild
           >
             <KeyboardEditorKeyboard

@@ -1,9 +1,9 @@
-import { buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { KeycodeMetadata } from "@/types/keycodes"
-import { HTMLAttributes } from "react"
+import { ComponentProps } from "react"
 
-interface KeycodeButtonProps extends HTMLAttributes<HTMLButtonElement> {
+interface KeycodeButtonProps extends ComponentProps<typeof Button> {
   keycodeMetadata: KeycodeMetadata
 }
 
@@ -13,9 +13,10 @@ export function KeycodeButton({
   ...props
 }: KeycodeButtonProps) {
   return (
-    <button
+    <Button
+      variant="outline"
+      size="icon"
       className={cn(
-        buttonVariants({ variant: "outline", size: "icon" }),
         keycodeMetadata.highlight && "font-extrabold",
         "size-full flex-col gap-0",
         className,
@@ -23,6 +24,6 @@ export function KeycodeButton({
       {...props}
     >
       {keycodeMetadata.display ?? keycodeMetadata.id}
-    </button>
+    </Button>
   )
 }

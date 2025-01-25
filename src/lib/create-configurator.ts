@@ -13,6 +13,10 @@ const initialState: ConfiguratorState = {
     keys: [],
     showKeymap: false,
   },
+  advancedKeys: {
+    layer: 0,
+    keys: [],
+  },
 }
 
 export function createConfigurator() {
@@ -23,10 +27,7 @@ export function createConfigurator() {
       reset: () => set((state) => Object.assign(state, initialState)),
       setTab: (tab) => set({ tab }),
       setProfileNum: (profileNum) =>
-        set((state) => {
-          state.profileNum = profileNum
-          state.remap = Object.assign(state.remap, initialState.remap)
-        }),
+        set((state) => Object.assign(state, { ...initialState, profileNum })),
 
       remap: {
         ...initialState.remap,
@@ -52,6 +53,20 @@ export function createConfigurator() {
         setShowKeymap: (showKeymap) =>
           set((state) => {
             state.performance.showKeymap = showKeymap
+          }),
+      },
+
+      advancedKeys: {
+        ...initialState.advancedKeys,
+
+        setLayer: (layer) =>
+          set((state) => {
+            state.advancedKeys.layer = layer
+            state.advancedKeys.keys = []
+          }),
+        setKeys: (keys) =>
+          set((state) => {
+            state.advancedKeys.keys = keys
           }),
       },
     })),

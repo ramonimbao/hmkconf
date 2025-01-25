@@ -1,4 +1,5 @@
 import { TabsContent } from "@radix-ui/react-tabs"
+import { AdvancedKeysTab } from "./advanced-keys/advanced-keys-tab"
 import { DebugTab } from "./debug/debug-tab"
 import { PerformanceTab } from "./performance/performance-tab"
 import { RemapTab } from "./remap/remap-tab"
@@ -17,9 +18,13 @@ export function Configurator() {
         <TabsContent value="performance">
           <PerformanceTab />
         </TabsContent>
+        <TabsContent value="advanced-keys">
+          <AdvancedKeysTab />
+        </TabsContent>
         <TabsContent value="debug">
           <DebugTab />
         </TabsContent>
+        <TabsContent value="settings"></TabsContent>
       </div>
     </div>
   )

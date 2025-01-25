@@ -68,7 +68,7 @@ export function ConfiguratorSidebar() {
           <p className="font-semibold leading-none">Profiles</p>
           <RadioGroup
             value={profileNum.toString()}
-            onValueChange={(value) => setProfileNum(Number(value))}
+            onValueChange={(value) => setProfileNum(parseInt(value))}
             className="grid gap-1"
           >
             {[...Array(NUM_PROFILES)].map((_, i) => (

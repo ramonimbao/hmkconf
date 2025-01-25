@@ -1,13 +1,13 @@
 "use client"
 
 import { useConfigurator } from "@/components/providers/configurator-provider"
-import { buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { cn, displayDistance } from "@/lib/utils"
 import { DeviceActuation } from "@/types/devices"
 import { KeycodeMetadata } from "@/types/keycodes"
-import { HTMLAttributes } from "react"
+import { ComponentProps } from "react"
 
-interface ActuationButtonProps extends HTMLAttributes<HTMLButtonElement> {
+interface ActuationButtonProps extends ComponentProps<typeof Button> {
   keycodeMetadata: KeycodeMetadata
   actuation: DeviceActuation
 }
@@ -23,9 +23,10 @@ export function ActuationButton({
   } = useConfigurator()
 
   return (
-    <button
+    <Button
+      variant="outline"
+      size="icon"
       className={cn(
-        buttonVariants({ variant: "outline", size: "icon" }),
         keycodeMetadata.highlight && "font-extrabold",
         "size-full flex-col gap-0 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
         className,
@@ -58,6 +59,6 @@ export function ActuationButton({
           )}
         </span>
       )}
-    </button>
+    </Button>
   )
 }

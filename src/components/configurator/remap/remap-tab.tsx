@@ -18,12 +18,12 @@ import {
 } from "../common/keyboard-editor"
 import { KeycodeButton } from "../common/keycode-button"
 import { KeycodeSelector } from "../common/keycode-selector"
-import { LayerSelector } from "./layer-selector"
+import { LayerSelector } from "../common/layer-selector"
 
 export function RemapTab() {
   const {
     profileNum,
-    remap: { layer, key, setKey },
+    remap: { layer, key, setLayer, setKey },
   } = useConfigurator()
   const { metadata } = useDevice()
 
@@ -43,7 +43,11 @@ export function RemapTab() {
     setKey(null)
   }
 
-  const setKeycode = (key: number, keycode: number) => {
+  const setKeycode = (
+    key: number,
+    keycode: number,
+    moveToNextKey?: boolean,
+  ) => {
     if (!isSuccess) {
       return
     }
@@ -53,14 +57,33 @@ export function RemapTab() {
         draft[layer][key] = keycode
       }),
     )
-    setKey(null)
+    if (moveToNextKey) {
+      for (let i = 0; i < metadata.layout.length; i++) {
+        for (let j = 0; j < metadata.layout[i].length; j++) {
+          if (metadata.layout[i][j].key !== key) {
+            continue
+          }
+
+          if (j + 1 < metadata.layout[i].length) {
+            setKey(metadata.layout[i][j + 1].key)
+          } else if (i + 1 < metadata.layout.length) {
+            setKey(metadata.layout[i + 1][0].key)
+          } else {
+            setKey(null)
+          }
+          return
+        }
+      }
+    } else {
+      setKey(null)
+    }
   }
 
   return (
     <KeyboardEditor>
       <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
-          <LayerSelector />
+          <LayerSelector layer={layer} setLayer={setLayer} />
           <Button
             variant="destructive"
             size="sm"
@@ -98,11 +121,11 @@ export function RemapTab() {
         )}
       </KeyboardEditorLayout>
       <KeyboardEditorLayout>
-        <div className="mx-auto w-full max-w-7xl p-4">
+        <div className="mx-auto w-full max-w-5xl p-4">
           <KeycodeSelector
             disabled={!isSuccess || key === null}
             onKeycodeSelected={(keycode) =>
-              key !== null && setKeycode(key, keycode)
+              key !== null && setKeycode(key, keycode, true)
             }
           />
         </div>
