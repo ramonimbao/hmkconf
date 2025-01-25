@@ -56,6 +56,7 @@ export type DeviceAKCDKS = {
   type: DeviceAKCType.AKC_DKS
   keycodes: number[]
   bitmap: DeviceAKCDKSAction[][]
+  bottomOutPoint: number
 }
 
 export type DeviceAKCTapHold = {
@@ -106,5 +107,6 @@ export type DeviceAKCMetadata = {
   type: DeviceAKCType
   name: string
   description: string
-  keycode: number[]
+  keycodes: number[]
+  constructDefault(layer: number, keys: number[]): DeviceAKC
 }

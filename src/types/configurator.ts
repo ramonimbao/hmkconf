@@ -11,7 +11,7 @@ export type ConfiguratorState = {
   }
   advancedKeys: {
     layer: number
-    keys: number[]
+    akcIndex: number | null
   }
 }
 
@@ -29,7 +29,7 @@ export type ConfiguratorAction = {
   }
   advancedKeys: {
     setLayer(layer: number): void
-    setKeys(keys: number[]): void
+    setAKCIndex(akcIndex: number | null): void
   }
 }
 

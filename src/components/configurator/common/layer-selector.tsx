@@ -13,6 +13,7 @@ interface LayerSelectorProps
 }
 
 export function LayerSelector({
+  disabled,
   layer,
   setLayer,
   className,
@@ -20,9 +21,14 @@ export function LayerSelector({
 }: LayerSelectorProps) {
   return (
     <RadioGroup
+      disabled={disabled}
       value={layer.toString()}
       onValueChange={(value) => setLayer(parseInt(value))}
-      className={cn("flex items-center gap-2", className)}
+      className={cn(
+        "flex items-center gap-2",
+        disabled && "pointer-events-none opacity-50",
+        className,
+      )}
       {...props}
     >
       <p className="font-semibold">Layer</p>

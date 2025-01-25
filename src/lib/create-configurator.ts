@@ -15,7 +15,7 @@ const initialState: ConfiguratorState = {
   },
   advancedKeys: {
     layer: 0,
-    keys: [],
+    akcIndex: null,
   },
 }
 
@@ -74,11 +74,11 @@ export function createConfigurator() {
         setLayer: (layer) =>
           set((state) => {
             state.advancedKeys.layer = layer
-            state.advancedKeys.keys = []
+            state.advancedKeys.akcIndex = null
           }),
-        setKeys: (keys) =>
+        setAKCIndex: (akcIndex) =>
           set((state) => {
-            state.advancedKeys.keys = keys
+            state.advancedKeys.akcIndex = akcIndex
           }),
       },
     })),

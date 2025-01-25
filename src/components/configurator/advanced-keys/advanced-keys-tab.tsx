@@ -4,17 +4,22 @@ import { useGetKeymapWithAKC } from "@/api/use-get-keymap-with-akc"
 import { useSetAKC } from "@/api/use-set-akc"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { AKC_METADATA, DEFAULT_AKC } from "@/constants/devices"
+import {
+  AKC_METADATA,
+  AKC_TYPE_TO_METADATA,
+  DEFAULT_AKC,
+} from "@/constants/devices"
 import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { cn } from "@/lib/utils"
 import { DeviceAKC, DeviceAKCType } from "@/types/devices"
+import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import { Plus } from "lucide-react"
@@ -29,25 +34,10 @@ import {
 import { KeycodeButton } from "../common/keycode-button"
 import { LayerSelector } from "../common/layer-selector"
 
-const getKeysFromAKC = (akc: DeviceAKC) => {
-  switch (akc.akc.type) {
-    case DeviceAKCType.AKC_NULL_BIND:
-      return [akc.key, akc.akc.secondaryKey]
-
-    case DeviceAKCType.AKC_DKS:
-    case DeviceAKCType.AKC_TAP_HOLD:
-    case DeviceAKCType.AKC_TOGGLE:
-      return [akc.key]
-
-    default:
-      return []
-  }
-}
-
 export function AdvancedKeysTab() {
   const {
     profileNum,
-    advancedKeys: { layer, keys, setLayer, setKeys },
+    advancedKeys: { layer, akcIndex, setLayer, setAKCIndex },
   } = useConfigurator()
   const { metadata } = useDevice()
 
@@ -64,21 +54,6 @@ export function AdvancedKeysTab() {
         : [],
     [akc, isSuccess],
   )
-
-  const onAKCSelected = (keys: number[]) => {
-    if (!isSuccess || newAKCType !== DeviceAKCType.AKC_NONE) {
-      return
-    }
-
-    if (keys.length === 0) {
-      setKeys([])
-    } else {
-      const akcIndex = akcIndices[layer][keys[0]]
-      if (akcIndex !== null) {
-        setKeys(getKeysFromAKC(akc[akcIndex]))
-      }
-    }
-  }
 
   const onNewAKCKeySelected = (keys: number[]) => {
     if (!isSuccess || newAKCType === DeviceAKCType.AKC_NONE) {
@@ -98,13 +73,33 @@ export function AdvancedKeysTab() {
     }
 
     const akcIndex = akcIndices[layer][key]
-    if (akcIndex !== null && (keys.length === 0 || keys.includes(key))) {
+    if (akcIndex !== null) {
       setAKC(
         produce(akc, (draft) => {
           draft[akcIndex] = DEFAULT_AKC
         }),
       )
-      setKeys([])
+      setAKCIndex(null)
+    }
+  }
+
+  const onCreateNewAKC = (newAKC: DeviceAKC) => {
+    if (!isSuccess) {
+      return
+    }
+
+    const akcIndex = akc.findIndex(
+      (akc) => akc.akc.type === DeviceAKCType.AKC_NONE,
+    )
+    if (akcIndex !== -1) {
+      setAKC(
+        produce(akc, (draft) => {
+          draft[akcIndex] = newAKC
+        }),
+      )
+      setNewAKCType(DeviceAKCType.AKC_NONE)
+      setNewAKCKeys([])
+      setAKCIndex(akcIndex)
     }
   }
 
@@ -112,34 +107,58 @@ export function AdvancedKeysTab() {
     <KeyboardEditor>
       <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
-          <LayerSelector layer={layer} setLayer={setLayer} />
+          <LayerSelector
+            disabled={newAKCType !== DeviceAKCType.AKC_NONE}
+            layer={layer}
+            setLayer={setLayer}
+          />
         </KeyboardEditorHeader>
         {!isSuccess ? (
           <KeyboardEditorSkeleton />
+        ) : newAKCType === DeviceAKCType.AKC_NONE ? (
+          <ToggleGroup
+            type="single"
+            value={akcIndex === null ? "" : akcIndex.toString()}
+            onValueChange={(akcIndex) =>
+              setAKCIndex(akcIndex === "" ? null : parseInt(akcIndex))
+            }
+          >
+            <KeyboardEditorKeyboard
+              elt={(key) => (
+                <ToggleGroupItem
+                  value={
+                    akcIndices[layer][key] === null
+                      ? ""
+                      : akcIndices[layer][key].toString()
+                  }
+                  asChild
+                >
+                  <KeycodeButton
+                    disabled={akcIndices[layer][key] === null}
+                    keycodeMetadata={KEYCODE_TO_METADATA[keymap[layer][key]]}
+                    onContextMenu={(e) => {
+                      e.preventDefault()
+                      onRightClickAKC(key)
+                    }}
+                    className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
+                  />
+                </ToggleGroupItem>
+              )}
+            />
+          </ToggleGroup>
         ) : (
           <ToggleGroup
             type="multiple"
-            value={(newAKCType === DeviceAKCType.AKC_NONE
-              ? keys
-              : newAKCKeys
-            ).map((key) => key.toString())}
-            onValueChange={(keys) => {
-              const newKeys = keys.map((key) => parseInt(key))
-              if (newAKCType === DeviceAKCType.AKC_NONE) {
-                onAKCSelected(newKeys)
-              } else {
-                onNewAKCKeySelected(newKeys)
-              }
-            }}
+            value={newAKCKeys.map((key) => key.toString())}
+            onValueChange={(keys) =>
+              onNewAKCKeySelected(keys.map((key) => parseInt(key)))
+            }
           >
             <KeyboardEditorKeyboard
               elt={(key) => (
                 <ToggleGroupItem value={key.toString()} asChild>
                   <KeycodeButton
-                    disabled={
-                      (newAKCType === DeviceAKCType.AKC_NONE) ===
-                      (akcIndices[layer][key] === null)
-                    }
+                    disabled={akcIndices[layer][key] !== null}
                     keycodeMetadata={KEYCODE_TO_METADATA[keymap[layer][key]]}
                     onContextMenu={(e) => {
                       e.preventDefault()
@@ -154,7 +173,7 @@ export function AdvancedKeysTab() {
         )}
       </KeyboardEditorLayout>
       <KeyboardEditorLayout>
-        {keys.length > 0 ? (
+        {akcIndex !== null ? (
           <div></div>
         ) : newAKCType === DeviceAKCType.AKC_NONE ? (
           <div
@@ -165,8 +184,9 @@ export function AdvancedKeysTab() {
           >
             <div className="flex items-center justify-between gap-4">
               <p className="font-semibold leading-none tracking-tight">
-                Advanced Key Bindings: {filteredAKC.toString().padStart(2, "0")}
-                /{metadata.numAKC.toString().padStart(2, "0")}
+                Advanced Key Bindings:{" "}
+                {filteredAKC.length.toString().padStart(2, "0")}/
+                {metadata.numAKC.toString().padStart(2, "0")}
               </p>
               <DropdownMenu>
                 <DropdownMenuTrigger
@@ -181,7 +201,10 @@ export function AdvancedKeysTab() {
                   {AKC_METADATA.map((akcMetadata) => (
                     <DropdownMenuItem
                       key={akcMetadata.type}
-                      onClick={() => setNewAKCType(akcMetadata.type)}
+                      onClick={() => {
+                        setNewAKCType(akcMetadata.type)
+                        setNewAKCKeys([])
+                      }}
                     >
                       <div className="flex flex-col">
                         <p>{akcMetadata.name}</p>
@@ -195,7 +218,17 @@ export function AdvancedKeysTab() {
               </DropdownMenu>
             </div>
             {filteredAKC.length > 0 ? (
-              <div className="mt-4 grid gap-4 p-4"></div>
+              <div className="mt-4 grid gap-4">
+                {filteredAKC.map((akc, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      buttonVariants({ variant: "outline" }),
+                      "p-4",
+                    )}
+                  ></div>
+                ))}
+              </div>
             ) : (
               <div className="mt-4 flex h-56 flex-col items-center justify-center rounded-sm border border-dashed border-muted p-4 text-center">
                 <p className="text-sm text-muted-foreground">
@@ -206,7 +239,76 @@ export function AdvancedKeysTab() {
           </div>
         ) : (
           <div className="mx-auto flex w-full max-w-5xl flex-col p-4">
-            <div className="flex items-center justify-between gap-4"></div>
+            <div className="flex items-center justify-between gap-4">
+              <p className="font-semibold leading-none tracking-tight">
+                {AKC_TYPE_TO_METADATA[newAKCType].name}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setNewAKCType(DeviceAKCType.AKC_NONE)
+                    setNewAKCKeys([])
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={
+                    newAKCKeys.length !==
+                    AKC_TYPE_TO_METADATA[newAKCType].keycodes.length
+                  }
+                  size="sm"
+                  onClick={() =>
+                    onCreateNewAKC(
+                      AKC_TYPE_TO_METADATA[newAKCType].constructDefault(
+                        layer,
+                        newAKCKeys,
+                      ),
+                    )
+                  }
+                >
+                  Continue
+                </Button>
+              </div>
+            </div>
+            <p className="mt-2 text-sm font-semibold">
+              Select{" "}
+              {AKC_TYPE_TO_METADATA[newAKCType].keycodes.length > 1
+                ? `${AKC_TYPE_TO_METADATA[newAKCType].keycodes.length} keys`
+                : "a key"}{" "}
+              from the keyboard to assign{" "}
+              {AKC_TYPE_TO_METADATA[newAKCType].name}.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {AKC_TYPE_TO_METADATA[newAKCType].description}
+            </p>
+            <div className="mt-4 flex w-full items-center justify-center">
+              {AKC_TYPE_TO_METADATA[newAKCType].keycodes.map((_, i) => (
+                <div key={i} className="flex flex-col items-center text-center">
+                  <p className="text-sm">Key {i + 1}</p>
+                  <div className="size-16 p-0.5">
+                    <KeycodeButton
+                      keycodeMetadata={
+                        KEYCODE_TO_METADATA[
+                          isSuccess && newAKCKeys.length > i
+                            ? keymap[layer][newAKCKeys[i]]
+                            : Keycode.KC_NO
+                        ]
+                      }
+                      onContextMenu={(e) => {
+                        e.preventDefault()
+                        onNewAKCKeySelected(
+                          newAKCKeys.filter((_, j) => j !== i),
+                        )
+                      }}
+                      className={cn(newAKCKeys.length <= i && "border-dashed")}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </KeyboardEditorLayout>
