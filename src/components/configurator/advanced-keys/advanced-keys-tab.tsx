@@ -4,7 +4,7 @@ import { useGetKeymapWithAKC } from "@/api/use-get-keymap-with-akc"
 import { useSetAKC } from "@/api/use-set-akc"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ import { DeviceAKC, DeviceAKCType } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
-import { Plus } from "lucide-react"
+import { Edit, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
 import {
   KeyboardEditor,
@@ -65,6 +65,19 @@ export function AdvancedKeysTab() {
     if (keys.every((key) => akcIndices[layer][key] === null)) {
       setNewAKCKeys(keys)
     }
+  }
+
+  const onDeleteAKC = (akcIndex: number) => {
+    if (!isSuccess) {
+      return
+    }
+
+    setAKC(
+      produce(akc, (draft) => {
+        draft[akcIndex] = DEFAULT_AKC
+      }),
+    )
+    setAKCIndex(null)
   }
 
   const onRightClickAKC = (key: number) => {
@@ -217,17 +230,45 @@ export function AdvancedKeysTab() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            {filteredAKC.length > 0 ? (
+            {isSuccess && filteredAKC.length > 0 ? (
               <div className="mt-4 grid gap-4">
-                {filteredAKC.map((akc, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      buttonVariants({ variant: "outline" }),
-                      "p-4",
-                    )}
-                  ></div>
-                ))}
+                {akc.map(
+                  (akc, i) =>
+                    akc.akc.type !== DeviceAKCType.AKC_NONE && (
+                      <div
+                        key={i}
+                        className="flex items-center gap-4 rounded-md border p-4"
+                      >
+                        <div className="flex flex-1 items-center">
+                          <p className="text-sm font-semibold leading-none tracking-tight">
+                            {(i + 1).toString().padStart(2, "0")} -{" "}
+                            {AKC_TYPE_TO_METADATA[akc.akc.type].name}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              setLayer(akc.layer)
+                              setAKCIndex(i)
+                            }}
+                          >
+                            <Edit />
+                            <span className="sr-only">Edit</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => onDeleteAKC(i)}
+                          >
+                            <Trash />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                        </div>
+                      </div>
+                    ),
+                )}
               </div>
             ) : (
               <div className="mt-4 flex h-56 flex-col items-center justify-center rounded-sm border border-dashed border-muted p-4 text-center">
