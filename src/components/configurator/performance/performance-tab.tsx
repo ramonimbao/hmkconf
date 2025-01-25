@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { DEFAULT_ACTUATION } from "@/constants/devices"
 import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { useGetActuations } from "@/hooks/use-get-actuations"
-import { useGetKeymap } from "@/hooks/use-get-keymap"
+import { useGetKeymapWithAKC } from "@/hooks/use-get-keymap-with-akc"
 import { useSetActuations } from "@/hooks/use-set-actuations"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
@@ -27,7 +27,7 @@ export function PerformanceTab() {
   } = useConfigurator()
   const { metadata } = useDevice()
 
-  const { isSuccess: isKeymapSuccess, data: keymap } = useGetKeymap(profileNum)
+  const { isSuccess: isKeymapSuccess, keymap } = useGetKeymapWithAKC(profileNum)
   const { isSuccess: isActuationsSuccess, data: actuations } =
     useGetActuations(profileNum)
   const { mutate: setActuations } = useSetActuations(profileNum)

@@ -285,6 +285,13 @@ export enum Keycode {
   KC_PF3 = KC_PROFILE_3,
   KC_PSWP = KC_PROFILE_SWAP,
   KC_PCYC = KC_PROFILE_CYCLE,
+
+  // AKC keycodes (not part of the firmware)
+  KC_NULL_BIND_PRIMARY = 0x100,
+  KC_NULL_BIND_SECONDARY = 0x101,
+  KC_DKS = 0x102,
+  KC_TAP_HOLD = 0x103,
+  KC_TOGGLE = 0x104,
 }
 
 export type KeycodeMetadata = {
@@ -294,4 +301,5 @@ export type KeycodeMetadata = {
   keycode: number
   webCodes: string[]
   category: (typeof KEYCODE_CATEGORIES)[number]
+  highlight?: boolean
 }

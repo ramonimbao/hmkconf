@@ -31,7 +31,12 @@ import {
   VolumeOff,
 } from "lucide-react"
 
-export const KEYCODE_CATEGORIES = ["Basic", "Extended", "Special"] as const
+export const KEYCODE_CATEGORIES = [
+  "Basic",
+  "Extended",
+  "Special",
+  "Unknown",
+] as const
 
 export const KEYCODE_METADATA: KeycodeMetadata[] = [
   {
@@ -1404,15 +1409,65 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     webCodes: [],
     category: "Special",
   },
+  {
+    id: "Null Bind Primary",
+    display: (
+      <>
+        <p>NB</p>
+        <p>L</p>
+      </>
+    ),
+    keycode: Keycode.KC_NULL_BIND_PRIMARY,
+    webCodes: [],
+    category: "Unknown",
+    highlight: true,
+  },
+  {
+    id: "Null Bind Secondary",
+    display: (
+      <>
+        <p>NB</p>
+        <p>R</p>
+      </>
+    ),
+    keycode: Keycode.KC_NULL_BIND_SECONDARY,
+    webCodes: [],
+    category: "Unknown",
+    highlight: true,
+  },
+  {
+    id: "DKS",
+    keycode: Keycode.KC_DKS,
+    webCodes: [],
+    category: "Unknown",
+    highlight: true,
+  },
+  {
+    id: "Tap-Hold",
+    display: (
+      <>
+        <p>Tap</p>
+        <p>Hold</p>
+      </>
+    ),
+    keycode: Keycode.KC_TAP_HOLD,
+    webCodes: [],
+    category: "Unknown",
+    highlight: true,
+  },
+  {
+    id: "TGL",
+    keycode: Keycode.KC_TOGGLE,
+    webCodes: [],
+    category: "Unknown",
+    highlight: true,
+  },
 ]
 
 export const KEYCODE_TO_METADATA: Record<number, KeycodeMetadata> =
   KEYCODE_METADATA.reduce((acc, meta) => ({ ...acc, [meta.keycode]: meta }), {})
 
-export const KEYCODE_CATEGORIES_MAP: Record<
-  (typeof KEYCODE_CATEGORIES)[number],
-  KeycodeMetadata[]
-> = {
+export const KEYCODE_CATEGORIES_MAP: Record<string, KeycodeMetadata[]> = {
   Basic: [
     Keycode.KC_A,
     Keycode.KC_B,

@@ -16,6 +16,7 @@ export function KeycodeButton({
     <button
       className={cn(
         buttonVariants({ variant: "outline", size: "icon" }),
+        keycodeMetadata.highlight && "font-extrabold",
         "size-full flex-col gap-0",
         className,
       )}
