@@ -1,11 +1,11 @@
 "use client"
 
+import { useGetKeymap } from "@/api/use-get-keymap"
+import { useSetKeymap } from "@/api/use-set-keymap"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
-import { useGetKeymap } from "@/hooks/use-get-keymap"
-import { useSetKeymap } from "@/hooks/use-set-keymap"
 import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
