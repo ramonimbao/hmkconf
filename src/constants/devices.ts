@@ -6,6 +6,7 @@ export const NUM_PROFILES = 4
 export const NUM_LAYERS = 4
 
 export const DEFAULT_ACTUATION_POINT = 128
+export const DEFAULT_RT_DOWN = 32
 
 export const DEFAULT_ACTUATION: DeviceActuation = {
   actuationPoint: DEFAULT_ACTUATION_POINT,

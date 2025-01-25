@@ -10,7 +10,7 @@ export function useGetKeymapWithAKC(
   profileNum: number,
 ):
   | { isSuccess: false; keymap?: undefined; akcIndices?: undefined }
-  | { isSuccess: true; keymap: number[][]; akcIndices: number[][] } {
+  | { isSuccess: true; keymap: number[][]; akcIndices: (number | null)[][] } {
   const { metadata } = useDevice()
 
   const { isSuccess: isKeymapSuccess, data: keymap } = useGetKeymap(profileNum)
@@ -21,7 +21,7 @@ export function useGetKeymapWithAKC(
   }
 
   const akcIndices = Array.from({ length: NUM_LAYERS }, () =>
-    Array(metadata.numKeys).fill(0),
+    Array(metadata.numKeys).fill(null),
   )
   const keymapWithAKC = produce(keymap, (draft) => {
     for (let i = 0; i < akc.length; i++) {
@@ -32,7 +32,7 @@ export function useGetKeymapWithAKC(
         case DeviceAKCType.AKC_NULL_BIND:
           draft[layer][key] = Keycode.KC_NULL_BIND_PRIMARY
           draft[layer][akConfig.secondaryKey] = Keycode.KC_NULL_BIND_SECONDARY
-          akcIndices[layer][akConfig.secondaryKey] = i + 1
+          akcIndices[layer][akConfig.secondaryKey] = i
           break
 
         case DeviceAKCType.AKC_DKS:

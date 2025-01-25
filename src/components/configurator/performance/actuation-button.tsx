@@ -36,19 +36,24 @@ export function ActuationButton({
         (keycodeMetadata.display ?? keycodeMetadata.id)
       ) : (
         <span className="text-xs">
-          {actuation.rtUp === 0 || actuation.rtDown === 0 ? (
+          {actuation.rtDown === 0 ? (
             displayDistance(actuation.actuationPoint)
-          ) : !actuation.continuous ? (
-            <>
-              <p>{displayDistance(actuation.actuationPoint)}</p>
-              <p>{displayDistance(actuation.rtUp)}</p>
-              <p>{displayDistance(actuation.rtDown)}</p>
-            </>
           ) : (
             <>
-              <p>{displayDistance(actuation.actuationPoint)}C</p>
-              <p>{displayDistance(actuation.rtUp)}C</p>
-              <p>{displayDistance(actuation.rtDown)}C</p>
+              <p>
+                {displayDistance(actuation.actuationPoint)}
+                {actuation.continuous && "C"}
+              </p>
+              <p>
+                {displayDistance(actuation.rtDown)}
+                {actuation.continuous && "C"}
+              </p>
+              {actuation.rtUp > 0 && (
+                <p>
+                  {displayDistance(actuation.rtUp)}
+                  {actuation.continuous && "C"}
+                </p>
+              )}
             </>
           )}
         </span>

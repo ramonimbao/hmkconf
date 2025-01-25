@@ -19,6 +19,7 @@ import {
   KeyboardEditorSkeleton,
 } from "../common/keyboard-editor"
 import { ActuationButton } from "./actuation-button"
+import { ActuationSettings } from "./actuation-settings"
 
 export function PerformanceTab() {
   const {
@@ -116,7 +117,9 @@ export function PerformanceTab() {
           </ToggleGroup>
         )}
       </KeyboardEditorLayout>
-      <KeyboardEditorLayout></KeyboardEditorLayout>
+      <KeyboardEditorLayout>
+        <ActuationSettings />
+      </KeyboardEditorLayout>
     </KeyboardEditor>
   )
 }
