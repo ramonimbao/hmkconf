@@ -33,6 +33,7 @@ import {
 } from "../common/keyboard-editor"
 import { KeycodeButton } from "../common/keycode-button"
 import { LayerSelector } from "../common/layer-selector"
+import { AdvancedKeysEditor } from "./advanced-keys-editor"
 
 export function AdvancedKeysTab() {
   const {
@@ -187,7 +188,7 @@ export function AdvancedKeysTab() {
       </KeyboardEditorLayout>
       <KeyboardEditorLayout>
         {akcIndex !== null ? (
-          <div></div>
+          <AdvancedKeysEditor />
         ) : newAKCType === DeviceAKCType.AKC_NONE ? (
           <div
             className={cn(
