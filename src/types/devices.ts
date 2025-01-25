@@ -101,3 +101,10 @@ export type DeviceAction = {
 }
 
 export type Device = DeviceState & DeviceAction
+
+export type DeviceAKCMetadata = {
+  type: DeviceAKCType
+  name: string
+  description: string
+  keycode: number[]
+}

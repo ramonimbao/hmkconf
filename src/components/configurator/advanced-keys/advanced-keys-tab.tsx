@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { DEFAULT_AKC } from "@/constants/devices"
+import { AKC_METADATA, DEFAULT_AKC } from "@/constants/devices"
 import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { cn } from "@/lib/utils"
 import { DeviceAKC, DeviceAKCType } from "@/types/devices"
@@ -57,11 +57,11 @@ export function AdvancedKeysTab() {
   const [newAKCType, setNewAKCType] = useState(DeviceAKCType.AKC_NONE)
   const [newAKCKeys, setNewAKCKeys] = useState<number[]>([])
 
-  const akcCount = useMemo(
+  const filteredAKC = useMemo(
     () =>
       isSuccess
-        ? akc.filter((akc) => akc.akc.type !== DeviceAKCType.AKC_NONE).length
-        : 0,
+        ? akc.filter((akc) => akc.akc.type !== DeviceAKCType.AKC_NONE)
+        : [],
     [akc, isSuccess],
   )
 
@@ -165,12 +165,12 @@ export function AdvancedKeysTab() {
           >
             <div className="flex items-center justify-between gap-4">
               <p className="font-semibold leading-none tracking-tight">
-                Advanced Key Bindings: {akcCount.toString().padStart(2, "0")}/
-                {metadata.numAKC.toString().padStart(2, "0")}
+                Advanced Key Bindings: {filteredAKC.toString().padStart(2, "0")}
+                /{metadata.numAKC.toString().padStart(2, "0")}
               </p>
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  disabled={!isSuccess || akcCount >= metadata.numAKC}
+                  disabled={!isSuccess || filteredAKC.length >= metadata.numAKC}
                   asChild
                 >
                   <Button variant="outline" size="sm">
@@ -178,56 +178,24 @@ export function AdvancedKeysTab() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="max-w-96">
-                  <DropdownMenuItem
-                    onClick={() => setNewAKCType(DeviceAKCType.AKC_NULL_BIND)}
-                  >
-                    <div className="flex flex-col">
-                      <p>Null Bind (Rappy Snappy + SOCD)</p>
-                      <p className="text-xs text-muted-foreground">
-                        Monitor 2 keys and select which one is active based on
-                        the chosen behavior.
-                      </p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setNewAKCType(DeviceAKCType.AKC_DKS)}
-                  >
-                    <div className="flex flex-col">
-                      <p>Dynamic Keystroke</p>
-                      <p className="text-xs text-muted-foreground">
-                        Assign up to 4 keycodes to a single key. Each keycode
-                        can be assigned up to 4 actions for 4 different parts of
-                        the keystroke.
-                      </p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setNewAKCType(DeviceAKCType.AKC_TAP_HOLD)}
-                  >
-                    <div className="flex flex-col">
-                      <p>Tap-Hold</p>
-                      <p className="text-xs text-muted-foreground">
-                        Send a different keycode depending on whether the key is
-                        tapped or held.
-                      </p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setNewAKCType(DeviceAKCType.AKC_TOGGLE)}
-                  >
-                    <div className="flex flex-col">
-                      <p>Toggle</p>
-                      <p className="text-xs text-muted-foreground">
-                        Toggle between key press and key release. Hold the key
-                        for normal behavior.
-                      </p>
-                    </div>
-                  </DropdownMenuItem>
+                  {AKC_METADATA.map((akcMetadata) => (
+                    <DropdownMenuItem
+                      key={akcMetadata.type}
+                      onClick={() => setNewAKCType(akcMetadata.type)}
+                    >
+                      <div className="flex flex-col">
+                        <p>{akcMetadata.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {akcMetadata.description}
+                        </p>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            {akcCount > 0 ? (
-              <div></div>
+            {filteredAKC.length > 0 ? (
+              <div className="mt-4 grid gap-4 p-4"></div>
             ) : (
               <div className="mt-4 flex h-56 flex-col items-center justify-center rounded-sm border border-dashed border-muted p-4 text-center">
                 <p className="text-sm text-muted-foreground">
@@ -237,7 +205,9 @@ export function AdvancedKeysTab() {
             )}
           </div>
         ) : (
-          <div className="mx-auto flex w-full max-w-5xl flex-col p-4"></div>
+          <div className="mx-auto flex w-full max-w-5xl flex-col p-4">
+            <div className="flex items-center justify-between gap-4"></div>
+          </div>
         )}
       </KeyboardEditorLayout>
     </KeyboardEditor>
