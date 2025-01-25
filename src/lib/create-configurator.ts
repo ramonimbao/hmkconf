@@ -24,10 +24,22 @@ export function createConfigurator() {
     immer((set) => ({
       ...initialState,
 
-      reset: () => set((state) => Object.assign(state, initialState)),
+      reset: () =>
+        set((state) => ({
+          ...initialState,
+          remap: { ...state.remap, ...initialState.remap },
+          performance: { ...state.performance, ...initialState.performance },
+          advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
+        })),
       setTab: (tab) => set({ tab }),
       setProfileNum: (profileNum) =>
-        set((state) => Object.assign(state, { ...initialState, profileNum })),
+        set((state) => ({
+          ...initialState,
+          profileNum,
+          remap: { ...state.remap, ...initialState.remap },
+          performance: { ...state.performance, ...initialState.performance },
+          advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
+        })),
 
       remap: {
         ...initialState.remap,
