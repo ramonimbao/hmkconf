@@ -1,17 +1,19 @@
 import { Button } from "@/components/ui/button"
+import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { cn } from "@/lib/utils"
-import { KeycodeMetadata } from "@/types/keycodes"
 import { ComponentProps } from "react"
 
 interface KeycodeButtonProps extends ComponentProps<typeof Button> {
-  keycodeMetadata: KeycodeMetadata
+  keycode: number
 }
 
 export function KeycodeButton({
-  keycodeMetadata,
+  keycode,
   className,
   ...props
 }: KeycodeButtonProps) {
+  const keycodeMetadata = KEYCODE_TO_METADATA[keycode]
+
   return (
     <Button
       variant="outline"

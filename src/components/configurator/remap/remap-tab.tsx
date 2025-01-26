@@ -5,7 +5,6 @@ import { useSetKeymap } from "@/api/use-set-keymap"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
-import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
@@ -107,7 +106,7 @@ export function RemapTab() {
               elt={(key) => (
                 <ToggleGroupItem value={key.toString()} asChild>
                   <KeycodeButton
-                    keycodeMetadata={KEYCODE_TO_METADATA[keymap[layer][key]]}
+                    keycode={keymap[layer][key]}
                     onContextMenu={(e) => {
                       e.preventDefault()
                       setKeycode(key, Keycode.KC_NO)

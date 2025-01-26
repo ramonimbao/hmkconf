@@ -1467,7 +1467,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
 export const KEYCODE_TO_METADATA: Record<number, KeycodeMetadata> =
   KEYCODE_METADATA.reduce((acc, meta) => ({ ...acc, [meta.keycode]: meta }), {})
 
-export const KEYCODE_CATEGORIES_MAP: Record<string, KeycodeMetadata[]> = {
+export const KEYCODE_CATEGORIES_MAP: Record<string, number[]> = {
   Basic: [
     Keycode.KC_A,
     Keycode.KC_B,
@@ -1518,7 +1518,7 @@ export const KEYCODE_CATEGORIES_MAP: Record<string, KeycodeMetadata[]> = {
     Keycode.KC_SLASH,
     Keycode.KC_NONUS_HASH,
     Keycode.KC_NONUS_BACKSLASH,
-  ].map((keycode) => KEYCODE_TO_METADATA[keycode]),
+  ],
   Extended: [
     Keycode.KC_NO,
     Keycode.KC_TRANSPARENT,
@@ -1593,7 +1593,7 @@ export const KEYCODE_CATEGORIES_MAP: Record<string, KeycodeMetadata[]> = {
     Keycode.KC_KP_MINUS,
     Keycode.KC_KP_PLUS,
     Keycode.KC_KP_ENTER,
-  ].map((keycode) => KEYCODE_TO_METADATA[keycode]),
+  ],
   Special: [
     Keycode.KC_MEDIA_NEXT_TRACK,
     Keycode.KC_MEDIA_PREV_TRACK,
@@ -1635,5 +1635,5 @@ export const KEYCODE_CATEGORIES_MAP: Record<string, KeycodeMetadata[]> = {
     Keycode.KC_PROFILE_3,
     Keycode.KC_PROFILE_SWAP,
     Keycode.KC_PROFILE_CYCLE,
-  ].map((keycode) => KEYCODE_TO_METADATA[keycode]),
+  ],
 }

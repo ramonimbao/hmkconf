@@ -10,21 +10,25 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { KEYCODE_CATEGORIES_MAP } from "@/constants/keycodes"
+import {
+  KEYCODE_CATEGORIES_MAP,
+  KEYCODE_TO_METADATA,
+} from "@/constants/keycodes"
 import { cn } from "@/lib/utils"
-import { KeycodeMetadata } from "@/types/keycodes"
 import { HTMLAttributes, ReactNode } from "react"
 import { KeycodeButton } from "./keycode-button"
 
 interface KeycodeSelectorTooltipProps {
-  keycodeMetadata: KeycodeMetadata
+  keycode: number
   children: ReactNode
 }
 
 function KeycodeSelectorTooltip({
-  keycodeMetadata,
+  keycode,
   children,
 }: KeycodeSelectorTooltipProps) {
+  const keycodeMetadata = KEYCODE_TO_METADATA[keycode]
+
   if (keycodeMetadata.tooltip === undefined) {
     return children
   }
@@ -66,36 +70,32 @@ export function KeycodeSelector({
       {...props}
     >
       <Accordion type="multiple" defaultValue={["Basic"]} className="w-full">
-        {Object.entries(KEYCODE_CATEGORIES_MAP).map(
-          ([category, keycodeGroup]) => (
-            <AccordionItem key={category} value={category}>
-              <AccordionTrigger>{category}</AccordionTrigger>
-              <AccordionContent>
-                <div className="flex flex-wrap">
-                  {keycodeGroup.map((keycodeMetadata, i) => (
-                    <div
-                      key={i}
-                      className="p-0.5"
-                      style={{
-                        width: size,
-                        height: size,
-                      }}
-                    >
-                      <KeycodeSelectorTooltip keycodeMetadata={keycodeMetadata}>
-                        <KeycodeButton
-                          keycodeMetadata={keycodeMetadata}
-                          onClick={() =>
-                            onKeycodeSelected(keycodeMetadata.keycode)
-                          }
-                        />
-                      </KeycodeSelectorTooltip>
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          ),
-        )}
+        {Object.entries(KEYCODE_CATEGORIES_MAP).map(([category, keycodes]) => (
+          <AccordionItem key={category} value={category}>
+            <AccordionTrigger>{category}</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-wrap">
+                {keycodes.map((keycode, i) => (
+                  <div
+                    key={i}
+                    className="p-0.5"
+                    style={{
+                      width: size,
+                      height: size,
+                    }}
+                  >
+                    <KeycodeSelectorTooltip keycode={keycode}>
+                      <KeycodeButton
+                        keycode={keycode}
+                        onClick={() => onKeycodeSelected(keycode)}
+                      />
+                    </KeycodeSelectorTooltip>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
       </Accordion>
     </div>
   )
