@@ -18,11 +18,7 @@ export function KeycodeButton({
     <Button
       variant="outline"
       size="icon"
-      className={cn(
-        keycodeMetadata.highlight && "font-extrabold",
-        "size-full flex-col gap-0",
-        className,
-      )}
+      className={cn("size-full flex-col gap-0", className)}
       {...props}
     >
       {keycodeMetadata.display ?? keycodeMetadata.id}

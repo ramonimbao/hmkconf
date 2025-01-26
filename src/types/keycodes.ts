@@ -301,5 +301,4 @@ export type KeycodeMetadata = {
   keycode: number
   webCodes: string[]
   category: (typeof KEYCODE_CATEGORIES)[number]
-  highlight?: boolean
 }

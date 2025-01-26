@@ -1414,33 +1414,30 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     display: (
       <>
         <p>NB</p>
-        <p>L</p>
+        <ArrowBigLeft />
       </>
     ),
     keycode: Keycode.KC_NULL_BIND_PRIMARY,
     webCodes: [],
     category: "AKC",
-    highlight: true,
   },
   {
     id: "Null Bind Secondary",
     display: (
       <>
         <p>NB</p>
-        <p>R</p>
+        <ArrowBigRight />
       </>
     ),
     keycode: Keycode.KC_NULL_BIND_SECONDARY,
     webCodes: [],
     category: "AKC",
-    highlight: true,
   },
   {
     id: "DKS",
     keycode: Keycode.KC_DKS,
     webCodes: [],
     category: "AKC",
-    highlight: true,
   },
   {
     id: "Tap-Hold",
@@ -1453,14 +1450,12 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     keycode: Keycode.KC_TAP_HOLD,
     webCodes: [],
     category: "AKC",
-    highlight: true,
   },
   {
     id: "TGL",
     keycode: Keycode.KC_TOGGLE,
     webCodes: [],
     category: "AKC",
-    highlight: true,
   },
 ]
 

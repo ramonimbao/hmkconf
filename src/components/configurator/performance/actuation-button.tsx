@@ -27,7 +27,6 @@ export function ActuationButton({
       variant="outline"
       size="icon"
       className={cn(
-        keycodeMetadata.highlight && "font-extrabold",
         "size-full flex-col gap-0 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
         className,
       )}
