@@ -1,6 +1,7 @@
 import {
   DeviceActuation,
   DeviceAKC,
+  DeviceAKCDKSAction,
   DeviceAKCMetadata,
   DeviceAKCType,
 } from "@/types/devices"
@@ -36,8 +37,9 @@ export const AKC_METADATA: DeviceAKCMetadata[] = [
     name: "Null Bind (Rappy Snappy + SOCD)",
     description:
       "Monitor 2 keys and select which one is active based on the chosen behavior.",
+    numKeys: 2,
     keycodes: [Keycode.KC_NULL_BIND_PRIMARY, Keycode.KC_NULL_BIND_SECONDARY],
-    constructDefault: (layer, keys) => ({
+    create: (layer, keys) => ({
       layer,
       key: keys[0],
       akc: {
@@ -53,18 +55,24 @@ export const AKC_METADATA: DeviceAKCMetadata[] = [
     name: "Dynamic Keystroke",
     description:
       "Assign up to 4 keycodes to a single key. Each keycode can be assigned up to 4 actions for 4 different parts of the keystroke.",
+    numKeys: 1,
     keycodes: [Keycode.KC_DKS],
-    constructDefault: (layer, keys) => ({
+    create: (layer, keys, keymap) => ({
       layer,
       key: keys[0],
       akc: {
         type: DeviceAKCType.AKC_DKS,
-        keycodes: [0, 0, 0, 0],
+        keycodes: [keymap[0], Keycode.KC_NO, Keycode.KC_NO, Keycode.KC_NO],
         bitmap: [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
+          [
+            DeviceAKCDKSAction.DKS_PRESS,
+            DeviceAKCDKSAction.DKS_HOLD,
+            DeviceAKCDKSAction.DKS_HOLD,
+            DeviceAKCDKSAction.DKS_RELEASE,
+          ],
+          Array(4).fill(DeviceAKCDKSAction.DKS_HOLD),
+          Array(4).fill(DeviceAKCDKSAction.DKS_HOLD),
+          Array(4).fill(DeviceAKCDKSAction.DKS_HOLD),
         ],
         bottomOutPoint: DEFAULT_BOTTOM_OUT_POINT,
       },
@@ -75,13 +83,14 @@ export const AKC_METADATA: DeviceAKCMetadata[] = [
     name: "Tap-Hold",
     description:
       "Send a different keycode depending on whether the key is tapped or held.",
+    numKeys: 1,
     keycodes: [Keycode.KC_TAP_HOLD],
-    constructDefault: (layer, keys) => ({
+    create: (layer, keys, keymap) => ({
       layer,
       key: keys[0],
       akc: {
         type: DeviceAKCType.AKC_TAP_HOLD,
-        tapKeycode: Keycode.KC_NO,
+        tapKeycode: keymap[0],
         holdKeycode: Keycode.KC_NO,
         tappingTerm: DEFAULT_TAPPING_TERM,
       },
@@ -92,13 +101,14 @@ export const AKC_METADATA: DeviceAKCMetadata[] = [
     name: "Toggle",
     description:
       "Toggle between key press and key release. Hold the key for normal behavior.",
+    numKeys: 1,
     keycodes: [Keycode.KC_TOGGLE],
-    constructDefault: (layer, keys) => ({
+    create: (layer, keys, keymap) => ({
       layer,
       key: keys[0],
       akc: {
         type: DeviceAKCType.AKC_TOGGLE,
-        keycode: Keycode.KC_NO,
+        keycode: keymap[0],
         tappingTerm: DEFAULT_TAPPING_TERM,
       },
     }),

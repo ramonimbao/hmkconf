@@ -10,12 +10,14 @@ export function useGetKeymapWithAKC(profileNum: number):
   | {
       isSuccess: false
       keymap?: undefined
+      normalKeymap?: undefined
       akc?: undefined
       akcIndices?: undefined
     }
   | {
       isSuccess: true
       keymap: number[][]
+      normalKeymap: number[][]
       akc: DeviceAKC[]
       akcIndices: (number | null)[][]
     } {
@@ -67,6 +69,7 @@ export function useGetKeymapWithAKC(profileNum: number):
   return {
     isSuccess: true,
     keymap: keymapWithAKC,
+    normalKeymap: keymap,
     akc,
     akcIndices,
   }

@@ -107,6 +107,7 @@ export type DeviceAKCMetadata = {
   type: DeviceAKCType
   name: string
   description: string
+  numKeys: number
   keycodes: number[]
-  constructDefault(layer: number, keys: number[]): DeviceAKC
+  create(layer: number, keys: number[], keymap: number[]): DeviceAKC
 }
