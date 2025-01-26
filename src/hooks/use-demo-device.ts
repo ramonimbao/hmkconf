@@ -1,8 +1,4 @@
-import {
-  DEFAULT_ACTUATION,
-  DEFAULT_AKC,
-  NUM_PROFILES,
-} from "@/constants/devices"
+import { DEFAULT_ACTUATION, NUM_PROFILES } from "@/constants/devices"
 import { GAUSS64 } from "@/constants/devices/GAUSS64"
 import {
   DeviceAction,
@@ -30,7 +26,7 @@ const initialState: DemoDeviceState = {
   profile: Array.from({ length: NUM_PROFILES }, () => ({
     keymap: GAUSS64.defaultKeymap,
     actuations: Array(GAUSS64.numKeys).fill(DEFAULT_ACTUATION),
-    akc: Array(GAUSS64.numAKC).fill(DEFAULT_AKC),
+    akc: [],
   })),
 }
 

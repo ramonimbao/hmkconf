@@ -3,7 +3,7 @@
 import { useGetKeymapWithAKC } from "@/api/use-get-keymap-with-akc"
 import { useSetAKC } from "@/api/use-set-akc"
 import { useConfigurator } from "@/components/providers/configurator-provider"
-import { AKC_TYPE_TO_METADATA, DEFAULT_AKC } from "@/constants/devices"
+import { AKC_TYPE_TO_METADATA } from "@/constants/devices"
 import { DeviceAKC, DeviceAKCType } from "@/types/devices"
 import { Toggle } from "@radix-ui/react-toggle"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
@@ -95,9 +95,9 @@ export function AdvancedKeysTab() {
                     const akcIndex = akcIndices[layer][key]
                     if (akcIndex !== null) {
                       setAKC(
-                        produce(akc, (draft) => {
-                          draft[akcIndex] = DEFAULT_AKC
-                        }),
+                        produce(akc, (draft) =>
+                          draft.filter((_, i) => i !== akcIndex),
+                        ),
                       )
                       setAKCIndex(null)
                     }

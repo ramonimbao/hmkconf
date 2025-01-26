@@ -1,6 +1,5 @@
 import {
   DeviceActuation,
-  DeviceAKC,
   DeviceAKCDKSAction,
   DeviceAKCMetadata,
   DeviceAKCType,
@@ -24,12 +23,6 @@ export const DEFAULT_ACTUATION: DeviceActuation = {
 
 export const DEFAULT_BOTTOM_OUT_POINT = 230
 export const DEFAULT_TAPPING_TERM = 200
-
-export const DEFAULT_AKC: DeviceAKC = {
-  layer: 0,
-  key: 0,
-  akc: { type: DeviceAKCType.AKC_NONE },
-}
 
 export const AKC_METADATA: DeviceAKCMetadata[] = [
   {

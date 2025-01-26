@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { DEFAULT_AKC } from "@/constants/devices"
 import { produce } from "immer"
 import { ReactNode } from "react"
 
@@ -46,20 +45,17 @@ export function AKCDeleteDialog({ akcIndex, children }: AKCDeleteDialogProps) {
             Cancel
           </DialogClose>
           <DialogClose
+            disabled={!isSuccess}
             className={buttonVariants({
               variant: "destructive",
               size: "sm",
             })}
-            onClick={() => {
-              if (!isSuccess) {
-                return
-              }
+            onClick={() =>
+              isSuccess &&
               setAKC(
-                produce(akc, (draft) => {
-                  draft[akcIndex] = DEFAULT_AKC
-                }),
+                produce(akc, (draft) => draft.filter((_, i) => i !== akcIndex)),
               )
-            }}
+            }
           >
             Delete
           </DialogClose>

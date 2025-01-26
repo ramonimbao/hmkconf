@@ -12,7 +12,6 @@ import {
 import { AKC_METADATA, AKC_TYPE_TO_METADATA } from "@/constants/devices"
 import { DeviceAKCType } from "@/types/devices"
 import { Edit, Plus, Trash } from "lucide-react"
-import { useMemo } from "react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { useAdvancedKeys } from "./advanced-keys-tab"
 import { AKCDeleteDialog } from "./akc-delete-dialog"
@@ -25,22 +24,17 @@ export function AdvancedKeysMenu() {
   const { akc, setNewAKCType, setNewAKCKeys, setNewAKCKeysIndex } =
     useAdvancedKeys()
 
-  const bindings = useMemo(
-    () => akc.filter((akc) => akc.akc.type !== DeviceAKCType.AKC_NONE),
-    [akc],
-  )
-
   return (
     <KeyboardEditorLayout>
       <div className="mx-auto flex w-full max-w-5xl flex-col p-4">
         <div className="flex items-center justify-between gap-4">
           <p className="font-semibold leading-none tracking-tight">
-            Advanced Key Bindings: {bindings.length.toString().padStart(2, "0")}
-            /{metadata.numAKC.toString().padStart(2, "0")}
+            Advanced Key Bindings: {akc.length.toString().padStart(2, "0")}/
+            {metadata.numAKC.toString().padStart(2, "0")}
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger
-              disabled={bindings.length >= metadata.numAKC}
+              disabled={akc.length >= metadata.numAKC}
               asChild
             >
               <Button variant="outline" size="sm">
@@ -68,17 +62,13 @@ export function AdvancedKeysMenu() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {bindings.length === 0 ? (
+        {akc.length === 0 ? (
           <div className="mt-4 flex h-56 w-full flex-col items-center justify-center rounded-md border border-dashed p-4 text-center text-sm opacity-50">
             No advanced key bindings have been configured...
           </div>
         ) : (
           <div className="mt-4 grid w-full gap-4">
             {akc.map((akc, i) => {
-              if (akc.akc.type === DeviceAKCType.AKC_NONE) {
-                return null
-              }
-
               const akcMetadata = AKC_TYPE_TO_METADATA[akc.akc.type]
               return (
                 <div
@@ -86,7 +76,7 @@ export function AdvancedKeysMenu() {
                   className="flex w-full items-center rounded-md border bg-card p-4 shadow-sm"
                 >
                   <div className="flex-1 text-sm font-semibold leading-none tracking-tight">
-                    {(i + 1).toString().padStart(2, "0")} - {akcMetadata.name}
+                    {akcMetadata.name}
                   </div>
                   <div className="flex items-center gap-2">
                     <Button

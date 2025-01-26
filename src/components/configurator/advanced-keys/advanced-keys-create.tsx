@@ -2,6 +2,7 @@
 
 import { useSetAKC } from "@/api/use-set-akc"
 import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { AKC_TYPE_TO_METADATA } from "@/constants/devices"
 import { DeviceAKCType } from "@/types/devices"
@@ -16,6 +17,7 @@ export const AdvancedKeysCreate = () => {
     profileNum,
     advancedKeys: { layer, setAKCIndex },
   } = useConfigurator()
+  const { metadata } = useDevice()
   const {
     keymap,
     akc,
@@ -27,7 +29,7 @@ export const AdvancedKeysCreate = () => {
     setNewAKCKeysIndex,
   } = useAdvancedKeys()
 
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { mutateAsync: setAKC } = useSetAKC(profileNum)
 
   return (
     <KeyboardEditorLayout>
@@ -54,26 +56,28 @@ export const AdvancedKeysCreate = () => {
                 AKC_TYPE_TO_METADATA[newAKCType].numKeys
               }
               size="sm"
-              onClick={() => {
-                const akcIndex = akc.findIndex(
-                  (akc) => akc.akc.type === DeviceAKCType.AKC_NONE,
-                )
-                if (akcIndex !== -1) {
-                  const keys = newAKCKeys.filter((key) => key !== null)
-                  setAKC(
-                    produce(akc, (draft) => {
-                      draft[akcIndex] = AKC_TYPE_TO_METADATA[newAKCType].create(
+              onClick={async () => {
+                if (akc.length >= metadata.numAKC) {
+                  return
+                }
+
+                const akcIndex = akc.length
+                const keys = newAKCKeys.filter((key) => key !== null)
+                await setAKC(
+                  produce(akc, (draft) => {
+                    draft.push(
+                      AKC_TYPE_TO_METADATA[newAKCType].create(
                         layer,
                         keys,
                         keys.map((key) => keymap[layer][key]),
-                      )
-                    }),
-                  )
-                  setNewAKCType(DeviceAKCType.AKC_NONE)
-                  setNewAKCKeys([null, null])
-                  setNewAKCKeysIndex(null)
-                  setAKCIndex(akcIndex)
-                }
+                      ),
+                    )
+                  }),
+                )
+                setNewAKCType(DeviceAKCType.AKC_NONE)
+                setNewAKCKeys([null, null])
+                setNewAKCKeysIndex(null)
+                setAKCIndex(akcIndex)
               }}
             >
               Continue
