@@ -5,7 +5,7 @@ export function useGetActuations(profileNum: number) {
   const { id, getActuations } = useDevice()
 
   return useQuery({
-    queryKey: [id, "actuations", profileNum],
+    queryKey: [id, profileNum, "actuations"],
     queryFn: () => getActuations(profileNum),
   })
 }

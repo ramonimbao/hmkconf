@@ -5,7 +5,7 @@ export function useGetKeymap(profileNum: number) {
   const { id, getKeymap } = useDevice()
 
   return useQuery({
-    queryKey: [id, "keymap", profileNum],
+    queryKey: [id, profileNum, "keymap"],
     queryFn: () => getKeymap(profileNum),
   })
 }

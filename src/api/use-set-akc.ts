@@ -6,7 +6,7 @@ export function useSetAKC(profileNum: number) {
   const { id, setAKC } = useDevice()
 
   const queryClient = useQueryClient()
-  const queryKey = [id, "akc", profileNum]
+  const queryKey = [id, profileNum, "akc"]
 
   return useMutation({
     mutationFn: (akc: DeviceAKC[]) => setAKC(profileNum, akc),

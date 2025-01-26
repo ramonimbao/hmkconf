@@ -5,7 +5,7 @@ export function useGetAKC(profileNum: number) {
   const { id, getAKC } = useDevice()
 
   return useQuery({
-    queryKey: [id, "akc", profileNum],
+    queryKey: [id, profileNum, "akc"],
     queryFn: () => getAKC(profileNum),
   })
 }

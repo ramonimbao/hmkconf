@@ -6,7 +6,7 @@ export function useSetActuations(profileNum: number) {
   const { id, setActuations } = useDevice()
 
   const queryClient = useQueryClient()
-  const queryKey = [id, "actuations", profileNum]
+  const queryKey = [id, profileNum, "actuations"]
 
   return useMutation({
     mutationFn: (actuations: DeviceActuation[]) =>

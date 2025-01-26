@@ -5,7 +5,7 @@ export function useSetKeymap(profileNum: number) {
   const { id, setKeymap } = useDevice()
 
   const queryClient = useQueryClient()
-  const queryKey = [id, "keymap", profileNum]
+  const queryKey = [id, profileNum, "keymap"]
 
   return useMutation({
     mutationFn: (keymap: number[][]) => setKeymap(profileNum, keymap),
