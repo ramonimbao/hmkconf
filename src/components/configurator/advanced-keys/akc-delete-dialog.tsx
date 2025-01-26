@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { produce } from "immer"
 import { ReactNode } from "react"
 
 interface AKCDeleteDialogProps {
@@ -51,10 +50,7 @@ export function AKCDeleteDialog({ akcIndex, children }: AKCDeleteDialogProps) {
               size: "sm",
             })}
             onClick={() =>
-              isSuccess &&
-              setAKC(
-                produce(akc, (draft) => draft.filter((_, i) => i !== akcIndex)),
-              )
+              isSuccess && setAKC(akc.filter((_, i) => i !== akcIndex))
             }
           >
             Delete

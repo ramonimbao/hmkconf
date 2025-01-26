@@ -94,11 +94,7 @@ export function AdvancedKeysTab() {
                     e.preventDefault()
                     const akcIndex = akcIndices[layer][key]
                     if (akcIndex !== null) {
-                      setAKC(
-                        produce(akc, (draft) =>
-                          draft.filter((_, i) => i !== akcIndex),
-                        ),
-                      )
+                      setAKC(akc.filter((_, i) => i !== akcIndex))
                       setAKCIndex(null)
                     }
                   }}

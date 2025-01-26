@@ -62,17 +62,14 @@ export const AdvancedKeysCreate = () => {
                 }
 
                 const keys = newAKCKeys.filter((key) => key !== null)
-                setAKC(
-                  produce(akc, (draft) => {
-                    draft.push(
-                      AKC_TYPE_TO_METADATA[newAKCType].create(
-                        layer,
-                        keys,
-                        keys.map((key) => keymap[layer][key]),
-                      ),
-                    )
-                  }),
-                )
+                setAKC([
+                  ...akc,
+                  AKC_TYPE_TO_METADATA[newAKCType].create(
+                    layer,
+                    keys,
+                    keys.map((key) => keymap[layer][key]),
+                  ),
+                ])
                 setNewAKCType(DeviceAKCType.AKC_NONE)
                 setNewAKCKeys([null, null])
                 setNewAKCKeysIndex(null)
