@@ -25,6 +25,7 @@ import {
 import { KeycodeButton } from "../common/keycode-button"
 import { LayerSelector } from "../common/layer-selector"
 import { AdvancedKeysCreate } from "./advanced-keys-create"
+import { AdvancedKeysEditor } from "./advanced-keys-editor"
 import { AdvancedKeysMenu } from "./advanced-keys-menu"
 import { Loader } from "./loader"
 
@@ -66,7 +67,9 @@ export function AdvancedKeysTab() {
       <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
           <LayerSelector
-            disabled={newAKCType !== DeviceAKCType.AKC_NONE}
+            disabled={
+              newAKCType !== DeviceAKCType.AKC_NONE || akcIndex !== null
+            }
             layer={layer}
             setLayer={setLayer}
           />
@@ -84,7 +87,10 @@ export function AdvancedKeysTab() {
             <KeyboardEditorKeyboard
               elt={(key) => (
                 <ToggleGroupItem
-                  disabled={akcIndices[layer][key] === null}
+                  disabled={
+                    akcIndices[layer][key] === null ||
+                    (akcIndex !== null && akcIndices[layer][key] !== akcIndex)
+                  }
                   value={
                     akcIndices[layer][key] === null
                       ? ""
@@ -178,7 +184,7 @@ export function AdvancedKeysTab() {
             )}
           </AdvancedKeysContext.Provider>
         ) : (
-          <div></div>
+          <AdvancedKeysEditor />
         )
       ) : (
         <Loader />

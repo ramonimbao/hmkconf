@@ -18,7 +18,7 @@ import { AKCDeleteDialog } from "./akc-delete-dialog"
 
 export function AdvancedKeysMenu() {
   const {
-    advancedKeys: { setAKCIndex },
+    advancedKeys: { setLayer, setAKCIndex },
   } = useConfigurator()
   const { metadata } = useDevice()
   const { akc, setNewAKCType, setNewAKCKeys, setNewAKCKeysIndex } =
@@ -86,6 +86,7 @@ export function AdvancedKeysMenu() {
                         setNewAKCType(DeviceAKCType.AKC_NONE)
                         setNewAKCKeys([null, null])
                         setNewAKCKeysIndex(null)
+                        setLayer(akc.layer)
                         setAKCIndex(i)
                       }}
                     >
