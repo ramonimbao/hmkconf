@@ -12,6 +12,11 @@ import {
 import { cn, displayDistance } from "@/lib/utils"
 import { TriangleAlert } from "lucide-react"
 import {
+  KeyTesterKeyPress,
+  KeyTesterKeyRelease,
+  KeyTesterProvider,
+} from "../common/key-tester"
+import {
   KeyboardEditor,
   KeyboardEditorHeader,
   KeyboardEditorKeyboard,
@@ -63,19 +68,38 @@ export function DebugTab() {
         />
       </KeyboardEditorLayout>
       <KeyboardEditorLayout>
-        <div className="flex w-full flex-col p-4">
-          <div className="mx-auto flex w-full max-w-prose flex-col">
-            <div>
-              <Button size="lg" onClick={() => recalibrate()}>
-                Recalibrate
-              </Button>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">
+        <div className="mx-auto flex w-full max-w-5xl">
+          <div className="flex flex-1 flex-col p-4">
+            <p className="font-semibold leading-none tracking-tight">
+              Recalibrate
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
               Recalibration will erase and resample the stored minimum and
               maximum ADC values for each switch. Ensure that all keys are fully
               released before recalibrating, and press each key down completely
               once calibration is finished.
             </p>
+            <div className="mt-3">
+              <Button size="sm" onClick={() => recalibrate()}>
+                Recalibrate
+              </Button>
+            </div>
+          </div>
+          <div className="grid w-80 shrink-0 gap-4 p-4">
+            <KeyTesterProvider>
+              <div className="flex flex-col">
+                <p className="font-semibold leading-none tracking-tight">
+                  Pressed Keys
+                </p>
+                <KeyTesterKeyPress className="mt-2 h-32" />
+              </div>
+              <div className="flex flex-col">
+                <p className="font-semibold leading-none tracking-tight">
+                  Released Keys
+                </p>
+                <KeyTesterKeyRelease className="mt-2 h-32" />
+              </div>
+            </KeyTesterProvider>
           </div>
         </div>
       </KeyboardEditorLayout>
