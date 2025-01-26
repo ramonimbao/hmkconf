@@ -29,7 +29,7 @@ export const AdvancedKeysCreate = () => {
     setNewAKCKeysIndex,
   } = useAdvancedKeys()
 
-  const { mutateAsync: setAKC } = useSetAKC(profileNum)
+  const { mutate: setAKC } = useSetAKC(profileNum)
 
   return (
     <KeyboardEditorLayout>
@@ -56,14 +56,13 @@ export const AdvancedKeysCreate = () => {
                 AKC_TYPE_TO_METADATA[newAKCType].numKeys
               }
               size="sm"
-              onClick={async () => {
+              onClick={() => {
                 if (akc.length >= metadata.numAKC) {
                   return
                 }
 
-                const akcIndex = akc.length
                 const keys = newAKCKeys.filter((key) => key !== null)
-                await setAKC(
+                setAKC(
                   produce(akc, (draft) => {
                     draft.push(
                       AKC_TYPE_TO_METADATA[newAKCType].create(
@@ -77,7 +76,7 @@ export const AdvancedKeysCreate = () => {
                 setNewAKCType(DeviceAKCType.AKC_NONE)
                 setNewAKCKeys([null, null])
                 setNewAKCKeysIndex(null)
-                setAKCIndex(akcIndex)
+                setAKCIndex(null)
               }}
             >
               Continue
