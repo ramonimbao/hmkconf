@@ -92,7 +92,7 @@ export function PerformanceTab() {
             </Button>
           </div>
           <Button variant="destructive" size="sm" onClick={resetAllActuations}>
-            Reset
+            Reset All
           </Button>
         </KeyboardEditorHeader>
         {!isKeymapSuccess || !isActuationsSuccess ? (
