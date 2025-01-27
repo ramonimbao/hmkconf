@@ -12,6 +12,7 @@ import { DynamicKeystrokeEditor } from "./dynamic-keystroke-editor"
 import { Loader } from "./loader"
 import { NullBindEditor } from "./null-bind-editor"
 import { TapHoldEditor } from "./tap-hold-editor"
+import { ToggleEditor } from "./toggle-editor"
 
 type AdvancedKeysEditorState = {
   akc: DeviceAKC[]
@@ -85,7 +86,7 @@ export function AdvancedKeysEditor() {
             ) : akcMetadata.type === DeviceAKCType.AKC_TAP_HOLD ? (
               <TapHoldEditor />
             ) : akcMetadata.type === DeviceAKCType.AKC_TOGGLE ? (
-              <></>
+              <ToggleEditor />
             ) : (
               <></>
             )}

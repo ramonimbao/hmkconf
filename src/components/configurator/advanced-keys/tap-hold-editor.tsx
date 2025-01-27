@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { MAX_TAPPING_TERM, MIN_TAPPING_TERM } from "@/constants/devices"
 import { DeviceAKCTapHold } from "@/types/devices"
+import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import { useEffect, useState } from "react"
@@ -21,7 +22,7 @@ export function TapHoldEditor() {
 
   const { mutate: setAKC } = useSetAKC(profileNum)
 
-  const [selectedKey, setSelectedKey] = useState<string>("")
+  const [selectedKey, setSelectedKey] = useState("")
   const [uiAKConfig, setUIAKConfig] = useState(akConfig)
 
   const updateAKC = (akConfig: DeviceAKCTapHold) =>
@@ -56,6 +57,11 @@ export function TapHoldEditor() {
                   <KeycodeButton
                     keycode={akConfig.tapKeycode}
                     className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
+                    onContextMenu={(e) => {
+                      e.preventDefault()
+                      updateAKC({ ...akConfig, tapKeycode: Keycode.KC_NO })
+                      setSelectedKey("")
+                    }}
                   />
                 </ToggleGroupItem>
               </div>
@@ -67,6 +73,11 @@ export function TapHoldEditor() {
                   <KeycodeButton
                     keycode={akConfig.holdKeycode}
                     className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
+                    onContextMenu={(e) => {
+                      e.preventDefault()
+                      updateAKC({ ...akConfig, holdKeycode: Keycode.KC_NO })
+                      setSelectedKey("")
+                    }}
                   />
                 </ToggleGroupItem>
               </div>
