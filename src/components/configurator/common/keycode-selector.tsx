@@ -11,7 +11,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
-  KEYCODE_CATEGORIES,
   KEYCODE_CATEGORIES_MAP,
   KEYCODE_TO_METADATA,
 } from "@/constants/keycodes"
@@ -70,11 +69,7 @@ export function KeycodeSelector({
       )}
       {...props}
     >
-      <Accordion
-        type="multiple"
-        defaultValue={[...KEYCODE_CATEGORIES]}
-        className="w-full"
-      >
+      <Accordion type="multiple" defaultValue={["Basic"]} className="w-full">
         {Object.entries(KEYCODE_CATEGORIES_MAP).map(([category, keycodes]) => (
           <AccordionItem key={category} value={category}>
             <AccordionTrigger>{category}</AccordionTrigger>

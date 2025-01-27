@@ -29,13 +29,9 @@ import { produce } from "immer"
 import { Circle, Info } from "lucide-react"
 import { useEffect, useState } from "react"
 import { DistanceSlider } from "../common/distance-slider"
-import {
-  KeyTesterKeyPress,
-  KeyTesterKeyRelease,
-  KeyTesterProvider,
-} from "../common/key-tester"
 import { Switch } from "../common/switch"
 import { useAdvancedKeysEditor } from "./advanced-keys-editor"
+import { KeyTesterTab } from "./key-tester-tab"
 
 export function NullBindEditor() {
   const { profileNum } = useConfigurator()
@@ -140,6 +136,7 @@ export function NullBindEditor() {
             disabled={!isSuccess}
             size="sm"
             title="Bottom Out Point"
+            description="Set the distance at which the key is bottomed out."
             {...(isSuccess && {
               min: distanceToSwitchDistance(
                 actuations[akc[akcIndex].key].actuationPoint,
@@ -199,22 +196,7 @@ export function NullBindEditor() {
           </div>
         </TabsContent>
         <TabsContent value="key-tester">
-          <div className="grid gap-4 rounded-md border bg-card p-4 shadow-sm">
-            <KeyTesterProvider>
-              <div className="flex flex-col">
-                <p className="text-sm font-semibold leading-none tracking-tight">
-                  Pressed Keys
-                </p>
-                <KeyTesterKeyPress className="mt-2 h-24 max-w-72" />
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm font-semibold leading-none tracking-tight">
-                  Released Keys
-                </p>
-                <KeyTesterKeyRelease className="mt-2 h-24 max-w-72" />
-              </div>
-            </KeyTesterProvider>
-          </div>
+          <KeyTesterTab />
         </TabsContent>
       </Tabs>
     </div>

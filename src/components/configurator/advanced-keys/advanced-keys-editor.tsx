@@ -8,6 +8,7 @@ import { DeviceAKC, DeviceAKCMetadata, DeviceAKCType } from "@/types/devices"
 import { createContext, useContext, useLayoutEffect } from "react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { AKCDeleteDialog } from "./akc-delete-dialog"
+import { DynamicKeystrokeEditor } from "./dynamic-keystroke-editor"
 import { Loader } from "./loader"
 import { NullBindEditor } from "./null-bind-editor"
 
@@ -79,7 +80,7 @@ export function AdvancedKeysEditor() {
             {akcMetadata.type === DeviceAKCType.AKC_NULL_BIND ? (
               <NullBindEditor />
             ) : akcMetadata.type === DeviceAKCType.AKC_DKS ? (
-              <></>
+              <DynamicKeystrokeEditor />
             ) : akcMetadata.type === DeviceAKCType.AKC_TAP_HOLD ? (
               <></>
             ) : akcMetadata.type === DeviceAKCType.AKC_TOGGLE ? (

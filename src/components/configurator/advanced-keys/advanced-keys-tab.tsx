@@ -8,13 +8,7 @@ import { DeviceAKC, DeviceAKCType } from "@/types/devices"
 import { Toggle } from "@radix-ui/react-toggle"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react"
+import { createContext, Dispatch, useContext, useState } from "react"
 import {
   KeyboardEditor,
   KeyboardEditorHeader,
@@ -37,9 +31,9 @@ type AdvancedKeys = {
   newAKCType: DeviceAKCType
   newAKCKeys: [number | null, number | null]
   newAKCKeysIndex: number | null
-  setNewAKCType: Dispatch<SetStateAction<DeviceAKCType>>
-  setNewAKCKeys: Dispatch<SetStateAction<[number | null, number | null]>>
-  setNewAKCKeysIndex: Dispatch<SetStateAction<number | null>>
+  setNewAKCType: Dispatch<DeviceAKCType>
+  setNewAKCKeys: Dispatch<[number | null, number | null]>
+  setNewAKCKeysIndex: Dispatch<number | null>
 }
 
 const AdvancedKeysContext = createContext<AdvancedKeys>({} as AdvancedKeys)
