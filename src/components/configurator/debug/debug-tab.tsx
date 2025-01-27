@@ -80,9 +80,7 @@ export function DebugTab() {
               once calibration is finished.
             </p>
             <div className="mt-3">
-              <Button size="sm" onClick={() => recalibrate()}>
-                Recalibrate
-              </Button>
+              <Button onClick={() => recalibrate()}>Recalibrate</Button>
             </div>
           </div>
           <div className="grid w-80 shrink-0 gap-4 p-4">
