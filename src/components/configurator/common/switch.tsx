@@ -5,6 +5,7 @@ import { HTMLAttributes } from "react"
 
 interface SwitchProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
+  size?: "default" | "sm"
   id: string
   title: string
   description?: string
@@ -14,6 +15,7 @@ interface SwitchProps extends HTMLAttributes<HTMLDivElement> {
 
 export function Switch({
   disabled,
+  size,
   id,
   title,
   description,
@@ -35,7 +37,13 @@ export function Switch({
           checked={checked}
           onCheckedChange={onCheckedChange}
         />
-        <Label htmlFor={id} className="text-base font-semibold tracking-tight">
+        <Label
+          htmlFor={id}
+          className={cn(
+            "font-semibold tracking-tight",
+            size === "sm" ? "text-sm" : "text-base",
+          )}
+        >
           {title}
         </Label>
       </div>

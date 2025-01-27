@@ -23,14 +23,11 @@ export function ActuationSettings() {
 
   const disabled = !isSuccess || keys.length === 0
 
-  const [uiActuation, setUiActuation] =
+  const [uiActuation, setUIActuation] =
     useState<DeviceActuation>(DEFAULT_ACTUATION)
 
-  const updateActuation = (actuation: DeviceActuation) => {
-    if (disabled) {
-      return
-    }
-
+  const updateActuation = (actuation: DeviceActuation) =>
+    !disabled &&
     setActuations(
       produce(actuations, (draft) => {
         for (const key of keys) {
@@ -38,14 +35,13 @@ export function ActuationSettings() {
         }
       }),
     )
-  }
 
   useEffect(() => {
     if (!isSuccess) {
       return
     }
 
-    setUiActuation(
+    setUIActuation(
       keys.length === 0 ? DEFAULT_ACTUATION : actuations[keys[keys.length - 1]],
     )
   }, [actuations, isSuccess, keys])
@@ -61,7 +57,7 @@ export function ActuationSettings() {
           max={SWITCH_DISTANCE}
           distance={uiActuation.actuationPoint}
           onDistanceChange={(actuationPoint) =>
-            setUiActuation({ ...uiActuation, actuationPoint })
+            setUIActuation({ ...uiActuation, actuationPoint })
           }
           onDistanceCommit={() => updateActuation(uiActuation)}
         />
@@ -83,7 +79,7 @@ export function ActuationSettings() {
               max={SWITCH_DISTANCE}
               distance={uiActuation.rtDown}
               onDistanceChange={(rtDown) =>
-                setUiActuation({ ...uiActuation, rtDown })
+                setUIActuation({ ...uiActuation, rtDown })
               }
               onDistanceCommit={() => updateActuation(uiActuation)}
             />
@@ -96,7 +92,7 @@ export function ActuationSettings() {
                 max={SWITCH_DISTANCE}
                 distance={uiActuation.rtUp}
                 onDistanceChange={(rtUp) =>
-                  setUiActuation({ ...uiActuation, rtUp })
+                  setUIActuation({ ...uiActuation, rtUp })
                 }
                 onDistanceCommit={() => updateActuation(uiActuation)}
               />

@@ -2,6 +2,8 @@ import {
   DeviceActuation,
   DeviceAKCDKSAction,
   DeviceAKCMetadata,
+  DeviceAKCNullBindBehavior,
+  DeviceAKCNullBindBehaviorMetadata,
   DeviceAKCType,
 } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
@@ -39,7 +41,7 @@ export const AKC_METADATA: DeviceAKCMetadata[] = [
         type: DeviceAKCType.AKC_NULL_BIND,
         secondaryKey: keys[1],
         behavior: 0,
-        bottomOutPoint: DEFAULT_BOTTOM_OUT_POINT,
+        bottomOutPoint: 0,
       },
     }),
   },
@@ -113,3 +115,32 @@ export const AKC_TYPE_TO_METADATA: Record<number, DeviceAKCMetadata> =
     (acc, metadata) => ({ ...acc, [metadata.type]: metadata }),
     {},
   )
+
+export const AKC_NULL_BIND_BEHAVIOR_METADATA: DeviceAKCNullBindBehaviorMetadata[] =
+  [
+    {
+      behavior: DeviceAKCNullBindBehavior.NULL_BIND_DISTANCE,
+      name: "Distance (Rappy Snappy)",
+      description: "Activate whichever key is pressed down further.",
+    },
+    {
+      behavior: DeviceAKCNullBindBehavior.NULL_BIND_LAST,
+      name: "Last Input",
+      description: "Activate the key that was pressed last.",
+    },
+    {
+      behavior: DeviceAKCNullBindBehavior.NULL_BIND_PRIMARY,
+      name: "Absolute Priority (Key 1)",
+      description: "Key 1 will take priority over key 2.",
+    },
+    {
+      behavior: DeviceAKCNullBindBehavior.NULL_BIND_SECONDARY,
+      name: "Absolute Priority (Key 2)",
+      description: "Key 2 will take priority over key 1.",
+    },
+    {
+      behavior: DeviceAKCNullBindBehavior.NULL_BIND_NEUTRAL,
+      name: "Neutral",
+      description: "Neither key will be activated.",
+    },
+  ]

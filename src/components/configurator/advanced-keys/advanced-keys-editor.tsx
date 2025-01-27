@@ -4,11 +4,24 @@ import { useGetAKC } from "@/api/use-get-akc"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { AKC_TYPE_TO_METADATA } from "@/constants/devices"
-import { DeviceAKCType } from "@/types/devices"
-import { useLayoutEffect } from "react"
+import { DeviceAKC, DeviceAKCMetadata, DeviceAKCType } from "@/types/devices"
+import { createContext, useContext, useLayoutEffect } from "react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { AKCDeleteDialog } from "./akc-delete-dialog"
 import { Loader } from "./loader"
+import { NullBindEditor } from "./null-bind-editor"
+
+type AdvancedKeysEditorState = {
+  akc: DeviceAKC[]
+  akcMetadata: DeviceAKCMetadata
+  akcIndex: number
+}
+
+const AdvancedKeysEditorContext = createContext<AdvancedKeysEditorState>(
+  {} as AdvancedKeysEditorState,
+)
+
+export const useAdvancedKeysEditor = () => useContext(AdvancedKeysEditorContext)
 
 export function AdvancedKeysEditor() {
   const {
@@ -56,17 +69,25 @@ export function AdvancedKeysEditor() {
           </div>
         </div>
         <div className="mt-4 flex w-full flex-col">
-          {akcMetadata.type === DeviceAKCType.AKC_NULL_BIND ? (
-            <></>
-          ) : akcMetadata.type === DeviceAKCType.AKC_DKS ? (
-            <></>
-          ) : akcMetadata.type === DeviceAKCType.AKC_TAP_HOLD ? (
-            <></>
-          ) : akcMetadata.type === DeviceAKCType.AKC_TOGGLE ? (
-            <></>
-          ) : (
-            <></>
-          )}
+          <AdvancedKeysEditorContext.Provider
+            value={{
+              akc,
+              akcMetadata,
+              akcIndex,
+            }}
+          >
+            {akcMetadata.type === DeviceAKCType.AKC_NULL_BIND ? (
+              <NullBindEditor />
+            ) : akcMetadata.type === DeviceAKCType.AKC_DKS ? (
+              <></>
+            ) : akcMetadata.type === DeviceAKCType.AKC_TAP_HOLD ? (
+              <></>
+            ) : akcMetadata.type === DeviceAKCType.AKC_TOGGLE ? (
+              <></>
+            ) : (
+              <></>
+            )}
+          </AdvancedKeysEditorContext.Provider>
         </div>
       </div>
     </KeyboardEditorLayout>

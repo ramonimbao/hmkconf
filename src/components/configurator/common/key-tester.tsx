@@ -92,7 +92,7 @@ export function KeyTesterKeyPress({
       className={cn("w-full rounded-md border", className)}
       {...props}
     >
-      <div className="flex flex-wrap gap-2 p-4">
+      <div className="flex flex-wrap gap-2 p-2">
         {keyEvents
           .filter((keyEvent) => keyEvent.pressed)
           .map((keyEvent, i) => (
@@ -114,7 +114,7 @@ export function KeyTesterKeyRelease({
       className={cn("w-full rounded-md border", className)}
       {...props}
     >
-      <div className="flex flex-wrap gap-2 p-4">
+      <div className="flex flex-wrap gap-2 p-2">
         {keyEvents
           .filter((keyEvent) => !keyEvent.pressed)
           .map((keyEvent, i) => (

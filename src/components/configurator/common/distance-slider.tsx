@@ -9,6 +9,7 @@ import { HTMLAttributes } from "react"
 
 interface DistanceSliderProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
+  size?: "default" | "sm"
   title: string
   description?: string
   min?: number
@@ -20,6 +21,7 @@ interface DistanceSliderProps extends HTMLAttributes<HTMLDivElement> {
 
 export function DistanceSlider({
   disabled,
+  size,
   title,
   description,
   min,
@@ -39,7 +41,12 @@ export function DistanceSlider({
       )}
       {...props}
     >
-      <p className="font-semibold leading-none tracking-tight">
+      <p
+        className={cn(
+          "font-semibold leading-none tracking-tight",
+          size === "sm" ? "text-sm" : "text-base",
+        )}
+      >
         {title}: {displayDistance(distance ?? 0)}mm
       </p>
       {description && (

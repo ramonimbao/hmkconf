@@ -111,3 +111,9 @@ export type DeviceAKCMetadata = {
   keycodes: number[]
   create(layer: number, keys: number[], keymap: number[]): DeviceAKC
 }
+
+export type DeviceAKCNullBindBehaviorMetadata = {
+  behavior: DeviceAKCNullBindBehavior
+  name: string
+  description: string
+}
