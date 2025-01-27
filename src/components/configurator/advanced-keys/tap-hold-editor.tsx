@@ -3,7 +3,7 @@
 import { useSetAKC } from "@/api/use-set-akc"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Slider } from "@/components/ui/slider"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MAX_TAPPING_TERM, MIN_TAPPING_TERM } from "@/constants/devices"
 import { DeviceAKCTapHold } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
@@ -108,6 +108,12 @@ export function TapHoldEditor() {
         </div>
       </div>
       <Tabs defaultValue="bindings" className="flex flex-1 flex-col">
+        <div>
+          <TabsList>
+            <TabsTrigger value="bindings">Bindings</TabsTrigger>
+            <TabsTrigger value="key-tester">Key Tester</TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="bindings">
           <div className="flex flex-col rounded-md border bg-card p-4 shadow-sm">
             <KeycodeSelector
