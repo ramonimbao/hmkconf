@@ -11,6 +11,7 @@ import { AKCDeleteDialog } from "./akc-delete-dialog"
 import { DynamicKeystrokeEditor } from "./dynamic-keystroke-editor"
 import { Loader } from "./loader"
 import { NullBindEditor } from "./null-bind-editor"
+import { TapHoldEditor } from "./tap-hold-editor"
 
 type AdvancedKeysEditorState = {
   akc: DeviceAKC[]
@@ -82,7 +83,7 @@ export function AdvancedKeysEditor() {
             ) : akcMetadata.type === DeviceAKCType.AKC_DKS ? (
               <DynamicKeystrokeEditor />
             ) : akcMetadata.type === DeviceAKCType.AKC_TAP_HOLD ? (
-              <></>
+              <TapHoldEditor />
             ) : akcMetadata.type === DeviceAKCType.AKC_TOGGLE ? (
               <></>
             ) : (

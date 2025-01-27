@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { AKC_TYPE_TO_METADATA } from "@/constants/devices"
 import { DeviceAKCType } from "@/types/devices"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
-import { produce } from "immer"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { KeycodeButton } from "../common/keycode-button"
 import { useAdvancedKeys } from "./advanced-keys-tab"
@@ -97,9 +96,7 @@ export const AdvancedKeysCreate = () => {
             if (value !== "") {
               const index = parseInt(value)
               setNewAKCKeys(
-                produce((draft) => {
-                  draft[index] = null
-                }),
+                index === 0 ? [null, newAKCKeys[1]] : [newAKCKeys[0], null],
               )
               setNewAKCKeysIndex(index)
             }
