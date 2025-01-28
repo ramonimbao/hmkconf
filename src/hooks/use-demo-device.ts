@@ -61,6 +61,10 @@ export const useDemoDevice = create<DemoDevice>()(
       })
     },
 
+    async getProfileNum() {
+      return 0
+    },
+
     async getKeymap(profileNum) {
       return get().profile[profileNum].keymap
     },

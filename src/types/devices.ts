@@ -7,6 +7,7 @@ export enum DeviceRequest {
   CLASS_REQUEST_FACTORY_RESET,
   CLASS_REQUEST_RECALIBRATE,
   CLASS_REQUEST_DEBUG,
+  CLASS_REQUEST_GET_PROFILE_NUM,
   // Requests below use `wValue` to specify the profile number
   CLASS_REQUEST_GET_KEYMAP,
   CLASS_REQUEST_SET_KEYMAP,
@@ -108,6 +109,7 @@ export type DeviceAction = {
   factoryReset(): Promise<void>
   recalibrate(): Promise<void>
   debug(): Promise<DeviceDebugInfo[]>
+  getProfileNum(): Promise<number>
   getKeymap(profileNum: number): Promise<number[][]>
   setKeymap(profileNum: number, keymap: number[][]): Promise<void>
   getActuations(profileNum: number): Promise<DeviceActuation[]>

@@ -238,6 +238,17 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     }))
   },
 
+  async getProfileNum() {
+    const response = await receiveRaw(
+      get(),
+      DeviceRequest.CLASS_REQUEST_GET_PROFILE_NUM,
+      0,
+      1,
+    )
+
+    return response.getUint8(0)
+  },
+
   async getKeymap(profileNum) {
     const device = get()
     const response = await receiveRaw(

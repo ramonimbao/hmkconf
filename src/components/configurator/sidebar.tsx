@@ -1,5 +1,6 @@
 "use client"
 
+import { useGetProfileNum } from "@/api/use-get-profile-num"
 import { NUM_PROFILES } from "@/constants/devices"
 import { displayUInt16 } from "@/lib/utils"
 import {
@@ -7,7 +8,7 @@ import {
   RadioGroupIndicator,
   RadioGroupItem,
 } from "@radix-ui/react-radio-group"
-import { ChevronsUpDown, Circle } from "lucide-react"
+import { ChevronsUpDown, Circle, Keyboard } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useConfigurator } from "../providers/configurator-provider"
 import { useDevice } from "../providers/device-provider"
@@ -24,6 +25,8 @@ import { ScrollArea } from "../ui/scroll-area"
 export function ConfiguratorSidebar() {
   const { profileNum, setProfileNum } = useConfigurator()
   const { metadata, isDemo, disconnect } = useDevice()
+
+  const { isSuccess, data: deviceProfileNum } = useGetProfileNum()
 
   const router = useRouter()
 
@@ -75,7 +78,7 @@ export function ConfiguratorSidebar() {
               <RadioGroupItem
                 key={i}
                 value={i.toString()}
-                className="relative flex items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
+                className="relative flex items-center gap-2 rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
               >
                 <span className="absolute left-2 flex size-3.5 items-center justify-center">
                   <RadioGroupIndicator>
@@ -83,6 +86,9 @@ export function ConfiguratorSidebar() {
                   </RadioGroupIndicator>
                 </span>
                 Profile {i}
+                {isSuccess && i === deviceProfileNum && (
+                  <Keyboard className="size-4" />
+                )}
               </RadioGroupItem>
             ))}
           </RadioGroup>
