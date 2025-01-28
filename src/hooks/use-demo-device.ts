@@ -34,6 +34,8 @@ export const useDemoDevice = create<DemoDevice>()(
   immer((set, get) => ({
     ...initialState,
 
+    async connect() {},
+
     async disconnect() {
       set({ ...initialState })
     },

@@ -1,5 +1,21 @@
 import { DeviceMetadata } from "./device-metadata"
 
+export enum DeviceRequest {
+  CLASS_REQUEST_FIRMWARE_VERSION = 0,
+  CLASS_REQUEST_REBOOT,
+  CLASS_REQUEST_BOOTLOADER,
+  CLASS_REQUEST_FACTORY_RESET,
+  CLASS_REQUEST_RECALIBRATE,
+  CLASS_REQUEST_DEBUG,
+  // Requests below use `wValue` to specify the profile number
+  CLASS_REQUEST_GET_KEYMAP,
+  CLASS_REQUEST_SET_KEYMAP,
+  CLASS_REQUEST_GET_ACTUATIONS,
+  CLASS_REQUEST_SET_ACTUATIONS,
+  CLASS_REQUEST_GET_AKC,
+  CLASS_REQUEST_SET_AKC,
+}
+
 export type DeviceState = {
   id: string
   metadata: DeviceMetadata
@@ -84,6 +100,7 @@ export type DeviceAKC = {
 }
 
 export type DeviceAction = {
+  connect(): Promise<void>
   disconnect(): Promise<void>
   firmwareVersion(): Promise<number>
   reboot(): Promise<void>
