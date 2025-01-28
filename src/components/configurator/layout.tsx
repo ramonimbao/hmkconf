@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { ReactNode } from "react"
+import { GithubLink } from "../github-link"
 import { useConfigurator } from "../providers/configurator-provider"
 import { ThemeSwitcher } from "../theme-switcher"
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs"
@@ -33,7 +34,10 @@ export function ConfiguratorLayout({
               <TabsTrigger value="debug">Debug</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
-            <ThemeSwitcher />
+            <div className="flex items-center gap-2">
+              <GithubLink />
+              <ThemeSwitcher />
+            </div>
           </div>
         </header>
         <div className="flex w-full flex-1 flex-col">
