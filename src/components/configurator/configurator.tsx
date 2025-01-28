@@ -3,6 +3,7 @@ import { AdvancedKeysTab } from "./advanced-keys/advanced-keys-tab"
 import { DebugTab } from "./debug/debug-tab"
 import { PerformanceTab } from "./performance/performance-tab"
 import { RemapTab } from "./remap/remap-tab"
+import { SettingsTab } from "./settings/settings-tab"
 import { ConfiguratorSidebar } from "./sidebar"
 
 export function Configurator() {
@@ -24,7 +25,9 @@ export function Configurator() {
         <TabsContent value="debug">
           <DebugTab />
         </TabsContent>
-        <TabsContent value="settings"></TabsContent>
+        <TabsContent value="settings">
+          <SettingsTab />
+        </TabsContent>
       </div>
     </div>
   )

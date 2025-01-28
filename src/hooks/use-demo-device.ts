@@ -42,6 +42,8 @@ export const useDemoDevice = create<DemoDevice>()(
       return 0x0100
     },
 
+    async reboot() {},
+
     async bootloader() {},
 
     async factoryReset() {

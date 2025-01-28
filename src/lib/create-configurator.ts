@@ -34,7 +34,7 @@ export function createConfigurator() {
       setTab: (tab) => set({ tab }),
       setProfileNum: (profileNum) =>
         set((state) => ({
-          ...initialState,
+          ...state,
           profileNum,
           remap: { ...state.remap, ...initialState.remap },
           performance: { ...state.performance, ...initialState.performance },

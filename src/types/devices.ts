@@ -86,6 +86,7 @@ export type DeviceAKC = {
 export type DeviceAction = {
   disconnect(): Promise<void>
   firmwareVersion(): Promise<number>
+  reboot(): Promise<void>
   bootloader(): Promise<void>
   factoryReset(): Promise<void>
   recalibrate(): Promise<void>
