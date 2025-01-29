@@ -36,6 +36,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
 import { ScrollArea } from "../ui/scroll-area"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip"
 
 export function ConfiguratorSidebar() {
   const { profileNum, setProfileNum } = useConfigurator()
@@ -84,29 +90,38 @@ export function ConfiguratorSidebar() {
         </DropdownMenu>
         <div className="flex flex-col gap-3 rounded-md border bg-card p-4 shadow-sm">
           <p className="font-semibold leading-none">Profiles</p>
-          <RadioGroup
-            value={profileNum.toString()}
-            onValueChange={(value) => setProfileNum(parseInt(value))}
-            className="grid gap-1"
-          >
-            {[...Array(NUM_PROFILES)].map((_, i) => (
-              <RadioGroupItem
-                key={i}
-                value={i.toString()}
-                className="relative flex items-center gap-2 rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
-              >
-                <span className="absolute left-2 flex size-3.5 items-center justify-center">
-                  <RadioGroupIndicator>
-                    <Circle className="size-2 fill-current" />
-                  </RadioGroupIndicator>
-                </span>
-                Profile {i}
-                {isSuccess && i === deviceProfileNum && (
-                  <Keyboard className="size-4" />
-                )}
-              </RadioGroupItem>
-            ))}
-          </RadioGroup>
+          <TooltipProvider>
+            <RadioGroup
+              value={profileNum.toString()}
+              onValueChange={(value) => setProfileNum(parseInt(value))}
+              className="grid gap-1"
+            >
+              {[...Array(NUM_PROFILES)].map((_, i) => (
+                <RadioGroupItem
+                  key={i}
+                  value={i.toString()}
+                  className="relative flex items-center gap-2 rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
+                >
+                  <span className="absolute left-2 flex size-3.5 items-center justify-center">
+                    <RadioGroupIndicator>
+                      <Circle className="size-2 fill-current" />
+                    </RadioGroupIndicator>
+                  </span>
+                  Profile {i}
+                  {isSuccess && i === deviceProfileNum && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Keyboard className="size-4" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-56">
+                        Device current profile
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </RadioGroupItem>
+              ))}
+            </RadioGroup>
+          </TooltipProvider>
         </div>
       </div>
     </ScrollArea>
