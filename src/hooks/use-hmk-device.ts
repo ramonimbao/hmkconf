@@ -16,6 +16,7 @@
 import { DEVICE_METADATA } from "@/constants/device-metadata"
 import { NUM_LAYERS } from "@/constants/devices"
 import { GAUSS64 } from "@/constants/devices/GAUSS64"
+import { TaskQueue } from "@/lib/task-queue"
 import { displayUInt16, isWebUsbSupported } from "@/lib/utils"
 import {
   DeviceAction,
@@ -41,11 +42,13 @@ type HMKDeviceState = DeviceState &
         status: "disconnected"
         usbDevice?: undefined
         interfaceNum?: undefined
+        taskQueue?: undefined
       }
     | {
         status: "connected"
         usbDevice: USBDevice
         interfaceNum: number
+        taskQueue: TaskQueue
       }
   )
 
@@ -91,63 +94,77 @@ const sendRaw = (
   request: number,
   value: number,
   payload?: BufferSource,
-) =>
-  withTimeout(async () => {
-    if (device.status !== "connected") {
-      throw new Error("Device not connected")
-    }
+) => {
+  if (device.status !== "connected") {
+    throw new Error("Device not connected")
+  }
 
-    const { usbDevice, interfaceNum } = device
-    const result = await usbDevice.controlTransferOut(
-      {
-        requestType: "class",
-        recipient: "interface",
-        request,
-        value,
-        index: interfaceNum,
-      },
-      payload,
-    )
+  return device.taskQueue.enqueue(() =>
+    withTimeout(async () => {
+      if (device.status !== "connected") {
+        throw new Error("Device not connected")
+      }
 
-    if (result.status !== "ok") {
-      throw new Error(`Failed to send request: ${result.status}`)
-    }
-  })
+      const { usbDevice, interfaceNum } = device
+      const result = await usbDevice.controlTransferOut(
+        {
+          requestType: "class",
+          recipient: "interface",
+          request,
+          value,
+          index: interfaceNum,
+        },
+        payload,
+      )
+
+      if (result.status !== "ok") {
+        throw new Error(`Failed to send request: ${result.status}`)
+      }
+    }),
+  )
+}
 
 const receiveRaw = (
   device: HMKDevice,
   request: number,
   value: number,
   length: number,
-) =>
-  withTimeout(async () => {
-    if (device.status !== "connected") {
-      throw new Error("Device not connected")
-    }
+) => {
+  if (device.status !== "connected") {
+    throw new Error("Device not connected")
+  }
 
-    const { usbDevice, interfaceNum } = device
-    const result = await usbDevice.controlTransferIn(
-      {
-        requestType: "class",
-        recipient: "interface",
-        request,
-        value,
-        index: interfaceNum,
-      },
-      length,
-    )
+  return device.taskQueue.enqueue(() =>
+    withTimeout(async () => {
+      if (device.status !== "connected") {
+        throw new Error("Device not connected")
+      }
 
-    if (result.status !== "ok" || result.data === undefined) {
-      throw new Error(`Failed to receive request: ${result.status}`)
-    }
-    if (result.data.byteLength !== length) {
-      throw new Error(
-        `Invalid response length: expect ${length}, got ${result.data.byteLength}`,
+      const { usbDevice, interfaceNum } = device
+      const result = await usbDevice.controlTransferIn(
+        {
+          requestType: "class",
+          recipient: "interface",
+          request,
+          value,
+          index: interfaceNum,
+        },
+        length,
       )
-    }
 
-    return result.data
-  })
+      if (result.status !== "ok" || result.data === undefined) {
+        throw new Error(`Failed to receive request: ${result.status}`)
+      }
+      if (result.data.byteLength !== length) {
+        throw new Error(
+          `Invalid response length: expect ${length}, got ${result.data.byteLength}`,
+        )
+      }
+
+      return result.data
+    }),
+  )
+}
 
 export const useHMKDevice = create<HMKDevice>()((set, get) => ({
   ...initialState,
@@ -193,6 +210,7 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
         status: "connected",
         usbDevice,
         interfaceNum,
+        taskQueue: new TaskQueue(),
       })
     } catch (err) {
       console.error("Failed to connect to device", err)
@@ -209,6 +227,7 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     navigator.usb.removeEventListener("disconnect", device.disconnect)
 
     set({ ...initialState })
+    await device.taskQueue.clear()
     await device.usbDevice.close()
   },
 
