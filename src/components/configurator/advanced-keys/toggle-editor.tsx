@@ -15,12 +15,12 @@
 
 "use client"
 
-import { useSetAKC } from "@/api/use-set-akc"
+import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MAX_TAPPING_TERM, MIN_TAPPING_TERM } from "@/constants/devices"
-import { DeviceAKCToggle } from "@/types/devices"
+import { DeviceAKToggle } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
 import { Toggle } from "@radix-ui/react-toggle"
 import { produce } from "immer"
@@ -31,23 +31,23 @@ import { useAdvancedKeysEditor } from "./advanced-keys-editor"
 import { KeyTesterTab } from "./key-tester-tab"
 
 export function ToggleEditor() {
-  const { profileNum } = useConfigurator()
-  const { akc, akcIndex } = useAdvancedKeysEditor()
-  const akConfig = akc[akcIndex].akc as DeviceAKCToggle
+  const { profile } = useConfigurator()
+  const { advancedKeys, akIndex } = useAdvancedKeysEditor()
+  const ak = advancedKeys[akIndex].ak as DeviceAKToggle
 
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
   const [isKeySelected, setIsKeySelected] = useState(false)
-  const [uiAKConfig, setUIAKConfig] = useState(akConfig)
+  const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
-  const updateAKC = (akConfig: DeviceAKCToggle) =>
-    setAKC(
-      produce(akc, (draft) => {
-        draft[akcIndex].akc = akConfig
+  const updateAdvancedKey = (ak: DeviceAKToggle) =>
+    setAdvancedKeys(
+      produce(advancedKeys, (draft) => {
+        draft[akIndex].ak = ak
       }),
     )
 
-  useEffect(() => setUIAKConfig(akConfig), [akConfig])
+  useEffect(() => setUIAdvancedKey(ak), [ak])
 
   return (
     <div className="flex w-full gap-8">
@@ -68,11 +68,11 @@ export function ToggleEditor() {
                 asChild
               >
                 <KeycodeButton
-                  keycode={akConfig.keycode}
+                  keycode={ak.keycode}
                   className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                   onContextMenu={(e) => {
                     e.preventDefault()
-                    updateAKC({ ...akConfig, keycode: Keycode.KC_NO })
+                    updateAdvancedKey({ ...ak, keycode: Keycode.KC_NO })
                     setIsKeySelected(false)
                   }}
                 />
@@ -82,7 +82,7 @@ export function ToggleEditor() {
         </div>
         <div className="flex flex-col">
           <p className="text-sm font-semibold leading-none tracking-tight">
-            Tapping Term: {uiAKConfig.tappingTerm}ms
+            Tapping Term: {uiAdvancedKey.tappingTerm}ms
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             Set the duration the key must be held to trigger the normal key
@@ -92,11 +92,11 @@ export function ToggleEditor() {
             min={MIN_TAPPING_TERM}
             max={MAX_TAPPING_TERM}
             step={5}
-            value={[uiAKConfig.tappingTerm]}
+            value={[uiAdvancedKey.tappingTerm]}
             onValueChange={([tappingTerm]) =>
-              setUIAKConfig({ ...uiAKConfig, tappingTerm })
+              setUIAdvancedKey({ ...uiAdvancedKey, tappingTerm })
             }
-            onValueCommit={() => updateAKC(uiAKConfig)}
+            onValueCommit={() => updateAdvancedKey(uiAdvancedKey)}
             className="mt-3"
           />
         </div>
@@ -113,7 +113,7 @@ export function ToggleEditor() {
             <KeycodeSelector
               disabled={!isKeySelected}
               onKeycodeSelected={(keycode) => {
-                updateAKC({ ...akConfig, keycode })
+                updateAdvancedKey({ ...ak, keycode })
                 setIsKeySelected(false)
               }}
             />

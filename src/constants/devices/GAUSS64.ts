@@ -14,14 +14,16 @@
  */
 
 import { DeviceMetadata, deviceMetadataSchema } from "@/types/device-metadata"
-import { Keycode } from "@/types/keycodes"
+import { Keycode, MO, PF } from "@/types/keycodes"
 
 export const GAUSS64: DeviceMetadata = deviceMetadataSchema.parse({
   name: "GAUSS64",
   vendorId: 0xab50,
   productId: 0xab01,
+  numProfiles: 4,
+  numLayers: 4,
   numKeys: 64,
-  numAKC: 32,
+  numAdvancedKeys: 32,
   layout: [
     [
       { key: 0, w: 1.5 },
@@ -141,7 +143,7 @@ export const GAUSS64: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_SCLN,
       Keycode.KC_QUOT,
       Keycode.KC_ENT,
-      Keycode.KC_NO, // Row 3
+      Keycode.KC_APP, // Row 3
       Keycode.KC_LSFT,
       Keycode.KC_Z,
       Keycode.KC_X,
@@ -155,7 +157,7 @@ export const GAUSS64: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_SLSH,
       Keycode.KC_RSFT,
       Keycode.KC_UP,
-      Keycode.KC_LAYER_1, // Row 4
+      MO(1), // Row 4
       Keycode.KC_LCTL,
       Keycode.KC_LGUI,
       Keycode.KC_LALT,
@@ -189,10 +191,10 @@ export const GAUSS64: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode._______,
       Keycode._______,
       Keycode._______,
-      Keycode.KC_PF0,
-      Keycode.KC_PF1,
-      Keycode.KC_PF2,
-      Keycode.KC_PF3,
+      PF(0),
+      PF(1),
+      PF(2),
+      PF(3),
       Keycode._______, // Row 2
       Keycode._______,
       Keycode.KC_HOME,
@@ -206,7 +208,7 @@ export const GAUSS64: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_MNXT,
       Keycode._______,
       Keycode._______,
-      Keycode.KC_PSWP,
+      Keycode.PF_SWAP,
       Keycode._______, // Row 3
       Keycode._______,
       Keycode._______,

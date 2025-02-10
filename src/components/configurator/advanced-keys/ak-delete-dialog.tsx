@@ -15,8 +15,8 @@
 
 "use client"
 
-import { useGetAKC } from "@/api/use-get-akc"
-import { useSetAKC } from "@/api/use-set-akc"
+import { useGetAdvancedKeys } from "@/api/use-get-advanced-keys"
+import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { buttonVariants } from "@/components/ui/button"
 import {
@@ -31,16 +31,16 @@ import {
 } from "@/components/ui/dialog"
 import { ReactNode } from "react"
 
-interface AKCDeleteDialogProps {
-  akcIndex: number
+interface AKDeleteDialogProps {
+  akIndex: number
   children: ReactNode
 }
 
-export function AKCDeleteDialog({ akcIndex, children }: AKCDeleteDialogProps) {
-  const { profileNum } = useConfigurator()
+export function AKDeleteDialog({ akIndex, children }: AKDeleteDialogProps) {
+  const { profile } = useConfigurator()
 
-  const { isSuccess, data: akc } = useGetAKC(profileNum)
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { isSuccess, data: advancedKeys } = useGetAdvancedKeys(profile)
+  const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
   return (
     <Dialog>
@@ -65,7 +65,8 @@ export function AKCDeleteDialog({ akcIndex, children }: AKCDeleteDialogProps) {
               size: "sm",
             })}
             onClick={() =>
-              isSuccess && setAKC(akc.filter((_, i) => i !== akcIndex))
+              isSuccess &&
+              setAdvancedKeys(advancedKeys.filter((_, i) => i !== akIndex))
             }
           >
             Delete

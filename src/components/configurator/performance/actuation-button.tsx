@@ -17,18 +17,18 @@
 
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
+import { keycodeToMetadata } from "@/constants/keycodes"
 import { cn, displayDistance } from "@/lib/utils"
 import { DeviceActuation } from "@/types/devices"
-import { KeycodeMetadata } from "@/types/keycodes"
-import { ComponentProps } from "react"
+import { ComponentProps, useMemo } from "react"
 
 interface ActuationButtonProps extends ComponentProps<typeof Button> {
-  keycodeMetadata: KeycodeMetadata
+  keycode: number
   actuation: DeviceActuation
 }
 
 export function ActuationButton({
-  keycodeMetadata,
+  keycode,
   actuation,
   className,
   ...props
@@ -36,6 +36,8 @@ export function ActuationButton({
   const {
     performance: { showKeymap },
   } = useConfigurator()
+
+  const keycodeMetadata = useMemo(() => keycodeToMetadata(keycode), [keycode])
 
   return (
     <Button

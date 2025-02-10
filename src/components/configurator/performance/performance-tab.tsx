@@ -15,14 +15,13 @@
 
 "use client"
 
-import { useGetActuations } from "@/api/use-get-actuations"
-import { useGetKeymapWithAKC } from "@/api/use-get-keymap-with-akc"
-import { useSetActuations } from "@/api/use-set-actuations"
+import { useGetActuationMap } from "@/api/use-get-actuation_map"
+import { useGetKeymapWithAdvancedKeys } from "@/api/use-get-keymap-with-advanced-keys"
+import { useSetActuationMap } from "@/api/use-set-actuation-map"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { DEFAULT_ACTUATION } from "@/constants/devices"
-import { KEYCODE_TO_METADATA } from "@/constants/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import { useMemo } from "react"
@@ -38,28 +37,29 @@ import { ActuationSettings } from "./actuation-settings"
 
 export function PerformanceTab() {
   const {
-    profileNum,
+    profile,
     performance: { keys, showKeymap, setKeys, setShowKeymap },
   } = useConfigurator()
   const { metadata } = useDevice()
 
-  const { isSuccess: isKeymapSuccess, keymap } = useGetKeymapWithAKC(profileNum)
-  const { isSuccess: isActuationsSuccess, data: actuations } =
-    useGetActuations(profileNum)
-  const { mutate: setActuations } = useSetActuations(profileNum)
+  const { isSuccess: isKeymapSuccess, keymap } =
+    useGetKeymapWithAdvancedKeys(profile)
+  const { isSuccess: isActuationMapSuccess, data: actuationMap } =
+    useGetActuationMap(profile)
+  const { mutate: setActuationMap } = useSetActuationMap(profile)
 
   const allKeys = useMemo(
     () => metadata.layout.map((row) => row.map(({ key }) => key)).flat(),
     [metadata.layout],
   )
 
-  const resetAllActuations = () => {
-    if (!isActuationsSuccess) {
+  const resetActuationMap = () => {
+    if (!isActuationMapSuccess) {
       return
     }
 
-    setActuations(
-      produce(actuations, (draft) => {
+    setActuationMap(
+      produce(actuationMap, (draft) => {
         for (const key of allKeys) {
           draft[key] = DEFAULT_ACTUATION
         }
@@ -106,11 +106,11 @@ export function PerformanceTab() {
               Deselect All
             </Button>
           </div>
-          <Button variant="destructive" size="sm" onClick={resetAllActuations}>
+          <Button variant="destructive" size="sm" onClick={resetActuationMap}>
             Reset All
           </Button>
         </KeyboardEditorHeader>
-        {!isKeymapSuccess || !isActuationsSuccess ? (
+        {!isKeymapSuccess || !isActuationMapSuccess ? (
           <KeyboardEditorSkeleton />
         ) : (
           <ToggleGroup
@@ -125,8 +125,8 @@ export function PerformanceTab() {
               elt={(key) => (
                 <ToggleGroupItem value={key.toString()} asChild>
                   <ActuationButton
-                    keycodeMetadata={KEYCODE_TO_METADATA[keymap[0][key]]}
-                    actuation={actuations[key]}
+                    keycode={keymap[0][key]}
+                    actuation={actuationMap[key]}
                   />
                 </ToggleGroupItem>
               )}

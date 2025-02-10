@@ -14,29 +14,29 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceActuation } from "@/types/devices"
+import { DeviceAdvancedKey } from "@/types/devices"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-export function useSetActuations(profileNum: number) {
-  const { id, setActuations } = useDevice()
+export function useSetAdvancedKeys(profile: number) {
+  const { id, setAdvancedKeys } = useDevice()
 
   const queryClient = useQueryClient()
-  const queryKey = [id, profileNum, "actuations"]
+  const queryKey = [id, profile, "advancedKeys"]
 
   return useMutation({
-    mutationFn: (actuations: DeviceActuation[]) =>
-      setActuations(profileNum, actuations),
-    onMutate: async (actuations) => {
+    mutationFn: (advancedKeys: DeviceAdvancedKey[]) =>
+      setAdvancedKeys(profile, advancedKeys),
+    onMutate: async (advancedKeys) => {
       await queryClient.cancelQueries({ queryKey })
-      const previousActuations =
-        queryClient.getQueryData<DeviceActuation[]>(queryKey)
-      queryClient.setQueryData(queryKey, actuations)
+      const previousAdvancedKeys =
+        queryClient.getQueryData<DeviceAdvancedKey[]>(queryKey)
+      queryClient.setQueryData(queryKey, advancedKeys)
 
-      return { previousActuations }
+      return { previousAdvancedKeys }
     },
     onError: (err, _, context) => {
       console.error(err)
-      queryClient.setQueryData(queryKey, context?.previousActuations)
+      queryClient.setQueryData(queryKey, context?.previousAdvancedKeys)
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })

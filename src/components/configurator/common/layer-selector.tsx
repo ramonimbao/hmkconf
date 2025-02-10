@@ -15,8 +15,8 @@
 
 "use client"
 
+import { useDevice } from "@/components/providers/device-provider"
 import { buttonVariants } from "@/components/ui/button"
-import { NUM_LAYERS } from "@/constants/devices"
 import { cn } from "@/lib/utils"
 import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group"
 import { ComponentProps } from "react"
@@ -34,6 +34,8 @@ export function LayerSelector({
   className,
   ...props
 }: LayerSelectorProps) {
+  const { metadata } = useDevice()
+
   return (
     <RadioGroup
       disabled={disabled}
@@ -48,7 +50,7 @@ export function LayerSelector({
     >
       <p className="font-semibold">Layer</p>
       <div className="grid grid-flow-col gap-1">
-        {[...Array(NUM_LAYERS)].map((_, i) => (
+        {[...Array(metadata.numLayers)].map((_, i) => (
           <RadioGroupItem
             key={i}
             value={i.toString()}

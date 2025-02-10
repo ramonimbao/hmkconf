@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { DeviceAKCDKSAction } from "@/types/devices"
+import { DeviceDKSAction } from "@/types/devices"
 import { produce } from "immer"
 import {
   ArrowDownFromLine,
@@ -57,21 +57,21 @@ const GRIP_TOP = SLIDER_HEIGHT / 2 - GRIP_HEIGHT / 2
 
 const nodeLeft = (i: number) => SLIDER_GAP * i
 
-const getIntervals = (bitmap: DeviceAKCDKSAction[]) => {
+const getIntervals = (bitmap: DeviceDKSAction[]) => {
   const intervals: [number, number][] = []
 
   let start = -1
   for (let i = 0; i < 4; i++) {
-    if (bitmap[i] === DeviceAKCDKSAction.DKS_HOLD) {
+    if (bitmap[i] === DeviceDKSAction.HOLD) {
       continue
     }
     if (start !== -1) {
       intervals.push([start, i])
       start = -1
     }
-    if (bitmap[i] === DeviceAKCDKSAction.DKS_PRESS) {
+    if (bitmap[i] === DeviceDKSAction.PRESS) {
       start = i
-    } else if (bitmap[i] === DeviceAKCDKSAction.DKS_TAP) {
+    } else if (bitmap[i] === DeviceDKSAction.TAP) {
       intervals.push([i, i])
     }
   }
@@ -83,12 +83,12 @@ const intervalWidth = ([l, r]: [number, number]) =>
   l === r ? 0 : SLIDER_GAP * (r - l) - NODE_SPACING
 
 interface DynamicKeystrokeSliderState {
-  bitmap: DeviceAKCDKSAction[]
+  bitmap: DeviceDKSAction[]
   intervals: [number, number][]
-  uiBitmap: DeviceAKCDKSAction[]
+  uiBitmap: DeviceDKSAction[]
   uiIntervals: [number, number][]
-  onBitmapChange: (bitmap: DeviceAKCDKSAction[]) => void
-  setUIBitmap: Dispatch<DeviceAKCDKSAction[]>
+  onBitmapChange: (bitmap: DeviceDKSAction[]) => void
+  setUIBitmap: Dispatch<DeviceDKSAction[]>
 }
 
 const DynamicKeystrokeSliderContext =
@@ -121,14 +121,14 @@ function DynamicKeystrokeBar({ i }: { i: number }) {
           onBitmapChange(
             produce(uiBitmap, (draft) => {
               for (let j = i + 1; j < interval[1]; j++) {
-                draft[j] = DeviceAKCDKSAction.DKS_HOLD
+                draft[j] = DeviceDKSAction.HOLD
               }
-              if (draft[interval[1]] === DeviceAKCDKSAction.DKS_RELEASE) {
-                draft[interval[1]] = DeviceAKCDKSAction.DKS_HOLD
+              if (draft[interval[1]] === DeviceDKSAction.RELEASE) {
+                draft[interval[1]] = DeviceDKSAction.HOLD
               }
               draft[i] = uiIntervals.some(([l, r]) => l !== r && r === i)
-                ? DeviceAKCDKSAction.DKS_RELEASE
-                : DeviceAKCDKSAction.DKS_HOLD
+                ? DeviceDKSAction.RELEASE
+                : DeviceDKSAction.HOLD
             }),
           )
         }
@@ -185,21 +185,18 @@ function DynamicKeystrokeDraggable({ i }: { i: number }) {
 
     setUIBitmap(
       produce(uiBitmap, (draft) => {
-        draft[i] =
-          i === closest
-            ? DeviceAKCDKSAction.DKS_TAP
-            : DeviceAKCDKSAction.DKS_PRESS
+        draft[i] = i === closest ? DeviceDKSAction.TAP : DeviceDKSAction.PRESS
         for (let j = i + 1; j < Math.max(interval[1], closest); j++) {
-          draft[j] = DeviceAKCDKSAction.DKS_HOLD
+          draft[j] = DeviceDKSAction.HOLD
         }
         if (
           interval[1] !== -1 &&
-          draft[interval[1]] === DeviceAKCDKSAction.DKS_RELEASE
+          draft[interval[1]] === DeviceDKSAction.RELEASE
         ) {
-          draft[interval[1]] = DeviceAKCDKSAction.DKS_HOLD
+          draft[interval[1]] = DeviceDKSAction.HOLD
         }
-        if (draft[closest] === DeviceAKCDKSAction.DKS_HOLD) {
-          draft[closest] = DeviceAKCDKSAction.DKS_RELEASE
+        if (draft[closest] === DeviceDKSAction.HOLD) {
+          draft[closest] = DeviceDKSAction.RELEASE
         }
       }),
     )
@@ -246,8 +243,8 @@ function DynamicKeystrokeDraggable({ i }: { i: number }) {
 }
 
 interface DynamicKeystrokeSliderProps extends HTMLAttributes<HTMLDivElement> {
-  bitmap: DeviceAKCDKSAction[]
-  onBitmapChange: (bitmap: DeviceAKCDKSAction[]) => void
+  bitmap: DeviceDKSAction[]
+  onBitmapChange: (bitmap: DeviceDKSAction[]) => void
 }
 
 export function DynamicKeystrokeSlider({
@@ -257,9 +254,7 @@ export function DynamicKeystrokeSlider({
   style,
   ...props
 }: DynamicKeystrokeSliderProps) {
-  const [uiBitmap, setUIBitmap] = useState(
-    Array(4).fill(DeviceAKCDKSAction.DKS_HOLD),
-  )
+  const [uiBitmap, setUIBitmap] = useState(Array(4).fill(DeviceDKSAction.HOLD))
 
   const intervals = useMemo(() => getIntervals(bitmap), [bitmap])
   const uiIntervals = useMemo(() => getIntervals(uiBitmap), [uiBitmap])

@@ -15,11 +15,11 @@
 
 "use client"
 
-import { useGetKeymapWithAKC } from "@/api/use-get-keymap-with-akc"
-import { useSetAKC } from "@/api/use-set-akc"
+import { useGetKeymapWithAdvancedKeys } from "@/api/use-get-keymap-with-advanced-keys"
+import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
-import { AKC_TYPE_TO_METADATA } from "@/constants/devices"
-import { DeviceAKC, DeviceAKCType } from "@/types/devices"
+import { AK_TYPE_TO_METADATA } from "@/constants/devices"
+import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
 import { Toggle } from "@radix-ui/react-toggle"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
@@ -41,14 +41,14 @@ import { Loader } from "./loader"
 type AdvancedKeys = {
   keymap: number[][]
   normalKeymap: number[][]
-  akc: DeviceAKC[]
-  akcIndices: (number | null)[][]
-  newAKCType: DeviceAKCType
-  newAKCKeys: [number | null, number | null]
-  newAKCKeysIndex: number | null
-  setNewAKCType: Dispatch<DeviceAKCType>
-  setNewAKCKeys: Dispatch<[number | null, number | null]>
-  setNewAKCKeysIndex: Dispatch<number | null>
+  advancedKeys: DeviceAdvancedKey[]
+  akIndices: (number | null)[][]
+  newAKType: DeviceAKType
+  newAKKeys: [number | null, number | null]
+  newAKKeysIndex: number | null
+  setNewAKType: Dispatch<DeviceAKType>
+  setNewAKKeys: Dispatch<[number | null, number | null]>
+  setNewAKKeysIndex: Dispatch<number | null>
 }
 
 const AdvancedKeysContext = createContext<AdvancedKeys>({} as AdvancedKeys)
@@ -57,60 +57,60 @@ export const useAdvancedKeys = () => useContext(AdvancedKeysContext)
 
 export function AdvancedKeysTab() {
   const {
-    profileNum,
-    advancedKeys: { layer, akcIndex, setLayer, setAKCIndex },
+    profile,
+    advancedKeys: { layer, akIndex, setLayer, setAKIndex },
   } = useConfigurator()
-  const { isSuccess, keymap, normalKeymap, akc, akcIndices } =
-    useGetKeymapWithAKC(profileNum)
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { isSuccess, keymap, normalKeymap, advancedKeys, akIndices } =
+    useGetKeymapWithAdvancedKeys(profile)
+  const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
-  const [newAKCType, setNewAKCType] = useState(DeviceAKCType.AKC_NONE)
-  const [newAKCKeys, setNewAKCKeys] = useState<[number | null, number | null]>([
+  const [newAKType, setNewAKType] = useState(DeviceAKType.NONE)
+  const [newAKKeys, setNewAKKeys] = useState<[number | null, number | null]>([
     null,
     null,
   ])
-  const [newAKCKeysIndex, setNewAKCKeysIndex] = useState<number | null>(null)
+  const [newAKKeysIndex, setNewAKKeysIndex] = useState<number | null>(null)
 
   return (
     <KeyboardEditor>
       <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
           <LayerSelector
-            disabled={
-              newAKCType !== DeviceAKCType.AKC_NONE || akcIndex !== null
-            }
+            disabled={newAKType !== DeviceAKType.NONE || akIndex !== null}
             layer={layer}
             setLayer={setLayer}
           />
         </KeyboardEditorHeader>
         {!isSuccess ? (
           <KeyboardEditorSkeleton />
-        ) : newAKCType === DeviceAKCType.AKC_NONE ? (
+        ) : newAKType === DeviceAKType.NONE ? (
           <ToggleGroup
             type="single"
-            value={akcIndex === null ? "" : akcIndex.toString()}
+            value={akIndex === null ? "" : akIndex.toString()}
             onValueChange={(value) =>
-              setAKCIndex(value === "" ? null : parseInt(value))
+              setAKIndex(value === "" ? null : parseInt(value))
             }
           >
             <KeyboardEditorKeyboard
               elt={(key) => (
                 <ToggleGroupItem
                   disabled={
-                    akcIndices[layer][key] === null ||
-                    (akcIndex !== null && akcIndices[layer][key] !== akcIndex)
+                    akIndices[layer][key] === null ||
+                    (akIndex !== null && akIndices[layer][key] !== akIndex)
                   }
                   value={
-                    akcIndices[layer][key] === null
+                    akIndices[layer][key] === null
                       ? ""
-                      : akcIndices[layer][key].toString()
+                      : akIndices[layer][key].toString()
                   }
                   onContextMenu={(e) => {
                     e.preventDefault()
-                    const akcIndex = akcIndices[layer][key]
-                    if (akcIndex !== null) {
-                      setAKC(akc.filter((_, i) => i !== akcIndex))
-                      setAKCIndex(null)
+                    const akIndex = akIndices[layer][key]
+                    if (akIndex !== null) {
+                      setAdvancedKeys(
+                        advancedKeys.filter((_, i) => i !== akIndex),
+                      )
+                      setAKIndex(null)
                     }
                   }}
                   asChild
@@ -128,34 +128,32 @@ export function AdvancedKeysTab() {
             elt={(key) => (
               <Toggle
                 disabled={
-                  akcIndices[layer][key] !== null ||
-                  (newAKCKeys.filter((key) => key !== null).length ===
-                    AKC_TYPE_TO_METADATA[newAKCType].numKeys &&
-                    !newAKCKeys.includes(key))
+                  akIndices[layer][key] !== null ||
+                  (newAKKeys.filter((key) => key !== null).length ===
+                    AK_TYPE_TO_METADATA[newAKType].numKeys &&
+                    !newAKKeys.includes(key))
                 }
-                pressed={newAKCKeys.includes(key)}
+                pressed={newAKKeys.includes(key)}
                 onPressedChange={(pressed) => {
                   if (pressed) {
-                    if (newAKCKeysIndex === null) {
+                    if (newAKKeysIndex === null) {
                       return
                     }
-                    const updatedKeys = produce(newAKCKeys, (draft) => {
-                      draft[newAKCKeysIndex] = key
+                    const updatedKeys = produce(newAKKeys, (draft) => {
+                      draft[newAKKeysIndex] = key
                     })
                     const updatedIndex = updatedKeys.indexOf(null)
-                    setNewAKCKeys(updatedKeys)
-                    setNewAKCKeysIndex(
-                      updatedIndex === -1 ? null : updatedIndex,
-                    )
+                    setNewAKKeys(updatedKeys)
+                    setNewAKKeysIndex(updatedIndex === -1 ? null : updatedIndex)
                   } else {
-                    const index = newAKCKeys.indexOf(key)
+                    const index = newAKKeys.indexOf(key)
                     if (index !== -1) {
-                      setNewAKCKeys(
-                        produce(newAKCKeys, (draft) => {
+                      setNewAKKeys(
+                        produce(newAKKeys, (draft) => {
                           draft[index] = null
                         }),
                       )
-                      setNewAKCKeysIndex(index)
+                      setNewAKKeysIndex(index)
                     }
                   }
                 }}
@@ -171,22 +169,22 @@ export function AdvancedKeysTab() {
         )}
       </KeyboardEditorLayout>
       {isSuccess ? (
-        akcIndex === null ? (
+        akIndex === null ? (
           <AdvancedKeysContext.Provider
             value={{
               keymap,
               normalKeymap,
-              akc,
-              akcIndices,
-              newAKCType,
-              newAKCKeys,
-              newAKCKeysIndex,
-              setNewAKCType,
-              setNewAKCKeys,
-              setNewAKCKeysIndex,
+              advancedKeys,
+              akIndices,
+              newAKType,
+              newAKKeys,
+              newAKKeysIndex,
+              setNewAKType,
+              setNewAKKeys,
+              setNewAKKeysIndex,
             }}
           >
-            {newAKCType === DeviceAKCType.AKC_NONE ? (
+            {newAKType === DeviceAKType.NONE ? (
               <AdvancedKeysMenu />
             ) : (
               <AdvancedKeysCreate />

@@ -14,14 +14,13 @@
  */
 
 import { DEVICE_METADATA } from "@/constants/device-metadata"
-import { NUM_LAYERS } from "@/constants/devices"
 import { GAUSS64 } from "@/constants/devices/GAUSS64"
 import { TaskQueue } from "@/lib/task-queue"
 import { displayUInt16, isWebUsbSupported } from "@/lib/utils"
 import {
   DeviceAction,
-  DeviceAKC,
-  DeviceAKCType,
+  DeviceAdvancedKey,
+  DeviceAKType,
   DeviceRequest,
   DeviceState,
 } from "@/types/devices"
@@ -234,7 +233,7 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
   async firmwareVersion() {
     const response = await receiveRaw(
       get(),
-      DeviceRequest.CLASS_REQUEST_FIRMWARE_VERSION,
+      DeviceRequest.FIRMWARE_VERSION,
       0,
       2,
     )
@@ -242,26 +241,26 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
   },
 
   async reboot() {
-    await sendRaw(get(), DeviceRequest.CLASS_REQUEST_REBOOT, 0)
+    await sendRaw(get(), DeviceRequest.REBOOT, 0)
   },
 
   async bootloader() {
-    await sendRaw(get(), DeviceRequest.CLASS_REQUEST_BOOTLOADER, 0)
+    await sendRaw(get(), DeviceRequest.BOOTLOADER, 0)
   },
 
   async factoryReset() {
-    await sendRaw(get(), DeviceRequest.CLASS_REQUEST_FACTORY_RESET, 0)
+    await sendRaw(get(), DeviceRequest.FACTORY_RESET, 0)
   },
 
   async recalibrate() {
-    await sendRaw(get(), DeviceRequest.CLASS_REQUEST_RECALIBRATE, 0)
+    await sendRaw(get(), DeviceRequest.RECALIBRATE, 0)
   },
 
   async debug() {
     const device = get()
     const response = await receiveRaw(
       device,
-      DeviceRequest.CLASS_REQUEST_DEBUG,
+      DeviceRequest.DEBUG,
       0,
       device.metadata.numKeys * 3,
     )
@@ -272,55 +271,48 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     }))
   },
 
-  async getProfileNum() {
-    const response = await receiveRaw(
-      get(),
-      DeviceRequest.CLASS_REQUEST_GET_PROFILE_NUM,
-      0,
-      1,
-    )
+  async getProfile() {
+    const response = await receiveRaw(get(), DeviceRequest.GET_PROFILE, 0, 1)
 
     return response.getUint8(0)
   },
 
-  async getKeymap(profileNum) {
+  async getKeymap(profile) {
     const device = get()
     const response = await receiveRaw(
       get(),
-      DeviceRequest.CLASS_REQUEST_GET_KEYMAP,
-      profileNum,
-      NUM_LAYERS * device.metadata.numKeys,
+      DeviceRequest.GET_KEYMAP,
+      profile,
+      device.metadata.numLayers * device.metadata.numKeys,
     )
 
-    return Array.from({ length: NUM_LAYERS }, (_, i) =>
+    return Array.from({ length: device.metadata.numLayers }, (_, i) =>
       Array.from({ length: device.metadata.numKeys }, (_, j) =>
         response.getUint8(i * device.metadata.numKeys + j),
       ),
     )
   },
 
-  async setKeymap(profileNum, keymap) {
+  async setKeymap(profile, keymap) {
     const device = get()
     const payload = new Uint8Array(keymap.flat())
 
-    if (payload.length !== NUM_LAYERS * device.metadata.numKeys) {
+    if (
+      payload.length !==
+      device.metadata.numLayers * device.metadata.numKeys
+    ) {
       throw new Error("Invalid keymap length")
     }
 
-    await sendRaw(
-      device,
-      DeviceRequest.CLASS_REQUEST_SET_KEYMAP,
-      profileNum,
-      payload,
-    )
+    await sendRaw(device, DeviceRequest.SET_KEYMAP, profile, payload)
   },
 
-  async getActuations(profileNum) {
+  async getActuationMap(profile) {
     const device = get()
     const response = await receiveRaw(
       device,
-      DeviceRequest.CLASS_REQUEST_GET_ACTUATIONS,
-      profileNum,
+      DeviceRequest.GET_ACTUATION_MAP,
+      profile,
       device.metadata.numKeys * 4,
     )
 
@@ -332,10 +324,10 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     }))
   },
 
-  async setActuations(profileNum, actuations) {
+  async setActuationMap(profile, actuationMap) {
     const device = get()
     const payload = new Uint8Array(
-      actuations.flatMap(({ actuationPoint, rtDown, rtUp, continuous }) => [
+      actuationMap.flatMap(({ actuationPoint, rtDown, rtUp, continuous }) => [
         actuationPoint,
         rtDown,
         rtUp,
@@ -344,27 +336,22 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     )
 
     if (payload.length !== device.metadata.numKeys * 4) {
-      throw new Error("Invalid actuations length")
+      throw new Error("Invalid actuation map length")
     }
 
-    await sendRaw(
-      device,
-      DeviceRequest.CLASS_REQUEST_SET_ACTUATIONS,
-      profileNum,
-      payload,
-    )
+    await sendRaw(device, DeviceRequest.SET_ACTUATION_MAP, profile, payload)
   },
 
-  async getAKC(profileNum) {
+  async getAdvancedKeys(profile) {
     const device = get()
     const response = await receiveRaw(
       device,
-      DeviceRequest.CLASS_REQUEST_GET_AKC,
-      profileNum,
-      device.metadata.numAKC * 12,
+      DeviceRequest.GET_ADVANCED_KEYS,
+      profile,
+      device.metadata.numAdvancedKeys * 12,
     )
-    const akc: DeviceAKC[] = Array.from(
-      { length: device.metadata.numAKC },
+    const advancedKeys: DeviceAdvancedKey[] = Array.from(
+      { length: device.metadata.numAdvancedKeys },
       (_, i) => {
         const offset = i * 12
         const layer = response.getUint8(offset)
@@ -372,24 +359,24 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
         const type = response.getUint8(offset + 2)
 
         switch (type) {
-          case DeviceAKCType.AKC_NULL_BIND:
+          case DeviceAKType.NULL_BIND:
             return {
               layer,
               key,
-              akc: {
-                type: DeviceAKCType.AKC_NULL_BIND,
+              ak: {
+                type: DeviceAKType.NULL_BIND,
                 secondaryKey: response.getUint8(offset + 3),
                 behavior: response.getUint8(offset + 4),
                 bottomOutPoint: response.getUint8(offset + 5),
               },
             }
 
-          case DeviceAKCType.AKC_DKS:
+          case DeviceAKType.DYNAMIC_KEYSTROKE:
             return {
               layer,
               key,
-              akc: {
-                type: DeviceAKCType.AKC_DKS,
+              ak: {
+                type: DeviceAKType.DYNAMIC_KEYSTROKE,
                 keycodes: Array.from({ length: 4 }, (_, j) =>
                   response.getUint8(offset + 3 + j),
                 ),
@@ -404,77 +391,77 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
               },
             }
 
-          case DeviceAKCType.AKC_TAP_HOLD:
+          case DeviceAKType.TAP_HOLD:
             return {
               layer,
               key,
-              akc: {
-                type: DeviceAKCType.AKC_TAP_HOLD,
+              ak: {
+                type: DeviceAKType.TAP_HOLD,
                 tapKeycode: response.getUint8(offset + 3),
                 holdKeycode: response.getUint8(offset + 4),
                 tappingTerm: response.getUint16(offset + 5, true),
               },
             }
 
-          case DeviceAKCType.AKC_TOGGLE:
+          case DeviceAKType.TOGGLE:
             return {
               layer,
               key,
-              akc: {
-                type: DeviceAKCType.AKC_TOGGLE,
+              ak: {
+                type: DeviceAKType.TOGGLE,
                 keycode: response.getUint8(offset + 3),
                 tappingTerm: response.getUint16(offset + 4, true),
               },
             }
 
-          case DeviceAKCType.AKC_NONE:
+          case DeviceAKType.NONE:
           default:
-            return { layer, key, akc: { type: DeviceAKCType.AKC_NONE } }
+            return { layer, key, ak: { type: DeviceAKType.NONE } }
         }
       },
     )
 
-    return akc.filter(({ akc }) => akc.type !== DeviceAKCType.AKC_NONE)
+    return advancedKeys.filter(({ ak }) => ak.type !== DeviceAKType.NONE)
   },
 
-  async setAKC(profileNum, akc) {
+  async setAdvancedKeys(profile, advancedKeys) {
     const device = get()
     const payload = new Uint8Array([
-      ...akc.flatMap(({ layer, key, akc }) => {
-        const buffer = [layer, key, akc.type]
+      ...advancedKeys.flatMap(({ layer, key, ak }) => {
+        const buffer = [layer, key, ak.type]
 
-        switch (akc.type) {
-          case DeviceAKCType.AKC_NULL_BIND:
-            buffer.push(akc.secondaryKey, akc.behavior, akc.bottomOutPoint)
+        switch (ak.type) {
+          case DeviceAKType.NULL_BIND:
+            buffer.push(ak.secondaryKey, ak.behavior, ak.bottomOutPoint)
             break
 
-          case DeviceAKCType.AKC_DKS:
+          case DeviceAKType.DYNAMIC_KEYSTROKE:
             buffer.push(
-              ...akc.keycodes,
-              ...akc.bitmap.map((actions) =>
+              ...ak.keycodes,
+              ...ak.bitmap.map((actions) =>
                 actions.reduce((acc, val, i) => acc | (val << (i * 2)), 0),
               ),
-              akc.bottomOutPoint,
+              ak.bottomOutPoint,
             )
             break
 
-          case DeviceAKCType.AKC_TAP_HOLD:
-            buffer.push(akc.tapKeycode, akc.holdKeycode)
+          case DeviceAKType.TAP_HOLD:
+            buffer.push(ak.tapKeycode, ak.holdKeycode)
             buffer.push(
-              (akc.tappingTerm >> 0) & 0xff,
-              (akc.tappingTerm >> 8) & 0xff,
+              (ak.tappingTerm >> 0) & 0xff,
+              (ak.tappingTerm >> 8) & 0xff,
             )
             break
 
-          case DeviceAKCType.AKC_TOGGLE:
-            buffer.push(akc.keycode)
+          case DeviceAKType.TOGGLE:
+            buffer.push(ak.keycode)
             buffer.push(
-              (akc.tappingTerm >> 0) & 0xff,
-              (akc.tappingTerm >> 8) & 0xff,
+              (ak.tappingTerm >> 0) & 0xff,
+              (ak.tappingTerm >> 8) & 0xff,
             )
             break
 
-          case DeviceAKCType.AKC_NONE:
+          case DeviceAKType.NONE:
           default:
             break
         }
@@ -485,18 +472,15 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
 
         return buffer
       }),
-      ...Array((device.metadata.numAKC - akc.length) * 12).fill(0),
+      ...Array(
+        (device.metadata.numAdvancedKeys - advancedKeys.length) * 12,
+      ).fill(0),
     ])
 
-    if (payload.length !== device.metadata.numAKC * 12) {
-      throw new Error("Invalid akc length")
+    if (payload.length !== device.metadata.numAdvancedKeys * 12) {
+      throw new Error("Invalid advanced keys length")
     }
 
-    await sendRaw(
-      device,
-      DeviceRequest.CLASS_REQUEST_SET_AKC,
-      profileNum,
-      payload,
-    )
+    await sendRaw(device, DeviceRequest.SET_ADVANCED_KEYS, profile, payload)
   },
 }))

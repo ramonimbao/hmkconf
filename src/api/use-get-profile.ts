@@ -18,12 +18,12 @@ import { useQuery } from "@tanstack/react-query"
 
 const REFETCH_INTERVAL = 1000
 
-export function useGetProfileNum() {
-  const { id, getProfileNum } = useDevice()
+export function useGetProfile() {
+  const { id, getProfile } = useDevice()
 
   return useQuery({
-    queryKey: [id, "profileNum"],
-    queryFn: getProfileNum,
+    queryKey: [id, "profile"],
+    queryFn: getProfile,
     refetchInterval: REFETCH_INTERVAL,
   })
 }

@@ -15,9 +15,9 @@
 
 "use client"
 
-import { useGetActuations } from "@/api/use-get-actuations"
-import { useSetActuations } from "@/api/use-set-actuations"
-import { useSetAKC } from "@/api/use-set-akc"
+import { useGetActuationMap } from "@/api/use-get-actuation_map"
+import { useSetActuationMap } from "@/api/use-set-actuation-map"
+import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -27,14 +27,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
-  AKC_NULL_BIND_BEHAVIOR_METADATA,
   DEFAULT_ACTUATION,
   DEFAULT_BOTTOM_OUT_POINT,
   DEFAULT_RT_DOWN,
+  NULL_BIND_BEHAVIOR_METADATA,
   SWITCH_DISTANCE,
 } from "@/constants/devices"
 import { distanceToSwitchDistance } from "@/lib/utils"
-import { DeviceActuation, DeviceAKCNullBind } from "@/types/devices"
+import { DeviceActuation, DeviceAKNullBind } from "@/types/devices"
 import {
   RadioGroup,
   RadioGroupIndicator,
@@ -49,41 +49,41 @@ import { useAdvancedKeysEditor } from "./advanced-keys-editor"
 import { KeyTesterTab } from "./key-tester-tab"
 
 export function NullBindEditor() {
-  const { profileNum } = useConfigurator()
-  const { akc, akcIndex } = useAdvancedKeysEditor()
-  const akConfig = akc[akcIndex].akc as DeviceAKCNullBind
+  const { profile } = useConfigurator()
+  const { advancedKeys, akIndex } = useAdvancedKeysEditor()
+  const ak = advancedKeys[akIndex].ak as DeviceAKNullBind
 
-  const { isSuccess, data: actuations } = useGetActuations(profileNum)
-  const { mutate: setActuations } = useSetActuations(profileNum)
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { isSuccess, data: actuationMap } = useGetActuationMap(profile)
+  const { mutate: setActuationMap } = useSetActuationMap(profile)
+  const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
   const [uiActuation, setUIActuation] = useState(DEFAULT_ACTUATION)
-  const [uiAKConfig, setUIAKConfig] = useState(akConfig)
+  const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
   const updateActuation = (actuation: DeviceActuation) =>
     isSuccess &&
-    setActuations(
-      produce(actuations, (draft) => {
-        for (const key of [akc[akcIndex].key, akConfig.secondaryKey]) {
+    setActuationMap(
+      produce(actuationMap, (draft) => {
+        for (const key of [advancedKeys[akIndex].key, ak.secondaryKey]) {
           draft[key] = actuation
         }
       }),
     )
 
-  const updateAKC = (akConfig: DeviceAKCNullBind) =>
-    setAKC(
-      produce(akc, (draft) => {
-        draft[akcIndex].akc = akConfig
+  const updateAdvancedKey = (ak: DeviceAKNullBind) =>
+    setAdvancedKeys(
+      produce(advancedKeys, (draft) => {
+        draft[akIndex].ak = ak
       }),
     )
 
   useEffect(() => {
     if (isSuccess) {
-      setUIActuation(actuations[akc[akcIndex].key])
+      setUIActuation(actuationMap[advancedKeys[akIndex].key])
     }
-  }, [actuations, akc, akcIndex, isSuccess])
+  }, [actuationMap, advancedKeys, akIndex, isSuccess])
 
-  useEffect(() => setUIAKConfig(akConfig), [akConfig])
+  useEffect(() => setUIAdvancedKey(ak), [ak])
 
   return (
     <div className="flex w-full gap-8">
@@ -96,13 +96,13 @@ export function NullBindEditor() {
             Select how to resolve the key events when both keys are pressed.
           </p>
           <RadioGroup
-            value={akConfig.behavior.toString()}
+            value={ak.behavior.toString()}
             onValueChange={(value) =>
-              updateAKC({ ...akConfig, behavior: parseInt(value) })
+              updateAdvancedKey({ ...ak, behavior: parseInt(value) })
             }
             className="mt-3 grid gap-1"
           >
-            {AKC_NULL_BIND_BEHAVIOR_METADATA.map((behaviorMetadata) => (
+            {NULL_BIND_BEHAVIOR_METADATA.map((behaviorMetadata) => (
               <RadioGroupItem
                 key={behaviorMetadata.behavior}
                 value={behaviorMetadata.behavior.toString()}
@@ -137,16 +137,16 @@ export function NullBindEditor() {
             id="alternative-bottom-out"
             title="Alternative Bottom Out Behavior"
             description="When both keys are bottomed out, register key press for both keys."
-            checked={akConfig.bottomOutPoint > 0}
+            checked={ak.bottomOutPoint > 0}
             onCheckedChange={(checked) =>
-              updateAKC({
-                ...akConfig,
+              updateAdvancedKey({
+                ...ak,
                 bottomOutPoint: checked ? DEFAULT_BOTTOM_OUT_POINT : 0,
               })
             }
           />
         </div>
-        {akConfig.bottomOutPoint > 0 && (
+        {ak.bottomOutPoint > 0 && (
           <DistanceSlider
             disabled={!isSuccess}
             size="sm"
@@ -154,15 +154,15 @@ export function NullBindEditor() {
             description="Set the distance at which the key is bottomed out."
             {...(isSuccess && {
               min: distanceToSwitchDistance(
-                actuations[akc[akcIndex].key].actuationPoint,
+                actuationMap[advancedKeys[akIndex].key].actuationPoint,
               ),
             })}
             max={SWITCH_DISTANCE}
-            distance={uiAKConfig.bottomOutPoint}
+            distance={uiAdvancedKey.bottomOutPoint}
             onDistanceChange={(bottomOutPoint) =>
-              setUIAKConfig({ ...uiAKConfig, bottomOutPoint })
+              setUIAdvancedKey({ ...uiAdvancedKey, bottomOutPoint })
             }
-            onDistanceCommit={() => updateAKC(uiAKConfig)}
+            onDistanceCommit={() => updateAdvancedKey(uiAdvancedKey)}
           />
         )}
       </div>
@@ -198,8 +198,8 @@ export function NullBindEditor() {
               description="Set the distance at which the key press is registered."
               min={1}
               max={
-                akConfig.bottomOutPoint > 0
-                  ? distanceToSwitchDistance(akConfig.bottomOutPoint)
+                ak.bottomOutPoint > 0
+                  ? distanceToSwitchDistance(ak.bottomOutPoint)
                   : SWITCH_DISTANCE
               }
               distance={uiActuation.actuationPoint}

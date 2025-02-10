@@ -13,6 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { useDevice } from "@/components/providers/device-provider"
 import {
   Accordion,
   AccordionContent,
@@ -25,12 +26,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import {
-  KEYCODE_CATEGORIES_MAP,
-  KEYCODE_TO_METADATA,
-} from "@/constants/keycodes"
+import { categoryToKeycodes, keycodeToMetadata } from "@/constants/keycodes"
 import { cn } from "@/lib/utils"
-import { HTMLAttributes, ReactNode } from "react"
+import { HTMLAttributes, ReactNode, useMemo } from "react"
 import { KeycodeButton } from "./keycode-button"
 
 interface KeycodeSelectorTooltipProps {
@@ -42,7 +40,7 @@ function KeycodeSelectorTooltip({
   keycode,
   children,
 }: KeycodeSelectorTooltipProps) {
-  const keycodeMetadata = KEYCODE_TO_METADATA[keycode]
+  const keycodeMetadata = useMemo(() => keycodeToMetadata(keycode), [keycode])
 
   if (keycodeMetadata.tooltip === undefined) {
     return children
@@ -73,7 +71,13 @@ export function KeycodeSelector({
   className,
   ...props
 }: KeycodeSelectorProps) {
+  const { metadata } = useDevice()
   const size = keySize ?? 64
+
+  const keycodeCategoriesMap = useMemo(
+    () => categoryToKeycodes(metadata),
+    [metadata],
+  )
 
   return (
     <div
@@ -85,7 +89,7 @@ export function KeycodeSelector({
       {...props}
     >
       <Accordion type="multiple" defaultValue={["Basic"]} className="w-full">
-        {Object.entries(KEYCODE_CATEGORIES_MAP).map(([category, keycodes]) => (
+        {Object.entries(keycodeCategoriesMap).map(([category, keycodes]) => (
           <AccordionItem key={category} value={category}>
             <AccordionTrigger>{category}</AccordionTrigger>
             <AccordionContent>

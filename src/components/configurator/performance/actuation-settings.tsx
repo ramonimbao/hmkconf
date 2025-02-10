@@ -13,8 +13,8 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useGetActuations } from "@/api/use-get-actuations"
-import { useSetActuations } from "@/api/use-set-actuations"
+import { useGetActuationMap } from "@/api/use-get-actuation_map"
+import { useSetActuationMap } from "@/api/use-set-actuation-map"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import {
   DEFAULT_ACTUATION,
@@ -29,12 +29,12 @@ import { Switch } from "../common/switch"
 
 export function ActuationSettings() {
   const {
-    profileNum,
+    profile,
     performance: { keys },
   } = useConfigurator()
 
-  const { isSuccess, data: actuations } = useGetActuations(profileNum)
-  const { mutate: setActuations } = useSetActuations(profileNum)
+  const { isSuccess, data: actuationMap } = useGetActuationMap(profile)
+  const { mutate: setActuationMap } = useSetActuationMap(profile)
 
   const disabled = !isSuccess || keys.length === 0
 
@@ -43,8 +43,8 @@ export function ActuationSettings() {
 
   const updateActuation = (actuation: DeviceActuation) =>
     !disabled &&
-    setActuations(
-      produce(actuations, (draft) => {
+    setActuationMap(
+      produce(actuationMap, (draft) => {
         for (const key of keys) {
           draft[key] = actuation
         }
@@ -57,9 +57,11 @@ export function ActuationSettings() {
     }
 
     setUIActuation(
-      keys.length === 0 ? DEFAULT_ACTUATION : actuations[keys[keys.length - 1]],
+      keys.length === 0
+        ? DEFAULT_ACTUATION
+        : actuationMap[keys[keys.length - 1]],
     )
-  }, [actuations, isSuccess, keys])
+  }, [actuationMap, isSuccess, keys])
 
   return (
     <div className="mx-auto flex w-full max-w-5xl">

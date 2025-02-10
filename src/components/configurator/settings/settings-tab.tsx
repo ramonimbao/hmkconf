@@ -41,7 +41,7 @@ export function SettingsTab() {
 
   return (
     <ScrollArea className="flex-1">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4">
         <div className="flex flex-col">
           <p className="font-semibold leading-none tracking-tight">
             Restart Device

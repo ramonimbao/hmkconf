@@ -24,19 +24,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { AKC_METADATA, AKC_TYPE_TO_METADATA } from "@/constants/devices"
-import { DeviceAKCType } from "@/types/devices"
+import { AK_METADATA, AK_TYPE_TO_METADATA } from "@/constants/devices"
+import { DeviceAKType } from "@/types/devices"
 import { Edit, Plus, Trash } from "lucide-react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { useAdvancedKeys } from "./advanced-keys-tab"
-import { AKCDeleteDialog } from "./akc-delete-dialog"
+import { AKDeleteDialog } from "./ak-delete-dialog"
 
 export function AdvancedKeysMenu() {
   const {
-    advancedKeys: { setLayer, setAKCIndex },
+    advancedKeys: { setLayer, setAKIndex },
   } = useConfigurator()
   const { metadata } = useDevice()
-  const { akc, setNewAKCType, setNewAKCKeys, setNewAKCKeysIndex } =
+  const { advancedKeys, setNewAKType, setNewAKKeys, setNewAKKeysIndex } =
     useAdvancedKeys()
 
   return (
@@ -44,12 +44,13 @@ export function AdvancedKeysMenu() {
       <div className="mx-auto flex w-full max-w-5xl flex-col p-4">
         <div className="flex items-center justify-between gap-4">
           <p className="font-semibold leading-none tracking-tight">
-            Advanced Key Bindings: {akc.length.toString().padStart(2, "0")}/
-            {metadata.numAKC.toString().padStart(2, "0")}
+            Advanced Key Bindings:{" "}
+            {advancedKeys.length.toString().padStart(2, "0")}/
+            {metadata.numAdvancedKeys.toString().padStart(2, "0")}
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger
-              disabled={akc.length >= metadata.numAKC}
+              disabled={advancedKeys.length >= metadata.numAdvancedKeys}
               asChild
             >
               <Button variant="outline" size="sm">
@@ -57,19 +58,19 @@ export function AdvancedKeysMenu() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="max-w-96">
-              {AKC_METADATA.map((akcMetadata) => (
+              {AK_METADATA.map((akMetadata) => (
                 <DropdownMenuItem
-                  key={akcMetadata.type}
+                  key={akMetadata.type}
                   onClick={() => {
-                    setNewAKCType(akcMetadata.type)
-                    setNewAKCKeys([null, null])
-                    setNewAKCKeysIndex(0)
+                    setNewAKType(akMetadata.type)
+                    setNewAKKeys([null, null])
+                    setNewAKKeysIndex(0)
                   }}
                 >
                   <div className="flex flex-col">
-                    <p>{akcMetadata.name}</p>
+                    <p>{akMetadata.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {akcMetadata.description}
+                      {akMetadata.description}
                     </p>
                   </div>
                 </DropdownMenuItem>
@@ -77,43 +78,43 @@ export function AdvancedKeysMenu() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {akc.length === 0 ? (
+        {advancedKeys.length === 0 ? (
           <div className="mt-4 flex h-56 w-full flex-col items-center justify-center rounded-md border border-dashed p-4 text-center text-sm opacity-50">
             No advanced key bindings have been configured...
           </div>
         ) : (
           <div className="mt-4 grid w-full gap-4">
-            {akc.map((akc, i) => {
-              const akcMetadata = AKC_TYPE_TO_METADATA[akc.akc.type]
+            {advancedKeys.map((advancedKeys, i) => {
+              const akMetadata = AK_TYPE_TO_METADATA[advancedKeys.ak.type]
               return (
                 <div
                   key={i}
                   className="flex w-full items-center rounded-md border bg-card p-4 shadow-sm"
                 >
                   <div className="flex-1 text-sm font-semibold leading-none tracking-tight">
-                    {akcMetadata.name}
+                    {akMetadata.name}
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={() => {
-                        setNewAKCType(DeviceAKCType.AKC_NONE)
-                        setNewAKCKeys([null, null])
-                        setNewAKCKeysIndex(null)
-                        setLayer(akc.layer)
-                        setAKCIndex(i)
+                        setNewAKType(DeviceAKType.NONE)
+                        setNewAKKeys([null, null])
+                        setNewAKKeysIndex(null)
+                        setLayer(advancedKeys.layer)
+                        setAKIndex(i)
                       }}
                     >
                       <Edit />
                       <span className="sr-only">Edit</span>
                     </Button>
-                    <AKCDeleteDialog akcIndex={i}>
+                    <AKDeleteDialog akIndex={i}>
                       <Button variant="outline" size="icon">
                         <Trash />
                         <span className="sr-only">Delete</span>
                       </Button>
-                    </AKCDeleteDialog>
+                    </AKDeleteDialog>
                   </div>
                 </div>
               )

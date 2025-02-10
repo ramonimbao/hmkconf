@@ -36,13 +36,13 @@ import { LayerSelector } from "../common/layer-selector"
 
 export function RemapTab() {
   const {
-    profileNum,
+    profile,
     remap: { layer, key, setLayer, setKey },
   } = useConfigurator()
   const { metadata } = useDevice()
 
-  const { isSuccess, data: keymap } = useGetKeymap(profileNum)
-  const { mutate: setKeymap } = useSetKeymap(profileNum)
+  const { isSuccess, data: keymap } = useGetKeymap(profile)
+  const { mutate: setKeymap } = useSetKeymap(profile)
 
   const resetThisLayerKeymap = () => {
     if (!isSuccess) {

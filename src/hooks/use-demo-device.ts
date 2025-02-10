@@ -13,12 +13,12 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DEFAULT_ACTUATION, NUM_PROFILES } from "@/constants/devices"
+import { DEFAULT_ACTUATION } from "@/constants/devices"
 import { GAUSS64 } from "@/constants/devices/GAUSS64"
 import {
   DeviceAction,
   DeviceActuation,
-  DeviceAKC,
+  DeviceAdvancedKey,
   DeviceState,
 } from "@/types/devices"
 import { create } from "zustand"
@@ -27,8 +27,8 @@ import { immer } from "zustand/middleware/immer"
 type DemoDeviceState = DeviceState & {
   profile: {
     keymap: number[][]
-    actuations: DeviceActuation[]
-    akc: DeviceAKC[]
+    actuationMap: DeviceActuation[]
+    advancedKeys: DeviceAdvancedKey[]
   }[]
 }
 
@@ -38,10 +38,10 @@ const initialState: DemoDeviceState = {
   id: "DEMO_DEVICE",
   metadata: GAUSS64,
   isDemo: true,
-  profile: Array.from({ length: NUM_PROFILES }, () => ({
+  profile: Array.from({ length: GAUSS64.numProfiles }, () => ({
     keymap: GAUSS64.defaultKeymap,
-    actuations: Array(GAUSS64.numKeys).fill(DEFAULT_ACTUATION),
-    akc: [],
+    actuationMap: Array(GAUSS64.numKeys).fill(DEFAULT_ACTUATION),
+    advancedKeys: [],
   })),
 }
 
@@ -76,37 +76,37 @@ export const useDemoDevice = create<DemoDevice>()(
       })
     },
 
-    async getProfileNum() {
+    async getProfile() {
       return 0
     },
 
-    async getKeymap(profileNum) {
-      return get().profile[profileNum].keymap
+    async getKeymap(profile) {
+      return get().profile[profile].keymap
     },
 
-    async setKeymap(profileNum, keymap) {
+    async setKeymap(profile, keymap) {
       set((state) => {
-        state.profile[profileNum].keymap = keymap
+        state.profile[profile].keymap = keymap
       })
     },
 
-    async getActuations(profileNum) {
-      return get().profile[profileNum].actuations
+    async getActuationMap(profile) {
+      return get().profile[profile].actuationMap
     },
 
-    async setActuations(profileNum, actuations) {
+    async setActuationMap(profile, actuationMap) {
       set((state) => {
-        state.profile[profileNum].actuations = actuations
+        state.profile[profile].actuationMap = actuationMap
       })
     },
 
-    async getAKC(profileNum) {
-      return get().profile[profileNum].akc
+    async getAdvancedKeys(profile) {
+      return get().profile[profile].advancedKeys
     },
 
-    async setAKC(profileNum, akc) {
+    async setAdvancedKeys(profile, advancedKeys) {
       set((state) => {
-        state.profile[profileNum].akc = akc
+        state.profile[profile].advancedKeys = advancedKeys
       })
     },
   })),

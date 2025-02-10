@@ -13,7 +13,6 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { NUM_LAYERS } from "@/constants/devices"
 import { z } from "zod"
 
 const keyboardLayoutSchema = z.array(
@@ -35,14 +34,16 @@ export const deviceMetadataSchema = z
     name: z.string(),
     vendorId: z.number().int().min(0x0000).max(0xffff),
     productId: z.number().int().min(0x0000).max(0xffff),
+    numProfiles: z.number().int().min(1).max(8),
+    numLayers: z.number().int().min(1).max(8),
     numKeys: z.number().int().min(1).max(256),
-    numAKC: z.number().int().min(1).max(256),
+    numAdvancedKeys: z.number().int().min(1).max(64),
     layout: keyboardLayoutSchema,
     defaultKeymap: z.array(z.array(z.number().int().min(0).max(255))),
   })
   .refine(
     (data) =>
-      data.defaultKeymap.length === NUM_LAYERS &&
+      data.defaultKeymap.length === data.numLayers &&
       data.defaultKeymap.every((layer) => layer.length === data.numKeys),
   )
 

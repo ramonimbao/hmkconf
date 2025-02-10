@@ -15,8 +15,7 @@
 
 "use client"
 
-import { useGetProfileNum } from "@/api/use-get-profile-num"
-import { NUM_PROFILES } from "@/constants/devices"
+import { useGetProfile } from "@/api/use-get-profile"
 import { displayUInt16 } from "@/lib/utils"
 import {
   RadioGroup,
@@ -44,10 +43,10 @@ import {
 } from "../ui/tooltip"
 
 export function ConfiguratorSidebar() {
-  const { profileNum, setProfileNum } = useConfigurator()
+  const { profile, setProfile } = useConfigurator()
   const { metadata, isDemo, disconnect } = useDevice()
 
-  const { isSuccess, data: deviceProfileNum } = useGetProfileNum()
+  const { isSuccess, data: deviceProfile } = useGetProfile()
 
   const router = useRouter()
 
@@ -92,11 +91,11 @@ export function ConfiguratorSidebar() {
           <p className="font-semibold leading-none">Profiles</p>
           <TooltipProvider>
             <RadioGroup
-              value={profileNum.toString()}
-              onValueChange={(value) => setProfileNum(parseInt(value))}
+              value={profile.toString()}
+              onValueChange={(value) => setProfile(parseInt(value))}
               className="grid gap-1"
             >
-              {[...Array(NUM_PROFILES)].map((_, i) => (
+              {[...Array(metadata.numProfiles)].map((_, i) => (
                 <RadioGroupItem
                   key={i}
                   value={i.toString()}
@@ -108,7 +107,7 @@ export function ConfiguratorSidebar() {
                     </RadioGroupIndicator>
                   </span>
                   Profile {i}
-                  {isSuccess && i === deviceProfileNum && (
+                  {isSuccess && i === deviceProfile && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Keyboard className="size-4" />

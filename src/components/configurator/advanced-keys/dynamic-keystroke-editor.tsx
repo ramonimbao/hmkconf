@@ -15,14 +15,14 @@
 
 "use client"
 
-import { useGetActuations } from "@/api/use-get-actuations"
-import { useSetActuations } from "@/api/use-set-actuations"
-import { useSetAKC } from "@/api/use-set-akc"
+import { useGetActuationMap } from "@/api/use-get-actuation_map"
+import { useSetActuationMap } from "@/api/use-set-actuation-map"
+import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DEFAULT_ACTUATION, SWITCH_DISTANCE } from "@/constants/devices"
 import { distanceToSwitchDistance } from "@/lib/utils"
-import { DeviceActuation, DeviceAKCDKS } from "@/types/devices"
+import { DeviceActuation, DeviceAKDynamicKeystroke } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
@@ -39,40 +39,40 @@ import {
 import { KeyTesterTab } from "./key-tester-tab"
 
 export function DynamicKeystrokeEditor() {
-  const { profileNum } = useConfigurator()
-  const { akc, akcIndex } = useAdvancedKeysEditor()
-  const akConfig = akc[akcIndex].akc as DeviceAKCDKS
+  const { profile } = useConfigurator()
+  const { advancedKeys, akIndex } = useAdvancedKeysEditor()
+  const ak = advancedKeys[akIndex].ak as DeviceAKDynamicKeystroke
 
-  const { isSuccess, data: actuations } = useGetActuations(profileNum)
-  const { mutate: setActuations } = useSetActuations(profileNum)
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { isSuccess, data: actuationMap } = useGetActuationMap(profile)
+  const { mutate: setActuationMap } = useSetActuationMap(profile)
+  const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
   const [dksBindingIndex, setDKSBindingIndex] = useState<number | null>(null)
   const [uiActuation, setUIActuation] = useState(DEFAULT_ACTUATION)
-  const [uiAKConfig, setUIAKConfig] = useState(akConfig)
+  const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
   const updateActuation = (actuation: DeviceActuation) =>
     isSuccess &&
-    setActuations(
-      produce(actuations, (draft) => {
-        draft[akc[akcIndex].key] = actuation
+    setActuationMap(
+      produce(actuationMap, (draft) => {
+        draft[advancedKeys[akIndex].key] = actuation
       }),
     )
 
-  const updateAKC = (akConfig: DeviceAKCDKS) =>
-    setAKC(
-      produce(akc, (draft) => {
-        draft[akcIndex].akc = akConfig
+  const updateAdvancedKey = (ak: DeviceAKDynamicKeystroke) =>
+    setAdvancedKeys(
+      produce(advancedKeys, (draft) => {
+        draft[akIndex].ak = ak
       }),
     )
 
   useEffect(() => {
     if (isSuccess) {
-      setUIActuation(actuations[akc[akcIndex].key])
+      setUIActuation(actuationMap[advancedKeys[akIndex].key])
     }
-  }, [actuations, akc, akcIndex, isSuccess])
+  }, [actuationMap, advancedKeys, akIndex, isSuccess])
 
-  useEffect(() => setUIAKConfig(akConfig), [akConfig])
+  useEffect(() => setUIAdvancedKey(ak), [ak])
 
   return (
     <div className="flex w-full gap-8">
@@ -101,7 +101,7 @@ export function DynamicKeystrokeEditor() {
               }
               className="grid gap-2"
             >
-              {akConfig.keycodes.map((keycode, i) => (
+              {ak.keycodes.map((keycode, i) => (
                 <div key={i} className="flex items-center gap-4">
                   <div className="size-16 p-0.5">
                     <ToggleGroupItem value={i.toString()} asChild>
@@ -109,8 +109,8 @@ export function DynamicKeystrokeEditor() {
                         keycode={keycode}
                         onContextMenu={(e) => {
                           e.preventDefault()
-                          updateAKC(
-                            produce(akConfig, (draft) => {
+                          updateAdvancedKey(
+                            produce(ak, (draft) => {
                               draft.keycodes[i] = Keycode.KC_NO
                             }),
                           )
@@ -120,10 +120,10 @@ export function DynamicKeystrokeEditor() {
                     </ToggleGroupItem>
                   </div>
                   <DynamicKeystrokeSlider
-                    bitmap={akConfig.bitmap[i]}
+                    bitmap={ak.bitmap[i]}
                     onBitmapChange={(bitmap) =>
-                      updateAKC(
-                        produce(akConfig, (draft) => {
+                      updateAdvancedKey(
+                        produce(ak, (draft) => {
                           draft.bitmap[i] = bitmap
                         }),
                       )
@@ -141,15 +141,15 @@ export function DynamicKeystrokeEditor() {
           description="Set the distance at which the key is bottomed out."
           {...(isSuccess && {
             min: distanceToSwitchDistance(
-              actuations[akc[akcIndex].key].actuationPoint,
+              actuationMap[advancedKeys[akIndex].key].actuationPoint,
             ),
           })}
           max={SWITCH_DISTANCE}
-          distance={uiAKConfig.bottomOutPoint}
+          distance={uiAdvancedKey.bottomOutPoint}
           onDistanceChange={(bottomOutPoint) =>
-            setUIAKConfig({ ...uiAKConfig, bottomOutPoint })
+            setUIAdvancedKey({ ...uiAdvancedKey, bottomOutPoint })
           }
-          onDistanceCommit={() => updateAKC(uiAKConfig)}
+          onDistanceCommit={() => updateAdvancedKey(uiAdvancedKey)}
         />
       </div>
       <Tabs defaultValue="bindings" className="flex flex-1 flex-col">
@@ -166,8 +166,8 @@ export function DynamicKeystrokeEditor() {
               disabled={dksBindingIndex === null}
               onKeycodeSelected={(keycode) => {
                 if (dksBindingIndex !== null) {
-                  updateAKC(
-                    produce(akConfig, (draft) => {
+                  updateAdvancedKey(
+                    produce(ak, (draft) => {
                       draft.keycodes[dksBindingIndex] = keycode
                     }),
                   )
@@ -186,8 +186,8 @@ export function DynamicKeystrokeEditor() {
               description="Set the distance at which the key press is registered."
               min={1}
               max={
-                akConfig.bottomOutPoint > 0
-                  ? distanceToSwitchDistance(akConfig.bottomOutPoint)
+                ak.bottomOutPoint > 0
+                  ? distanceToSwitchDistance(ak.bottomOutPoint)
                   : SWITCH_DISTANCE
               }
               distance={uiActuation.actuationPoint}

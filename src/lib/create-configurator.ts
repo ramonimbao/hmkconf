@@ -19,7 +19,7 @@ import { immer } from "zustand/middleware/immer"
 
 const initialState: ConfiguratorState = {
   tab: "remap",
-  profileNum: 0,
+  profile: 0,
   remap: {
     layer: 0,
     key: null,
@@ -30,7 +30,7 @@ const initialState: ConfiguratorState = {
   },
   advancedKeys: {
     layer: 0,
-    akcIndex: null,
+    akIndex: null,
   },
 }
 
@@ -47,10 +47,10 @@ export function createConfigurator() {
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
         })),
       setTab: (tab) => set({ tab }),
-      setProfileNum: (profileNum) =>
+      setProfile: (profile) =>
         set((state) => ({
           ...state,
-          profileNum,
+          profile,
           remap: { ...state.remap, ...initialState.remap },
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
@@ -89,11 +89,11 @@ export function createConfigurator() {
         setLayer: (layer) =>
           set((state) => {
             state.advancedKeys.layer = layer
-            state.advancedKeys.akcIndex = null
+            state.advancedKeys.akIndex = null
           }),
-        setAKCIndex: (akcIndex) =>
+        setAKIndex: (akIndex) =>
           set((state) => {
-            state.advancedKeys.akcIndex = akcIndex
+            state.advancedKeys.akIndex = akIndex
           }),
       },
     })),

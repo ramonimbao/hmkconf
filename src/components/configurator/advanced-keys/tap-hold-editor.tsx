@@ -15,12 +15,12 @@
 
 "use client"
 
-import { useSetAKC } from "@/api/use-set-akc"
+import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MAX_TAPPING_TERM, MIN_TAPPING_TERM } from "@/constants/devices"
-import { DeviceAKCTapHold } from "@/types/devices"
+import { DeviceAKTapHold } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
@@ -31,23 +31,23 @@ import { useAdvancedKeysEditor } from "./advanced-keys-editor"
 import { KeyTesterTab } from "./key-tester-tab"
 
 export function TapHoldEditor() {
-  const { profileNum } = useConfigurator()
-  const { akc, akcIndex } = useAdvancedKeysEditor()
-  const akConfig = akc[akcIndex].akc as DeviceAKCTapHold
+  const { profile } = useConfigurator()
+  const { advancedKeys, akIndex } = useAdvancedKeysEditor()
+  const ak = advancedKeys[akIndex].ak as DeviceAKTapHold
 
-  const { mutate: setAKC } = useSetAKC(profileNum)
+  const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
   const [selectedKey, setSelectedKey] = useState("")
-  const [uiAKConfig, setUIAKConfig] = useState(akConfig)
+  const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
-  const updateAKC = (akConfig: DeviceAKCTapHold) =>
-    setAKC(
-      produce(akc, (draft) => {
-        draft[akcIndex].akc = akConfig
+  const updateAdvancedKey = (ak: DeviceAKTapHold) =>
+    setAdvancedKeys(
+      produce(advancedKeys, (draft) => {
+        draft[akIndex].ak = ak
       }),
     )
 
-  useEffect(() => setUIAKConfig(akConfig), [akConfig])
+  useEffect(() => setUIAdvancedKey(ak), [ak])
 
   return (
     <div className="flex w-full gap-8">
@@ -70,11 +70,11 @@ export function TapHoldEditor() {
               <div className="size-16 p-0.5">
                 <ToggleGroupItem value="tap" asChild>
                   <KeycodeButton
-                    keycode={akConfig.tapKeycode}
+                    keycode={ak.tapKeycode}
                     className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                     onContextMenu={(e) => {
                       e.preventDefault()
-                      updateAKC({ ...akConfig, tapKeycode: Keycode.KC_NO })
+                      updateAdvancedKey({ ...ak, tapKeycode: Keycode.KC_NO })
                       setSelectedKey("")
                     }}
                   />
@@ -86,11 +86,11 @@ export function TapHoldEditor() {
               <div className="size-16 p-0.5">
                 <ToggleGroupItem value="hold" asChild>
                   <KeycodeButton
-                    keycode={akConfig.holdKeycode}
+                    keycode={ak.holdKeycode}
                     className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                     onContextMenu={(e) => {
                       e.preventDefault()
-                      updateAKC({ ...akConfig, holdKeycode: Keycode.KC_NO })
+                      updateAdvancedKey({ ...ak, holdKeycode: Keycode.KC_NO })
                       setSelectedKey("")
                     }}
                   />
@@ -101,7 +101,7 @@ export function TapHoldEditor() {
         </div>
         <div className="flex flex-col">
           <p className="text-sm font-semibold leading-none tracking-tight">
-            Tapping Term: {uiAKConfig.tappingTerm}ms
+            Tapping Term: {uiAdvancedKey.tappingTerm}ms
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             Set the duration the key must be held to trigger the hold keycode.
@@ -113,11 +113,11 @@ export function TapHoldEditor() {
             min={MIN_TAPPING_TERM}
             max={MAX_TAPPING_TERM}
             step={5}
-            value={[uiAKConfig.tappingTerm]}
+            value={[uiAdvancedKey.tappingTerm]}
             onValueChange={([tappingTerm]) =>
-              setUIAKConfig({ ...uiAKConfig, tappingTerm })
+              setUIAdvancedKey({ ...uiAdvancedKey, tappingTerm })
             }
-            onValueCommit={() => updateAKC(uiAKConfig)}
+            onValueCommit={() => updateAdvancedKey(uiAdvancedKey)}
             className="mt-3"
           />
         </div>
@@ -135,9 +135,9 @@ export function TapHoldEditor() {
               disabled={selectedKey === ""}
               onKeycodeSelected={(keycode) => {
                 if (selectedKey === "tap") {
-                  updateAKC({ ...akConfig, tapKeycode: keycode })
+                  updateAdvancedKey({ ...ak, tapKeycode: keycode })
                 } else if (selectedKey === "hold") {
-                  updateAKC({ ...akConfig, holdKeycode: keycode })
+                  updateAdvancedKey({ ...ak, holdKeycode: keycode })
                 }
                 setSelectedKey("")
               }}

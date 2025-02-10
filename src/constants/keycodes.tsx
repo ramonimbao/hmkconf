@@ -13,7 +13,15 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Keycode, KeycodeMetadata } from "@/types/keycodes"
+import { DeviceMetadata } from "@/types/device-metadata"
+import {
+  Keycode,
+  KeycodeMetadata,
+  MO,
+  MO_GET_LAYER,
+  PF,
+  PF_GET_PROFILE,
+} from "@/types/keycodes"
 import {
   AlarmClock,
   ArrowBigLeft,
@@ -50,7 +58,7 @@ export const KEYCODE_CATEGORIES = [
   "Basic",
   "Extended",
   "Special",
-  "AKC",
+  "Advanced Key",
 ] as const
 
 export const KEYCODE_METADATA: KeycodeMetadata[] = [
@@ -1150,7 +1158,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     id: "Media Player",
     tooltip: "Open Media Player",
     display: <Music />,
-    keycode: Keycode.KC_AUDIO_PLAYER,
+    keycode: Keycode.KC_MEDIA_SELECT,
     webCodes: [],
     category: "Special",
   },
@@ -1174,7 +1182,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     id: "File",
     tooltip: "Open File Browser",
     display: <FolderClosed />,
-    keycode: Keycode.KC_FILE_BROWSER,
+    keycode: Keycode.KC_MY_COMPUTER,
     webCodes: [],
     category: "Special",
   },
@@ -1267,7 +1275,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>L</p>
       </>
     ),
-    keycode: Keycode.KC_MOUSE_BUTTON_LEFT,
+    keycode: Keycode.SP_MOUSE_BUTTON_1,
     webCodes: [],
     category: "Special",
   },
@@ -1280,7 +1288,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>R</p>
       </>
     ),
-    keycode: Keycode.KC_MOUSE_BUTTON_RIGHT,
+    keycode: Keycode.SP_MOUSE_BUTTON_2,
     webCodes: [],
     category: "Special",
   },
@@ -1293,7 +1301,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>M</p>
       </>
     ),
-    keycode: Keycode.KC_MOUSE_BUTTON_MIDDLE,
+    keycode: Keycode.SP_MOUSE_BUTTON_3,
     webCodes: [],
     category: "Special",
   },
@@ -1306,7 +1314,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>4</p>
       </>
     ),
-    keycode: Keycode.KC_MOUSE_BUTTON_4,
+    keycode: Keycode.SP_MOUSE_BUTTON_4,
     webCodes: [],
     category: "Special",
   },
@@ -1319,41 +1327,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>5</p>
       </>
     ),
-    keycode: Keycode.KC_MOUSE_BUTTON_5,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "Layer Lock",
-    tooltip: "Toggle default layer between layer 0 and the current layer",
-    display: (
-      <>
-        <p>Layer</p>
-        <p>Lock</p>
-      </>
-    ),
-    keycode: Keycode.KC_LAYER_LOCK,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "MO(1)",
-    tooltip: "Activate layer 1 while held",
-    keycode: Keycode.KC_LAYER_1,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "MO(2)",
-    tooltip: "Activate layer 2 while held",
-    keycode: Keycode.KC_LAYER_2,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "MO(3)",
-    tooltip: "Activate layer 3 while held",
-    keycode: Keycode.KC_LAYER_3,
+    keycode: Keycode.SP_MOUSE_BUTTON_5,
     webCodes: [],
     category: "Special",
   },
@@ -1366,35 +1340,20 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>Lock</p>
       </>
     ),
-    keycode: Keycode.KC_KEY_LOCK,
+    keycode: Keycode.SP_KEY_LOCK,
     webCodes: [],
     category: "Special",
   },
   {
-    id: "PF(0)",
-    tooltip: "Switch to profile 0",
-    keycode: Keycode.KC_PROFILE_0,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "PF(1)",
-    tooltip: "Switch to profile 1",
-    keycode: Keycode.KC_PROFILE_1,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "PF(2)",
-    tooltip: "Switch to profile 2",
-    keycode: Keycode.KC_PROFILE_2,
-    webCodes: [],
-    category: "Special",
-  },
-  {
-    id: "PF(3)",
-    tooltip: "Switch to profile 3",
-    keycode: Keycode.KC_PROFILE_3,
+    id: "Layer Lock",
+    tooltip: "Toggle default layer between layer 0 and the current layer",
+    display: (
+      <>
+        <p>Layer</p>
+        <p>Lock</p>
+      </>
+    ),
+    keycode: Keycode.SP_LAYER_LOCK,
     webCodes: [],
     category: "Special",
   },
@@ -1407,7 +1366,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>Swap</p>
       </>
     ),
-    keycode: Keycode.KC_PROFILE_SWAP,
+    keycode: Keycode.SP_PROFILE_SWAP,
     webCodes: [],
     category: "Special",
   },
@@ -1420,7 +1379,7 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <p>Cycle</p>
       </>
     ),
-    keycode: Keycode.KC_PROFILE_CYCLE,
+    keycode: Keycode.SP_PROFILE_NEXT,
     webCodes: [],
     category: "Special",
   },
@@ -1432,9 +1391,9 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <ArrowBigLeft />
       </>
     ),
-    keycode: Keycode.KC_NULL_BIND_PRIMARY,
+    keycode: Keycode.AK_NULL_BIND_PRIMARY,
     webCodes: [],
-    category: "AKC",
+    category: "Advanced Key",
   },
   {
     id: "Null Bind Secondary",
@@ -1444,40 +1403,73 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
         <ArrowBigRight />
       </>
     ),
-    keycode: Keycode.KC_NULL_BIND_SECONDARY,
+    keycode: Keycode.AK_NULL_BIND_SECONDARY,
     webCodes: [],
-    category: "AKC",
+    category: "Advanced Key",
   },
   {
-    id: "DKS",
-    keycode: Keycode.KC_DKS,
+    id: "Dynamic Keystroke",
+    display: "DKS",
+    keycode: Keycode.AK_DYNAMIC_KEYSTROKE,
     webCodes: [],
-    category: "AKC",
+    category: "Advanced Key",
   },
   {
     id: "Tap-Hold",
     display: (
       <>
-        <p>Tap</p>
-        <p>Hold</p>
+        <p>TAP</p>
+        <p>HOLD</p>
       </>
     ),
-    keycode: Keycode.KC_TAP_HOLD,
+    keycode: Keycode.AK_TAP_HOLD,
     webCodes: [],
-    category: "AKC",
+    category: "Advanced Key",
   },
   {
-    id: "TGL",
-    keycode: Keycode.KC_TOGGLE,
+    id: "Toggle",
+    display: "TGL",
+    keycode: Keycode.AK_TOGGLE,
     webCodes: [],
-    category: "AKC",
+    category: "Advanced Key",
   },
 ]
 
-export const KEYCODE_TO_METADATA: Record<number, KeycodeMetadata> =
+const KEYCODE_TO_METADATA: Record<number, KeycodeMetadata> =
   KEYCODE_METADATA.reduce((acc, meta) => ({ ...acc, [meta.keycode]: meta }), {})
 
-export const KEYCODE_CATEGORIES_MAP: Record<string, number[]> = {
+export const keycodeToMetadata = (keycode: number): KeycodeMetadata => {
+  if (keycode in KEYCODE_TO_METADATA) {
+    return KEYCODE_TO_METADATA[keycode]
+  } else if (Keycode.SP_MO_MIN <= keycode && keycode <= Keycode.SP_MO_MAX) {
+    return {
+      id: `MO(${MO_GET_LAYER(keycode)})`,
+      tooltip: `Activate layer ${MO_GET_LAYER(keycode)} while held`,
+      keycode,
+      webCodes: [],
+      category: "Special",
+    }
+  } else if (Keycode.SP_PF_MIN <= keycode && keycode <= Keycode.SP_PF_MAX) {
+    return {
+      id: `PF(${PF_GET_PROFILE(keycode)})`,
+      tooltip: `Switch to profile ${PF_GET_PROFILE(keycode)}`,
+      keycode,
+      webCodes: [],
+      category: "Special",
+    }
+  }
+
+  return {
+    id: "???",
+    keycode,
+    webCodes: [],
+    category: "Special",
+  }
+}
+
+export const categoryToKeycodes = (
+  deviceMetadata: DeviceMetadata,
+): Record<string, number[]> => ({
   Basic: [
     Keycode.KC_A,
     Keycode.KC_B,
@@ -1612,10 +1604,10 @@ export const KEYCODE_CATEGORIES_MAP: Record<string, number[]> = {
     Keycode.KC_AUDIO_MUTE,
     Keycode.KC_AUDIO_VOL_UP,
     Keycode.KC_AUDIO_VOL_DOWN,
-    Keycode.KC_AUDIO_PLAYER,
+    Keycode.KC_MEDIA_SELECT,
     Keycode.KC_MAIL,
     Keycode.KC_CALCULATOR,
-    Keycode.KC_FILE_BROWSER,
+    Keycode.KC_MY_COMPUTER,
     Keycode.KC_WWW_SEARCH,
     Keycode.KC_WWW_HOME,
     Keycode.KC_WWW_BACK,
@@ -1629,21 +1621,16 @@ export const KEYCODE_CATEGORIES_MAP: Record<string, number[]> = {
     Keycode.KC_LAUNCHPAD,
     Keycode.KC_BRIGHTNESS_UP,
     Keycode.KC_BRIGHTNESS_DOWN,
-    Keycode.KC_MOUSE_BUTTON_LEFT,
-    Keycode.KC_MOUSE_BUTTON_RIGHT,
-    Keycode.KC_MOUSE_BUTTON_MIDDLE,
-    Keycode.KC_MOUSE_BUTTON_4,
-    Keycode.KC_MOUSE_BUTTON_5,
-    Keycode.KC_LAYER_LOCK,
-    Keycode.KC_LAYER_1,
-    Keycode.KC_LAYER_2,
-    Keycode.KC_LAYER_3,
-    Keycode.KC_KEY_LOCK,
-    Keycode.KC_PROFILE_0,
-    Keycode.KC_PROFILE_1,
-    Keycode.KC_PROFILE_2,
-    Keycode.KC_PROFILE_3,
-    Keycode.KC_PROFILE_SWAP,
-    Keycode.KC_PROFILE_CYCLE,
+    Keycode.SP_MOUSE_BUTTON_1,
+    Keycode.SP_MOUSE_BUTTON_2,
+    Keycode.SP_MOUSE_BUTTON_3,
+    Keycode.SP_MOUSE_BUTTON_4,
+    Keycode.SP_MOUSE_BUTTON_5,
+    ...[...Array(deviceMetadata.numLayers)].map((_, i) => MO(i)),
+    ...[...Array(deviceMetadata.numProfiles)].map((_, i) => PF(i)),
+    Keycode.SP_KEY_LOCK,
+    Keycode.SP_LAYER_LOCK,
+    Keycode.SP_PROFILE_SWAP,
+    Keycode.SP_PROFILE_NEXT,
   ],
-}
+})

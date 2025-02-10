@@ -16,20 +16,20 @@
 import { DeviceMetadata } from "./device-metadata"
 
 export enum DeviceRequest {
-  CLASS_REQUEST_FIRMWARE_VERSION = 0,
-  CLASS_REQUEST_REBOOT,
-  CLASS_REQUEST_BOOTLOADER,
-  CLASS_REQUEST_FACTORY_RESET,
-  CLASS_REQUEST_RECALIBRATE,
-  CLASS_REQUEST_DEBUG,
-  CLASS_REQUEST_GET_PROFILE_NUM,
+  FIRMWARE_VERSION = 0,
+  REBOOT,
+  BOOTLOADER,
+  FACTORY_RESET,
+  RECALIBRATE,
+  DEBUG,
+  GET_PROFILE,
   // Requests below use `wValue` to specify the profile number
-  CLASS_REQUEST_GET_KEYMAP,
-  CLASS_REQUEST_SET_KEYMAP,
-  CLASS_REQUEST_GET_ACTUATIONS,
-  CLASS_REQUEST_SET_ACTUATIONS,
-  CLASS_REQUEST_GET_AKC,
-  CLASS_REQUEST_SET_AKC,
+  GET_KEYMAP,
+  SET_KEYMAP,
+  GET_ACTUATION_MAP,
+  SET_ACTUATION_MAP,
+  GET_ADVANCED_KEYS,
+  SET_ADVANCED_KEYS,
 }
 
 export type DeviceState = {
@@ -50,69 +50,69 @@ export type DeviceActuation = {
   continuous: boolean
 }
 
-export enum DeviceAKCType {
-  AKC_NONE = 0,
-  AKC_NULL_BIND,
-  AKC_DKS,
-  AKC_TAP_HOLD,
-  AKC_TOGGLE,
+export enum DeviceAKType {
+  NONE = 0,
+  NULL_BIND,
+  DYNAMIC_KEYSTROKE,
+  TAP_HOLD,
+  TOGGLE,
 }
 
-export type DeviceAKCNone = {
-  type: DeviceAKCType.AKC_NONE
+export type DeviceAKNone = {
+  type: DeviceAKType.NONE
 }
 
-export enum DeviceAKCNullBindBehavior {
-  NULL_BIND_DISTANCE = 0,
-  NULL_BIND_LAST,
-  NULL_BIND_PRIMARY,
-  NULL_BIND_SECONDARY,
-  NULL_BIND_NEUTRAL,
+export enum DeviceNullBindBehavior {
+  LAST = 0,
+  PRIMARY,
+  SECONDARY,
+  NEUTRAL,
+  DISTANCE,
 }
 
-export type DeviceAKCNullBind = {
-  type: DeviceAKCType.AKC_NULL_BIND
+export type DeviceAKNullBind = {
+  type: DeviceAKType.NULL_BIND
   secondaryKey: number
-  behavior: DeviceAKCNullBindBehavior
+  behavior: DeviceNullBindBehavior
   bottomOutPoint: number
 }
 
-export enum DeviceAKCDKSAction {
-  DKS_HOLD = 0,
-  DKS_PRESS,
-  DKS_RELEASE,
-  DKS_TAP,
+export enum DeviceDKSAction {
+  HOLD = 0,
+  PRESS,
+  RELEASE,
+  TAP,
 }
 
-export type DeviceAKCDKS = {
-  type: DeviceAKCType.AKC_DKS
+export type DeviceAKDynamicKeystroke = {
+  type: DeviceAKType.DYNAMIC_KEYSTROKE
   keycodes: number[]
-  bitmap: DeviceAKCDKSAction[][]
+  bitmap: DeviceDKSAction[][]
   bottomOutPoint: number
 }
 
-export type DeviceAKCTapHold = {
-  type: DeviceAKCType.AKC_TAP_HOLD
+export type DeviceAKTapHold = {
+  type: DeviceAKType.TAP_HOLD
   tapKeycode: number
   holdKeycode: number
   tappingTerm: number
 }
 
-export type DeviceAKCToggle = {
-  type: DeviceAKCType.AKC_TOGGLE
+export type DeviceAKToggle = {
+  type: DeviceAKType.TOGGLE
   keycode: number
   tappingTerm: number
 }
 
-export type DeviceAKC = {
+export type DeviceAdvancedKey = {
   layer: number
   key: number
-  akc:
-    | DeviceAKCNone
-    | DeviceAKCNullBind
-    | DeviceAKCDKS
-    | DeviceAKCTapHold
-    | DeviceAKCToggle
+  ak:
+    | DeviceAKNone
+    | DeviceAKNullBind
+    | DeviceAKDynamicKeystroke
+    | DeviceAKTapHold
+    | DeviceAKToggle
 }
 
 export type DeviceAction = {
@@ -124,31 +124,34 @@ export type DeviceAction = {
   factoryReset(): Promise<void>
   recalibrate(): Promise<void>
   debug(): Promise<DeviceDebugInfo[]>
-  getProfileNum(): Promise<number>
-  getKeymap(profileNum: number): Promise<number[][]>
-  setKeymap(profileNum: number, keymap: number[][]): Promise<void>
-  getActuations(profileNum: number): Promise<DeviceActuation[]>
-  setActuations(
-    profileNum: number,
-    actuations: DeviceActuation[],
+  getProfile(): Promise<number>
+  getKeymap(profile: number): Promise<number[][]>
+  setKeymap(profile: number, keymap: number[][]): Promise<void>
+  getActuationMap(profile: number): Promise<DeviceActuation[]>
+  setActuationMap(
+    profile: number,
+    actuationMap: DeviceActuation[],
   ): Promise<void>
-  getAKC(profileNum: number): Promise<DeviceAKC[]>
-  setAKC(profileNum: number, akc: DeviceAKC[]): Promise<void>
+  getAdvancedKeys(profile: number): Promise<DeviceAdvancedKey[]>
+  setAdvancedKeys(
+    profile: number,
+    advancedKeys: DeviceAdvancedKey[],
+  ): Promise<void>
 }
 
 export type Device = DeviceState & DeviceAction
 
-export type DeviceAKCMetadata = {
-  type: DeviceAKCType
+export type DeviceAdvancedKeyMetadata = {
+  type: DeviceAKType
   name: string
   description: string
   numKeys: number
   keycodes: number[]
-  create(layer: number, keys: number[], keymap: number[]): DeviceAKC
+  create(layer: number, keys: number[], keymap: number[]): DeviceAdvancedKey
 }
 
-export type DeviceAKCNullBindBehaviorMetadata = {
-  behavior: DeviceAKCNullBindBehavior
+export type DeviceNullBindBehaviorMetadata = {
+  behavior: DeviceNullBindBehavior
   name: string
   description: string
 }

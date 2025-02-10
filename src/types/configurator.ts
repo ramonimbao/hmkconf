@@ -15,7 +15,7 @@
 
 export type ConfiguratorState = {
   tab: string
-  profileNum: number
+  profile: number
   remap: {
     layer: number
     key: number | null
@@ -26,14 +26,14 @@ export type ConfiguratorState = {
   }
   advancedKeys: {
     layer: number
-    akcIndex: number | null
+    akIndex: number | null
   }
 }
 
 export type ConfiguratorAction = {
   reset(): void
   setTab(tab: string): void
-  setProfileNum(profileNum: number): void
+  setProfile(profile: number): void
   remap: {
     setLayer(layer: number): void
     setKey(key: number | null): void
@@ -44,7 +44,7 @@ export type ConfiguratorAction = {
   }
   advancedKeys: {
     setLayer(layer: number): void
-    setAKCIndex(akcIndex: number | null): void
+    setAKIndex(akIndex: number | null): void
   }
 }
 
