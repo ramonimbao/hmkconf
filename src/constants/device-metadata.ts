@@ -13,6 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { GAUSS60 } from "./devices/GAUSS60"
 import { GAUSS64 } from "./devices/GAUSS64"
 
-export const DEVICE_METADATA = [GAUSS64]
+export const DEVICE_METADATA = [GAUSS64, GAUSS60]
