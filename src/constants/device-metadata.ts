@@ -15,5 +15,6 @@
 
 import { GAUSS60 } from "./devices/GAUSS60"
 import { GAUSS64 } from "./devices/GAUSS64"
+import { HE60 } from "./devices/HE60"
 
-export const DEVICE_METADATA = [GAUSS64, GAUSS60]
+export const DEVICE_METADATA = [GAUSS64, GAUSS60, HE60]
