@@ -120,9 +120,9 @@ export const HE60: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_0,
       Keycode.KC_EQL,
       Keycode.KC_MINS,
-      Keycode.KC_BSLS,
       Keycode._______,
-      Keycode.KC_DEL, // Row 1
+      Keycode.KC_BSPC,
+      Keycode._______, // Row 1
       Keycode.KC_TAB,
       Keycode.KC_Q,
       Keycode.KC_W,
@@ -136,7 +136,7 @@ export const HE60: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_P,
       Keycode.KC_LBRC,
       Keycode.KC_RBRC,
-      Keycode.KC_BSPC, // Row 2
+      Keycode.KC_BSLS, // Row 2
       Keycode.KC_CAPS,
       Keycode.KC_A,
       Keycode.KC_S,
@@ -190,8 +190,8 @@ export const HE60: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_F11,
       Keycode.KC_F12,
       Keycode._______,
-      Keycode._______,
-      Keycode.KC_INS, // Row 1
+      Keycode.KC_DEL,
+      Keycode._______, // Row 1
       Keycode.KC_PSCR,
       Keycode._______,
       Keycode.KC_PGUP,
