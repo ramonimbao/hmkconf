@@ -14,7 +14,7 @@
  */
 
 import { DEFAULT_ACTUATION } from "@/constants/devices"
-import { GAUSS64 } from "@/constants/devices/GAUSS64"
+import { HE60 } from "@/constants/devices/HE60"
 import {
   DeviceAction,
   DeviceActuation,
@@ -38,15 +38,15 @@ type DemoDevice = DemoDeviceState & DeviceAction
 
 const initialState: DemoDeviceState = {
   id: "DEMO_DEVICE",
-  metadata: GAUSS64,
+  metadata: HE60,
   isDemo: true,
   calibration: {
     initialRestValue: 0,
     initialBottomOutThreshold: 0,
   },
-  profile: Array.from({ length: GAUSS64.numProfiles }, () => ({
-    keymap: GAUSS64.defaultKeymap,
-    actuationMap: Array(GAUSS64.numKeys).fill(DEFAULT_ACTUATION),
+  profile: Array.from({ length: HE60.numProfiles }, () => ({
+    keymap: HE60.defaultKeymap,
+    actuationMap: Array(HE60.numKeys).fill(DEFAULT_ACTUATION),
     advancedKeys: [],
   })),
 }
@@ -76,7 +76,7 @@ export const useDemoDevice = create<DemoDevice>()(
     async recalibrate() {},
 
     async debug() {
-      return Array(GAUSS64.numKeys).fill({
+      return Array(HE60.numKeys).fill({
         adcValue: 0,
         distance: 0,
       })

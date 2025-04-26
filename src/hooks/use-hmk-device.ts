@@ -14,7 +14,7 @@
  */
 
 import { DEVICE_METADATA } from "@/constants/device-metadata"
-import { GAUSS64 } from "@/constants/devices/GAUSS64"
+import { HE60 } from "@/constants/devices/HE60"
 import { TaskQueue } from "@/lib/task-queue"
 import { displayUInt16, isWebUsbSupported } from "@/lib/utils"
 import {
@@ -55,7 +55,7 @@ type HMKDevice = HMKDeviceState & DeviceAction
 
 const initialState: HMKDeviceState = {
   id: "HMK_DEVICE",
-  metadata: GAUSS64,
+  metadata: HE60,
   isDemo: false,
   status: "disconnected",
 }
