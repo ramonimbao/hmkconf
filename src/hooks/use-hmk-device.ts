@@ -271,6 +271,33 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     }))
   },
 
+  async getCalibration() {
+    const device = get()
+    const response = await receiveRaw(
+      device,
+      DeviceRequest.GET_CALIBRATION,
+      0,
+      4,
+    )
+
+    return {
+      initialRestValue: response.getUint16(0, true),
+      initialBottomOutThreshold: response.getUint16(2, true),
+    }
+  },
+
+  async setCalibration(calibration) {
+    const device = get()
+    const payload = new Uint8Array([
+      calibration.initialRestValue & 0xff,
+      (calibration.initialRestValue >> 8) & 0xff,
+      calibration.initialBottomOutThreshold & 0xff,
+      (calibration.initialBottomOutThreshold >> 8) & 0xff,
+    ])
+
+    await sendRaw(device, DeviceRequest.SET_CALIBRATION, 0, payload)
+  },
+
   async getProfile() {
     const response = await receiveRaw(get(), DeviceRequest.GET_PROFILE, 0, 1)
 

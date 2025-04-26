@@ -22,6 +22,8 @@ export enum DeviceRequest {
   FACTORY_RESET,
   RECALIBRATE,
   DEBUG,
+  GET_CALIBRATION,
+  SET_CALIBRATION,
   GET_PROFILE,
   // Requests below use `wValue` to specify the profile number
   GET_KEYMAP,
@@ -41,6 +43,11 @@ export type DeviceState = {
 export type DeviceDebugInfo = {
   adcValue: number
   distance: number
+}
+
+export type DeviceCalibration = {
+  initialRestValue: number
+  initialBottomOutThreshold: number
 }
 
 export type DeviceActuation = {
@@ -124,6 +131,8 @@ export type DeviceAction = {
   factoryReset(): Promise<void>
   recalibrate(): Promise<void>
   debug(): Promise<DeviceDebugInfo[]>
+  getCalibration(): Promise<DeviceCalibration>
+  setCalibration(calibration: DeviceCalibration): Promise<void>
   getProfile(): Promise<number>
   getKeymap(profile: number): Promise<number[][]>
   setKeymap(profile: number, keymap: number[][]): Promise<void>

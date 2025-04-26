@@ -19,12 +19,14 @@ import {
   DeviceAction,
   DeviceActuation,
   DeviceAdvancedKey,
+  DeviceCalibration,
   DeviceState,
 } from "@/types/devices"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
 
 type DemoDeviceState = DeviceState & {
+  calibration: DeviceCalibration
   profile: {
     keymap: number[][]
     actuationMap: DeviceActuation[]
@@ -38,6 +40,10 @@ const initialState: DemoDeviceState = {
   id: "DEMO_DEVICE",
   metadata: GAUSS64,
   isDemo: true,
+  calibration: {
+    initialRestValue: 0,
+    initialBottomOutThreshold: 0,
+  },
   profile: Array.from({ length: GAUSS64.numProfiles }, () => ({
     keymap: GAUSS64.defaultKeymap,
     actuationMap: Array(GAUSS64.numKeys).fill(DEFAULT_ACTUATION),
@@ -73,6 +79,16 @@ export const useDemoDevice = create<DemoDevice>()(
       return Array(GAUSS64.numKeys).fill({
         adcValue: 0,
         distance: 0,
+      })
+    },
+
+    async getCalibration() {
+      return get().calibration
+    },
+
+    async setCalibration(calibration: DeviceCalibration) {
+      set((state) => {
+        state.calibration = calibration
       })
     },
 
