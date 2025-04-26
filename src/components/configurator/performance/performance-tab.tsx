@@ -15,7 +15,7 @@
 
 "use client"
 
-import { useGetActuationMap } from "@/api/use-get-actuation_map"
+import { useGetActuationMap } from "@/api/use-get-actuation-map"
 import { useGetKeymapWithAdvancedKeys } from "@/api/use-get-keymap-with-advanced-keys"
 import { useSetActuationMap } from "@/api/use-set-actuation-map"
 import { useConfigurator } from "@/components/providers/configurator-provider"

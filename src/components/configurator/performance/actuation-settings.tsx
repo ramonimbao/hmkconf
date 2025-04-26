@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useGetActuationMap } from "@/api/use-get-actuation_map"
+import { useGetActuationMap } from "@/api/use-get-actuation-map"
 import { useSetActuationMap } from "@/api/use-set-actuation-map"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import {
