@@ -41,8 +41,18 @@ export function RemapTab() {
   } = useConfigurator()
   const { metadata } = useDevice()
 
+  const { isSuccess: isProfile0Success, data: profile0Keymap } = useGetKeymap(0)
   const { isSuccess, data: keymap } = useGetKeymap(profile)
   const { mutate: setKeymap } = useSetKeymap(profile)
+
+  const cloneProfile0Keymap = () => {
+    if (!isProfile0Success) {
+      return
+    }
+
+    setKeymap(profile0Keymap)
+    setKey(null)
+  }
 
   const resetThisLayerKeymap = () => {
     if (!isSuccess) {
@@ -98,13 +108,20 @@ export function RemapTab() {
       <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
           <LayerSelector layer={layer} setLayer={setLayer} />
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={resetThisLayerKeymap}
-          >
-            Reset This Layer
-          </Button>
+          <div className="flex items-center gap-2">
+            {profile !== 0 && (
+              <Button variant="outline" size="sm" onClick={cloneProfile0Keymap}>
+                Clone Profile 0
+              </Button>
+            )}
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={resetThisLayerKeymap}
+            >
+              Reset This Layer
+            </Button>
+          </div>
         </KeyboardEditorHeader>
         {!isSuccess ? (
           <KeyboardEditorSkeleton />
