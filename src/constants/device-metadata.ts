@@ -14,5 +14,6 @@
  */
 
 import { HE60 } from "./devices/HE60"
+import { VALOR } from "./devices/Valor"
 
-export const DEVICE_METADATA = [HE60]
+export const DEVICE_METADATA = [HE60, VALOR]
