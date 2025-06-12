@@ -18,7 +18,7 @@
 import { useHMKDevice } from "@/hooks/use-hmk-device"
 import { createConfigurator } from "@/lib/create-configurator"
 import { isWebUsbSupported } from "@/lib/utils"
-import { useLayoutEffect } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import { Configurator } from "./configurator/configurator"
 import { ConfiguratorLayout } from "./configurator/layout"
 import { ConfiguratorProvider } from "./providers/configurator-provider"
@@ -31,11 +31,17 @@ export function AppConfigurator() {
   const { reset } = useAppConfigurator()
   const hmkDevice = useHMKDevice()
 
+  const [webUsbSupported, setWebUsbSupported] = useState(false)
+
   useLayoutEffect(() => {
     if (hmkDevice.status === "connected") {
       reset()
     }
   }, [hmkDevice.status, reset])
+
+  useEffect(() => {
+    setWebUsbSupported(isWebUsbSupported())
+  }, [])
 
   return (
     <ConfiguratorProvider configurator={useAppConfigurator()}>
@@ -46,7 +52,7 @@ export function AppConfigurator() {
           </DeviceProvider>
         ) : (
           <div className="flex w-full flex-1 flex-col items-center justify-center p-12">
-            {isWebUsbSupported() ? (
+            {webUsbSupported ? (
               <Button onClick={hmkDevice.connect}>Authorize Device</Button>
             ) : (
               <p>WebUSB is not supported in this browser.</p>
