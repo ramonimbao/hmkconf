@@ -15,8 +15,6 @@
 
 import { AppConfigurator } from "@/components/app-configurator"
 
-export const prerender = false;
-
 export default function App() {
   return <AppConfigurator />
 }
