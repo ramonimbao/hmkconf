@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client";
+"use client"
 
 import { AppConfigurator } from "@/components/app-configurator"
 
