@@ -75,7 +75,7 @@ export const useDemoDevice = create<DemoDevice>()(
 
     async recalibrate() {},
 
-    async debug() {
+    async keyInfo() {
       return Array(DEMO_DEVICE.numKeys).fill({
         adcValue: 0,
         distance: 0,

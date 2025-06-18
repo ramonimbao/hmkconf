@@ -15,7 +15,7 @@
 
 "use client"
 
-import { useDebug } from "@/api/use-debug"
+import { useKeyInfo } from "@/api/use-key-info"
 import { useRecalibrate } from "@/api/use-recalibrate"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -39,7 +39,7 @@ import {
 } from "../common/keyboard-editor"
 
 export function DebugTab() {
-  const { isSuccess, data: debugInfo } = useDebug()
+  const { isSuccess: isKeyInfoSuccess, data: keyInfo } = useKeyInfo()
   const { mutate: recalibrate } = useRecalibrate()
 
   return (
@@ -64,7 +64,7 @@ export function DebugTab() {
           </TooltipProvider>
         </KeyboardEditorHeader>
         <KeyboardEditorKeyboard
-          disabled={!isSuccess}
+          disabled={!isKeyInfoSuccess}
           elt={(key) => (
             <div
               className={cn(
@@ -72,10 +72,10 @@ export function DebugTab() {
                 "size-full flex-col gap-0 text-xs",
               )}
             >
-              {isSuccess && (
+              {isKeyInfoSuccess && (
                 <>
-                  <p>{debugInfo[key].adcValue}</p>
-                  <p>{displayDistance(debugInfo[key].distance)}</p>
+                  <p>{keyInfo[key].adcValue}</p>
+                  <p>{displayDistance(keyInfo[key].distance)}</p>
                 </>
               )}
             </div>

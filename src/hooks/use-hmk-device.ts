@@ -256,11 +256,11 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     await sendRaw(get(), DeviceRequest.RECALIBRATE, 0)
   },
 
-  async debug() {
+  async keyInfo() {
     const device = get()
     const response = await receiveRaw(
       device,
-      DeviceRequest.DEBUG,
+      DeviceRequest.KEY_INFO,
       0,
       device.metadata.numKeys * 3,
     )
