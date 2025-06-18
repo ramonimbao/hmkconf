@@ -25,6 +25,7 @@ export enum DeviceRequest {
   GET_CALIBRATION,
   SET_CALIBRATION,
   GET_PROFILE,
+  LOG,
   // Requests below use `wValue` to specify the profile number
   GET_KEYMAP = 128,
   SET_KEYMAP,
@@ -134,6 +135,7 @@ export type DeviceAction = {
   getCalibration(): Promise<DeviceCalibration>
   setCalibration(calibration: DeviceCalibration): Promise<void>
   getProfile(): Promise<number>
+  log(): Promise<string>
   getKeymap(profile: number): Promise<number[][]>
   setKeymap(profile: number, keymap: number[][]): Promise<void>
   getActuationMap(profile: number): Promise<DeviceActuation[]>
