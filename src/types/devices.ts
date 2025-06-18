@@ -26,7 +26,7 @@ export enum DeviceRequest {
   SET_CALIBRATION,
   GET_PROFILE,
   // Requests below use `wValue` to specify the profile number
-  GET_KEYMAP,
+  GET_KEYMAP = 128,
   SET_KEYMAP,
   GET_ACTUATION_MAP,
   SET_ACTUATION_MAP,
