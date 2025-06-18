@@ -1384,6 +1384,14 @@ export const KEYCODE_METADATA: KeycodeMetadata[] = [
     category: "Special",
   },
   {
+    id: "Enter Bootloader",
+    tooltip: "Enter bootloader mode",
+    display: "Boot",
+    keycode: Keycode.SP_BOOT,
+    webCodes: [],
+    category: "Special",
+  },
+  {
     id: "Null Bind Primary",
     display: (
       <>
@@ -1632,5 +1640,6 @@ export const categoryToKeycodes = (
     Keycode.SP_LAYER_LOCK,
     Keycode.SP_PROFILE_SWAP,
     Keycode.SP_PROFILE_NEXT,
+    Keycode.SP_BOOT,
   ],
 })
