@@ -128,6 +128,7 @@ const receiveRaw = (
   request: number,
   value: number,
   length: number,
+  strictLength = true,
 ) => {
   if (device.status !== "connected") {
     throw new Error("Device not connected")
@@ -154,7 +155,7 @@ const receiveRaw = (
       if (result.status !== "ok" || result.data === undefined) {
         throw new Error(`Failed to receive request: ${result.status}`)
       }
-      if (result.data.byteLength !== length) {
+      if (strictLength && result.data.byteLength !== length) {
         throw new Error(
           `Invalid response length: expect ${length}, got ${result.data.byteLength}`,
         )
@@ -256,11 +257,11 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     await sendRaw(get(), DeviceRequest.RECALIBRATE, 0)
   },
 
-  async debug() {
+  async keyInfo() {
     const device = get()
     const response = await receiveRaw(
       device,
-      DeviceRequest.DEBUG,
+      DeviceRequest.KEY_INFO,
       0,
       device.metadata.numKeys * 3,
     )
@@ -302,6 +303,12 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
     const response = await receiveRaw(get(), DeviceRequest.GET_PROFILE, 0, 1)
 
     return response.getUint8(0)
+  },
+
+  async log() {
+    const response = await receiveRaw(get(), DeviceRequest.LOG, 0, 1024, false)
+
+    return new TextDecoder().decode(response).split("\0")[0]
   },
 
   async getKeymap(profile) {

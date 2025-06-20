@@ -206,7 +206,7 @@ export const M256_WHE: DeviceMetadata = deviceMetadataSchema.parse({
       PF(1),
       PF(2),
       PF(3),
-      Keycode._______,
+      Keycode.SP_BOOT,
       Keycode._______, // Row 2
       Keycode._______,
       Keycode.KC_HOME,

@@ -15,7 +15,8 @@
 
 "use client"
 
-import { useDebug } from "@/api/use-debug"
+import { useKeyInfo } from "@/api/use-key-info"
+import { useLog } from "@/api/use-log"
 import { useRecalibrate } from "@/api/use-recalibrate"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/tooltip"
 import { cn, displayDistance } from "@/lib/utils"
 import { TriangleAlert } from "lucide-react"
+import { useEffect } from "react"
 import {
   KeyTesterKeyPress,
   KeyTesterKeyRelease,
@@ -39,8 +41,15 @@ import {
 } from "../common/keyboard-editor"
 
 export function DebugTab() {
-  const { isSuccess, data: debugInfo } = useDebug()
+  const { isSuccess: isKeyInfoSuccess, data: keyInfo } = useKeyInfo()
+  const { isSuccess: isLogSuccess, data: log } = useLog()
   const { mutate: recalibrate } = useRecalibrate()
+
+  useEffect(() => {
+    if (isLogSuccess && log) {
+      console.log(log)
+    }
+  }, [isLogSuccess, log])
 
   return (
     <KeyboardEditor>
@@ -64,7 +73,7 @@ export function DebugTab() {
           </TooltipProvider>
         </KeyboardEditorHeader>
         <KeyboardEditorKeyboard
-          disabled={!isSuccess}
+          disabled={!isKeyInfoSuccess}
           elt={(key) => (
             <div
               className={cn(
@@ -72,10 +81,10 @@ export function DebugTab() {
                 "size-full flex-col gap-0 text-xs",
               )}
             >
-              {isSuccess && (
+              {isKeyInfoSuccess && (
                 <>
-                  <p>{debugInfo[key].adcValue}</p>
-                  <p>{displayDistance(debugInfo[key].distance)}</p>
+                  <p>{keyInfo[key].adcValue}</p>
+                  <p>{displayDistance(keyInfo[key].distance)}</p>
                 </>
               )}
             </div>

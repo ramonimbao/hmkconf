@@ -205,7 +205,7 @@ export const HE60: DeviceMetadata = deviceMetadataSchema.parse({
       PF(1),
       PF(2),
       PF(3),
-      Keycode._______, // Row 2
+      Keycode.SP_BOOT, // Row 2
       Keycode._______,
       Keycode.KC_HOME,
       Keycode.KC_PGDN,

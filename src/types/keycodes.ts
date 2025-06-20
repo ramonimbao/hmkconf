@@ -192,6 +192,7 @@ export enum Keycode {
   SP_LAYER_LOCK = 0xd1,
   SP_PROFILE_SWAP = 0xd2,
   SP_PROFILE_NEXT = 0xd3,
+  SP_BOOT = 0xd4,
 
   XXXXXXX = KC_NO,
   _______ = KC_TRANSPARENT,

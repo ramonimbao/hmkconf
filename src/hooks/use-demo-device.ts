@@ -75,7 +75,7 @@ export const useDemoDevice = create<DemoDevice>()(
 
     async recalibrate() {},
 
-    async debug() {
+    async keyInfo() {
       return Array(DEMO_DEVICE.numKeys).fill({
         adcValue: 0,
         distance: 0,
@@ -94,6 +94,10 @@ export const useDemoDevice = create<DemoDevice>()(
 
     async getProfile() {
       return 0
+    },
+
+    async log() {
+      return ""
     },
 
     async getKeymap(profile) {
