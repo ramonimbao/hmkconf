@@ -34,8 +34,10 @@ export function AppConfigurator() {
   useLayoutEffect(() => {
     if (hmkDevice.status === "connected") {
       reset()
+    } else if (isWebUsbSupported()) {
+      hmkDevice.connect()
     }
-  }, [hmkDevice.status, reset])
+  }, [hmkDevice, reset])
 
   return (
     <ConfiguratorProvider configurator={useAppConfigurator()}>
