@@ -18,6 +18,7 @@
 import { useKeyInfo } from "@/api/use-key-info"
 import { useLog } from "@/api/use-log"
 import { useRecalibrate } from "@/api/use-recalibrate"
+import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Tooltip,
@@ -39,10 +40,15 @@ import {
   KeyboardEditorKeyboard,
   KeyboardEditorLayout,
 } from "../common/keyboard-editor"
+import { Switch } from "../common/switch"
 
 export function DebugTab() {
+  const {
+    debug: { logEnabled, setLogEnabled },
+  } = useConfigurator()
+
   const { isSuccess: isKeyInfoSuccess, data: keyInfo } = useKeyInfo()
-  const { isSuccess: isLogSuccess, data: log } = useLog()
+  const { isSuccess: isLogSuccess, data: log } = useLog(logEnabled)
   const { mutate: recalibrate } = useRecalibrate()
 
   useEffect(() => {
@@ -93,19 +99,28 @@ export function DebugTab() {
       </KeyboardEditorLayout>
       <KeyboardEditorLayout>
         <div className="mx-auto flex w-full max-w-5xl">
-          <div className="flex flex-1 flex-col p-4">
-            <p className="font-semibold leading-none tracking-tight">
-              Recalibrate
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Recalibration will erase and resample the stored minimum and
-              maximum ADC values for each switch. Ensure that all keys are fully
-              released before recalibrating, and press each key down completely
-              once calibration is finished.
-            </p>
-            <div className="mt-3">
-              <Button onClick={() => recalibrate()}>Recalibrate</Button>
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <div>
+              <p className="font-semibold leading-none tracking-tight">
+                Recalibrate
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Recalibration will erase and resample the stored minimum and
+                maximum ADC values for each switch. Ensure that all keys are
+                fully released before recalibrating, and press each key down
+                completely once calibration is finished.
+              </p>
+              <div className="mt-3">
+                <Button onClick={() => recalibrate()}>Recalibrate</Button>
+              </div>
             </div>
+            <Switch
+              id="logging"
+              title="Logging"
+              description="Continuously fetches log messages from the keyboard, and displays them in the console. Only enable this if logging is enabled in the firmware. Otherwise, it will block other operations."
+              checked={logEnabled}
+              onCheckedChange={setLogEnabled}
+            />
           </div>
           <div className="grid w-80 shrink-0 gap-4 p-4">
             <KeyTesterProvider>

@@ -18,12 +18,13 @@ import { useQuery } from "@tanstack/react-query"
 
 const REFETCH_INTERVAL = 1000 / 30
 
-export function useLog() {
+export function useLog(enabled: boolean) {
   const { id, log } = useDevice()
 
   return useQuery({
     queryKey: [id, "log"],
     queryFn: log,
     refetchInterval: REFETCH_INTERVAL,
+    enabled,
   })
 }

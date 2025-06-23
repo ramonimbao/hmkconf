@@ -28,6 +28,9 @@ export type ConfiguratorState = {
     layer: number
     akIndex: number | null
   }
+  debug: {
+    logEnabled: boolean
+  }
 }
 
 export type ConfiguratorAction = {
@@ -45,6 +48,9 @@ export type ConfiguratorAction = {
   advancedKeys: {
     setLayer(layer: number): void
     setAKIndex(akIndex: number | null): void
+  }
+  debug: {
+    setLogEnabled(enabled: boolean): void
   }
 }
 
