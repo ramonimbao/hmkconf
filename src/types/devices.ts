@@ -33,6 +33,8 @@ export enum DeviceRequest {
   SET_ACTUATION_MAP,
   GET_ADVANCED_KEYS,
   SET_ADVANCED_KEYS,
+  GET_TICK_RATE,
+  SET_TICK_RATE,
 }
 
 export type DeviceState = {
@@ -148,6 +150,8 @@ export type DeviceAction = {
     profile: number,
     advancedKeys: DeviceAdvancedKey[],
   ): Promise<void>
+  getTickRate(profile: number): Promise<number>
+  setTickRate(profile: number, tickRate: number): Promise<void>
 }
 
 export type Device = DeviceState & DeviceAction

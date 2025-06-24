@@ -26,6 +26,7 @@ import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
 
 type DemoDeviceState = DeviceState & {
+  tickRate: number
   calibration: DeviceCalibration
   profile: {
     keymap: number[][]
@@ -40,6 +41,7 @@ const initialState: DemoDeviceState = {
   id: "DEMO_DEVICE",
   metadata: DEMO_DEVICE,
   isDemo: true,
+  tickRate: 30,
   calibration: {
     initialRestValue: 0,
     initialBottomOutThreshold: 0,
@@ -98,6 +100,16 @@ export const useDemoDevice = create<DemoDevice>()(
 
     async log() {
       return ""
+    },
+
+    async getTickRate() {
+      return get().tickRate
+    },
+
+    async setTickRate(tickRate) {
+      set((state) => {
+        state.tickRate = tickRate
+      })
     },
 
     async getKeymap(profile) {

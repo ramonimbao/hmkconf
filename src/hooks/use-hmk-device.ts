@@ -517,4 +517,24 @@ export const useHMKDevice = create<HMKDevice>()((set, get) => ({
 
     await sendRaw(device, DeviceRequest.SET_ADVANCED_KEYS, profile, payload)
   },
+
+  async getTickRate(profile) {
+    const response = await receiveRaw(
+      get(),
+      DeviceRequest.GET_TICK_RATE,
+      profile,
+      1,
+    )
+
+    return response.getUint8(0)
+  },
+
+  async setTickRate(profile, tickRate) {
+    await sendRaw(
+      get(),
+      DeviceRequest.SET_TICK_RATE,
+      profile,
+      new Uint8Array([tickRate]),
+    )
+  },
 }))

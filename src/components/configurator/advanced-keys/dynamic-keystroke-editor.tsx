@@ -37,6 +37,7 @@ import {
   DynamicKeystrokeSliderHeader,
 } from "./dynamic-keystroke-slider"
 import { KeyTesterTab } from "./key-tester-tab"
+import { TickRateTab } from "./tick-rate-tab"
 
 export function DynamicKeystrokeEditor() {
   const { profile } = useConfigurator()
@@ -158,6 +159,7 @@ export function DynamicKeystrokeEditor() {
             <TabsTrigger value="bindings">Bindings</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
             <TabsTrigger value="key-tester">Key Tester</TabsTrigger>
+            <TabsTrigger value="tick-rate">Tick Rate</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="bindings">
@@ -204,6 +206,9 @@ export function DynamicKeystrokeEditor() {
         </TabsContent>
         <TabsContent value="key-tester">
           <KeyTesterTab />
+        </TabsContent>
+        <TabsContent value="tick-rate">
+          <TickRateTab />
         </TabsContent>
       </Tabs>
     </div>

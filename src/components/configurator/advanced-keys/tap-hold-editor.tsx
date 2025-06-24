@@ -29,6 +29,7 @@ import { KeycodeButton } from "../common/keycode-button"
 import { KeycodeSelector } from "../common/keycode-selector"
 import { useAdvancedKeysEditor } from "./advanced-keys-editor"
 import { KeyTesterTab } from "./key-tester-tab"
+import { TickRateTab } from "./tick-rate-tab"
 
 export function TapHoldEditor() {
   const { profile } = useConfigurator()
@@ -127,6 +128,7 @@ export function TapHoldEditor() {
           <TabsList>
             <TabsTrigger value="bindings">Bindings</TabsTrigger>
             <TabsTrigger value="key-tester">Key Tester</TabsTrigger>
+            <TabsTrigger value="tick-rate">Tick Rate</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="bindings">
@@ -146,6 +148,9 @@ export function TapHoldEditor() {
         </TabsContent>
         <TabsContent value="key-tester">
           <KeyTesterTab />
+        </TabsContent>
+        <TabsContent value="tick-rate">
+          <TickRateTab />
         </TabsContent>
       </Tabs>
     </div>
