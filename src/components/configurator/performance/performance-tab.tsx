@@ -23,7 +23,6 @@ import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { DEFAULT_ACTUATION } from "@/constants/devices"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
-import { produce } from "immer"
 import { useMemo } from "react"
 import {
   KeyboardEditor,
@@ -58,13 +57,18 @@ export function PerformanceTab() {
       return
     }
 
-    setActuationMap(
-      produce(actuationMap, (draft) => {
-        for (const key of allKeys) {
-          draft[key] = DEFAULT_ACTUATION
-        }
-      }),
-    )
+    const minKey = Math.min(...allKeys)
+    const maxKey = Math.max(...allKeys)
+    const newActuationMap = actuationMap.slice(minKey, maxKey + 1)
+
+    for (const key of allKeys) {
+      newActuationMap[key - minKey] = DEFAULT_ACTUATION
+    }
+
+    setActuationMap({
+      start: minKey,
+      actuationMap: newActuationMap,
+    })
     setKeys([])
   }
 

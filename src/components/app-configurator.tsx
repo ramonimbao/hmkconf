@@ -17,7 +17,8 @@
 
 import { useHMKDevice } from "@/hooks/use-hmk-device"
 import { createConfigurator } from "@/lib/create-configurator"
-import { isWebUsbSupported } from "@/lib/utils"
+import { isWebHIDSupported } from "@/lib/utils"
+import { useQueryClient } from "@tanstack/react-query"
 import { useLayoutEffect } from "react"
 import { Configurator } from "./configurator/configurator"
 import { ConfiguratorLayout } from "./configurator/layout"
@@ -31,13 +32,16 @@ export function AppConfigurator() {
   const { reset } = useAppConfigurator()
   const hmkDevice = useHMKDevice()
 
+  const queryClient = useQueryClient()
+
   useLayoutEffect(() => {
     if (hmkDevice.status === "connected") {
+      queryClient.clear()
       reset()
-    } else if (isWebUsbSupported()) {
+    } else if (isWebHIDSupported()) {
       hmkDevice.connect()
     }
-  }, [hmkDevice, reset])
+  }, [hmkDevice, queryClient, reset])
 
   return (
     <ConfiguratorProvider configurator={useAppConfigurator()}>
@@ -48,10 +52,10 @@ export function AppConfigurator() {
           </DeviceProvider>
         ) : (
           <div className="flex w-full flex-1 flex-col items-center justify-center p-12">
-            {isWebUsbSupported() ? (
+            {isWebHIDSupported() ? (
               <Button onClick={hmkDevice.connect}>Authorize Device</Button>
             ) : (
-              <p>WebUSB is not supported in this browser.</p>
+              <p>WebHID is not supported in this browser.</p>
             )}
           </div>
         )}

@@ -42,11 +42,14 @@ export function TapHoldEditor() {
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
   const updateAdvancedKey = (ak: DeviceAKTapHold) =>
-    setAdvancedKeys(
-      produce(advancedKeys, (draft) => {
-        draft[akIndex].ak = ak
-      }),
-    )
+    setAdvancedKeys({
+      start: akIndex,
+      advancedKeys: [
+        produce(advancedKeys[akIndex], (draft) => {
+          draft.ak = ak
+        }),
+      ],
+    })
 
   useEffect(() => setUIAdvancedKey(ak), [ak])
 

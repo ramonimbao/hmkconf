@@ -54,18 +54,20 @@ export function DynamicKeystrokeEditor() {
 
   const updateActuation = (actuation: DeviceActuation) =>
     isSuccess &&
-    setActuationMap(
-      produce(actuationMap, (draft) => {
-        draft[advancedKeys[akIndex].key] = actuation
-      }),
-    )
+    setActuationMap({
+      start: advancedKeys[akIndex].key,
+      actuationMap: [actuation],
+    })
 
   const updateAdvancedKey = (ak: DeviceAKDynamicKeystroke) =>
-    setAdvancedKeys(
-      produce(advancedKeys, (draft) => {
-        draft[akIndex].ak = ak
-      }),
-    )
+    setAdvancedKeys({
+      start: akIndex,
+      advancedKeys: [
+        produce(advancedKeys[akIndex], (draft) => {
+          draft.ak = ak
+        }),
+      ],
+    })
 
   useEffect(() => {
     if (isSuccess) {

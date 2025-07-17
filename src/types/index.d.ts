@@ -14,117 +14,31 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type USBDirection = "in" | "out"
-type USBEndpointType = "bulk" | "interrupt" | "isochronous"
-type USBRequestType = "standard" | "class" | "vendor"
-type USBRecipient = "device" | "interface" | "endpoint" | "other"
-type USBTransferStatus = "ok" | "stall" | "babble"
-
-interface USBEndpoint {
-  readonly endpointNumber: number
-  readonly direction: USBDirection
-  readonly type: USBEndpointType
-  readonly packetSize: number
-}
-
-interface USBControlTransferParameters {
-  requestType: USBRequestType
-  recipient: USBRecipient
-  request: number
-  value: number
-  index: number
-}
-
-interface USBDeviceFilter {
+/*~ https://wicg.github.io/webhid/#hiddevicefilter-dictionary */
+interface HIDDeviceFilter {
   vendorId?: number | undefined
   productId?: number | undefined
-  classCode?: number | undefined
-  subclassCode?: number | undefined
-  protocolCode?: number | undefined
-  serialNumber?: string | undefined
+  usagePage?: number | undefined
+  usage?: number | undefined
 }
 
-interface USBDeviceRequestOptions {
-  filters: USBDeviceFilter[]
-  exclusionFilters?: USBDeviceFilter[] | undefined
+/*~ https://wicg.github.io/webhid/#hiddevicerequestoptions-dictionary */
+interface HIDDeviceRequestOptions {
+  filters: HIDDeviceFilter[]
 }
 
-interface USBConnectionEventInit extends EventInit {
-  device: USBDevice
-}
+/*~ https://wicg.github.io/webhid/#hid-interface */
+declare class HID extends EventTarget {
+  onconnect: ((this: this, ev: Event) => any) | null
+  ondisconnect: ((this: this, ev: Event) => any) | null
 
-declare class USBConfiguration {
-  readonly configurationValue: number
-  readonly configurationName?: string | undefined
-  readonly interfaces: USBInterface[]
-}
+  getDevices(): Promise<HIDDevice[]>
 
-declare class USBInterface {
-  constructor(configuration: USBConfiguration, interfaceNumber: number)
-  readonly interfaceNumber: number
-  readonly alternate: USBAlternateInterface
-  readonly alternates: USBAlternateInterface[]
-  readonly claimed: boolean
-}
+  requestDevice(options?: HIDDeviceRequestOptions): Promise<HIDDevice[]>
 
-declare class USBAlternateInterface {
-  constructor(deviceInterface: USBInterface, alternateSetting: number)
-  readonly alternateSetting: number
-  readonly interfaceClass: number
-  readonly interfaceSubclass: number
-  readonly interfaceProtocol: number
-  readonly interfaceName?: string | undefined
-  readonly endpoints: USBEndpoint[]
-}
-
-declare class USBInTransferResult {
-  constructor(status: USBTransferStatus, data?: DataView)
-  readonly data?: DataView | undefined
-  readonly status?: USBTransferStatus | undefined
-}
-
-declare class USBOutTransferResult {
-  constructor(status: USBTransferStatus, bytesWriten?: number)
-  readonly bytesWritten: number
-  readonly status: USBTransferStatus
-}
-
-declare class USBIsochronousInTransferPacket {
-  constructor(status: USBTransferStatus, data?: DataView)
-  readonly data?: DataView | undefined
-  readonly status?: USBTransferStatus | undefined
-}
-
-declare class USBIsochronousInTransferResult {
-  constructor(packets: USBIsochronousInTransferPacket[], data?: DataView)
-  readonly data?: DataView | undefined
-  readonly packets: USBIsochronousInTransferPacket[]
-}
-
-declare class USBIsochronousOutTransferPacket {
-  constructor(status: USBTransferStatus, bytesWritten?: number)
-  readonly bytesWritten: number
-  readonly status: USBTransferStatus
-}
-
-declare class USBConnectionEvent extends Event {
-  constructor(type: string, eventInitDict: USBConnectionEventInit)
-  readonly device: USBDevice
-}
-
-declare class USBIsochronousOutTransferResult {
-  constructor(packets: USBIsochronousOutTransferPacket[])
-  readonly packets: USBIsochronousOutTransferPacket[]
-}
-
-declare class USB extends EventTarget {
-  onconnect: ((this: this, ev: USBConnectionEvent) => any) | null
-  ondisconnect: ((this: this, ev: USBConnectionEvent) => any) | null
-  getDevices(): Promise<USBDevice[]>
-  requestDevice(options?: USBDeviceRequestOptions): Promise<USBDevice>
   addEventListener(
     type: "connect" | "disconnect",
-    listener: (this: this, ev: USBConnectionEvent) => any,
+    listener: (this: this, ev: HIDConnectionEvent) => any,
     useCapture?: boolean,
   ): void
   addEventListener(
@@ -132,9 +46,10 @@ declare class USB extends EventTarget {
     listener: EventListenerOrEventListenerObject | null,
     options?: boolean | AddEventListenerOptions,
   ): void
+
   removeEventListener(
     type: "connect" | "disconnect",
-    callback: (this: this, ev: USBConnectionEvent) => any,
+    callback: (this: this, ev: HIDConnectionEvent) => any,
     useCapture?: boolean,
   ): void
   removeEventListener(
@@ -144,63 +59,136 @@ declare class USB extends EventTarget {
   ): void
 }
 
-declare class USBDevice {
-  readonly usbVersionMajor: number
-  readonly usbVersionMinor: number
-  readonly usbVersionSubminor: number
-  readonly deviceClass: number
-  readonly deviceSubclass: number
-  readonly deviceProtocol: number
-  readonly vendorId: number
-  readonly productId: number
-  readonly deviceVersionMajor: number
-  readonly deviceVersionMinor: number
-  readonly deviceVersionSubminor: number
-  readonly manufacturerName?: string | undefined
-  readonly productName?: string | undefined
-  readonly serialNumber?: string | undefined
-  readonly configuration?: USBConfiguration | undefined
-  readonly configurations: USBConfiguration[]
-  readonly opened: boolean
-  open(): Promise<void>
-  close(): Promise<void>
-  forget(): Promise<void>
-  selectConfiguration(configurationValue: number): Promise<void>
-  claimInterface(interfaceNumber: number): Promise<void>
-  releaseInterface(interfaceNumber: number): Promise<void>
-  selectAlternateInterface(
-    interfaceNumber: number,
-    alternateSetting: number,
-  ): Promise<void>
-  controlTransferIn(
-    setup: USBControlTransferParameters,
-    length: number,
-  ): Promise<USBInTransferResult>
-  controlTransferOut(
-    setup: USBControlTransferParameters,
-    data?: BufferSource,
-  ): Promise<USBOutTransferResult>
-  clearHalt(direction: USBDirection, endpointNumber: number): Promise<void>
-  transferIn(
-    endpointNumber: number,
-    length: number,
-  ): Promise<USBInTransferResult>
-  transferOut(
-    endpointNumber: number,
-    data: BufferSource,
-  ): Promise<USBOutTransferResult>
-  isochronousTransferIn(
-    endpointNumber: number,
-    packetLengths: number[],
-  ): Promise<USBIsochronousInTransferResult>
-  isochronousTransferOut(
-    endpointNumber: number,
-    data: BufferSource,
-    packetLengths: number[],
-  ): Promise<USBIsochronousOutTransferResult>
-  reset(): Promise<void>
+/*~ https://wicg.github.io/webhid/#extensions-to-the-navigator-interface */
+interface Navigator {
+  readonly hid: HID
 }
 
-interface Navigator {
-  readonly usb: USB
+/*~ https://wicg.github.io/webhid/#hidconnectioneventinit-dictionary */
+interface HIDConnectionEventInit {
+  device: HIDDevice
+}
+
+/*~ https://wicg.github.io/webhid/#hidconnectionevent-interface */
+declare class HIDConnectionEvent extends Event {
+  constructor(type: string, eventInitDict: HIDConnectionEventInit)
+
+  readonly device: HIDDevice
+}
+
+/*~ https://wicg.github.io/webhid/#hidinputreporteventinit-dictionary */
+interface HIDInputReportEventInit extends EventInit {
+  device: HIDDevice
+  reportId: number
+  data: DataView
+}
+
+/*~ https://wicg.github.io/webhid/#hidinputreportevent-interface */
+declare class HIDInputReportEvent extends Event {
+  constructor(type: string, eventInitDict: HIDInputReportEventInit)
+
+  readonly device: HIDDevice
+  readonly reportId: number
+  readonly data: DataView
+}
+
+/*~ https://wicg.github.io/webhid/#hidunitsystem-enum */
+type HIDUnitSystem =
+  | "none"
+  | "si-linear"
+  | "si-rotation"
+  | "english-linear"
+  | "english-rotation"
+  | "vendor-defined"
+  | "reserved"
+
+/*~ https://wicg.github.io/webhid/#hidreportitem-dictionary */
+interface HIDReportItem {
+  isAbsolute?: boolean | undefined
+  isArray?: boolean | undefined
+  isBufferedBytes?: boolean | undefined
+  isConstant?: boolean | undefined
+  isLinear?: boolean | undefined
+  isRange?: boolean | undefined
+  isVolatile?: boolean | undefined
+  hasNull?: boolean | undefined
+  hasPreferredState?: boolean | undefined
+  wrap?: boolean | undefined
+  usages?: number[] | undefined
+  usageMinimum?: number | undefined
+  usageMaximum?: number | undefined
+  reportSize?: number | undefined
+  reportCount?: number | undefined
+  unitExponent?: number | undefined
+  unitSystem?: HIDUnitSystem | undefined
+  unitFactorLengthExponent?: number | undefined
+  unitFactorMassExponent?: number | undefined
+  unitFactorTimeExponent?: number | undefined
+  unitFactorTemperatureExponent?: number | undefined
+  unitFactorCurrentExponent?: number | undefined
+  unitFactorLuminousIntensityExponent?: number | undefined
+  logicalMinimum?: number | undefined
+  logicalMaximum?: number | undefined
+  physicalMinimum?: number | undefined
+  physicalMaximum?: number | undefined
+  strings?: string[] | undefined
+}
+
+/*~ https://wicg.github.io/webhid/#hidreportinfo-dictionary */
+interface HIDReportInfo {
+  reportId?: number | undefined
+  items?: HIDReportItem[] | undefined
+}
+
+/*~ https://wicg.github.io/webhid/#hidcollectioninfo-dictionary */
+interface HIDCollectionInfo {
+  usagePage?: number | undefined
+  usage?: number | undefined
+  type?: number | undefined
+  children?: HIDCollectionInfo[] | undefined
+  inputReports?: HIDReportInfo[] | undefined
+  outputReports?: HIDReportInfo[] | undefined
+  featureReports?: HIDReportInfo[] | undefined
+}
+
+/*~ https://wicg.github.io/webhid/#hiddevice-interface */
+declare class HIDDevice extends EventTarget {
+  oninputreport: ((this: this, ev: HIDInputReportEvent) => any) | null
+  readonly opened: boolean
+  readonly vendorId: number
+  readonly productId: number
+  readonly productName: string
+  readonly collections: HIDCollectionInfo[]
+
+  open(): Promise<void>
+
+  close(): Promise<void>
+
+  forget(): Promise<void>
+
+  sendReport(reportId: number, data: BufferSource): Promise<void>
+
+  sendFeatureReport(reportId: number, data: BufferSource): Promise<void>
+
+  receiveFeatureReport(reportId: number): Promise<DataView>
+
+  addEventListener(
+    type: "inputreport",
+    listener: (this: this, ev: HIDInputReportEvent) => any,
+  ): void
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject | null,
+    options?: boolean | AddEventListenerOptions,
+  ): void
+
+  removeEventListener(
+    type: "inputreport",
+    callback: (this: this, ev: HIDInputReportEvent) => any,
+  ): void
+  removeEventListener(
+    type: string,
+    callback: EventListenerOrEventListenerObject | null,
+    options?: EventListenerOptions | boolean,
+  ): void
 }

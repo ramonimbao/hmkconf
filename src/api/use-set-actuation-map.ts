@@ -16,6 +16,12 @@
 import { useDevice } from "@/components/providers/device-provider"
 import { DeviceActuation } from "@/types/devices"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { produce } from "immer"
+
+type SetActuationMapParams = {
+  start: number
+  actuationMap: DeviceActuation[]
+}
 
 export function useSetActuationMap(profile: number) {
   const { id, setActuationMap } = useDevice()
@@ -24,13 +30,22 @@ export function useSetActuationMap(profile: number) {
   const queryKey = [id, profile, "actuationMap"]
 
   return useMutation({
-    mutationFn: (actuationMap: DeviceActuation[]) =>
-      setActuationMap(profile, actuationMap),
-    onMutate: async (actuationMap) => {
+    mutationFn: ({ start, actuationMap }: SetActuationMapParams) =>
+      setActuationMap(profile, start, actuationMap),
+    onMutate: async ({ start, actuationMap }) => {
       await queryClient.cancelQueries({ queryKey })
       const previousActuationMap =
         queryClient.getQueryData<DeviceActuation[]>(queryKey)
-      queryClient.setQueryData(queryKey, actuationMap)
+      queryClient.setQueryData(
+        queryKey,
+        produce(previousActuationMap, (draft) => {
+          if (draft) {
+            for (let i = 0; i < actuationMap.length; i++) {
+              draft[start + i] = actuationMap[i]
+            }
+          }
+        }),
+      )
 
       return { previousActuationMap }
     },

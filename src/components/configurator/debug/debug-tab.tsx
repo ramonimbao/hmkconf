@@ -15,10 +15,8 @@
 
 "use client"
 
-import { useKeyInfo } from "@/api/use-key-info"
-import { useLog } from "@/api/use-log"
+import { useAnalogInfo } from "@/api/use-analog-info"
 import { useRecalibrate } from "@/api/use-recalibrate"
-import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Tooltip,
@@ -28,7 +26,6 @@ import {
 } from "@/components/ui/tooltip"
 import { cn, displayDistance } from "@/lib/utils"
 import { TriangleAlert } from "lucide-react"
-import { useEffect } from "react"
 import {
   KeyTesterKeyPress,
   KeyTesterKeyRelease,
@@ -40,22 +37,10 @@ import {
   KeyboardEditorKeyboard,
   KeyboardEditorLayout,
 } from "../common/keyboard-editor"
-import { Switch } from "../common/switch"
 
 export function DebugTab() {
-  const {
-    debug: { logEnabled, setLogEnabled },
-  } = useConfigurator()
-
-  const { isSuccess: isKeyInfoSuccess, data: keyInfo } = useKeyInfo()
-  const { isSuccess: isLogSuccess, data: log } = useLog(logEnabled)
+  const { isSuccess, data: analogInfo } = useAnalogInfo()
   const { mutate: recalibrate } = useRecalibrate()
-
-  useEffect(() => {
-    if (isLogSuccess && log) {
-      console.log(log)
-    }
-  }, [isLogSuccess, log])
 
   return (
     <KeyboardEditor>
@@ -79,7 +64,7 @@ export function DebugTab() {
           </TooltipProvider>
         </KeyboardEditorHeader>
         <KeyboardEditorKeyboard
-          disabled={!isKeyInfoSuccess}
+          disabled={!isSuccess}
           elt={(key) => (
             <div
               className={cn(
@@ -87,10 +72,10 @@ export function DebugTab() {
                 "size-full flex-col gap-0 text-xs",
               )}
             >
-              {isKeyInfoSuccess && (
+              {isSuccess && (
                 <>
-                  <p>{keyInfo[key].adcValue}</p>
-                  <p>{displayDistance(keyInfo[key].distance)}</p>
+                  <p>{analogInfo[key].adcValue}</p>
+                  <p>{displayDistance(analogInfo[key].distance)}</p>
                 </>
               )}
             </div>
@@ -114,13 +99,6 @@ export function DebugTab() {
                 <Button onClick={() => recalibrate()}>Recalibrate</Button>
               </div>
             </div>
-            <Switch
-              id="logging"
-              title="Logging"
-              description="Continuously fetches log messages from the keyboard, and displays them in the console. Only enable this if logging is enabled in the firmware. Otherwise, it will block other operations."
-              checked={logEnabled}
-              onCheckedChange={setLogEnabled}
-            />
           </div>
           <div className="grid w-80 shrink-0 gap-4 p-4">
             <KeyTesterProvider>

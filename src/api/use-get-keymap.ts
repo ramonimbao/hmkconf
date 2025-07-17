@@ -21,6 +21,6 @@ export function useGetKeymap(profile: number) {
 
   return useQuery({
     queryKey: [id, profile, "keymap"],
-    queryFn: () => getKeymap(profile),
+    queryFn: async () => await getKeymap(profile),
   })
 }

@@ -41,11 +41,14 @@ export function ToggleEditor() {
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
   const updateAdvancedKey = (ak: DeviceAKToggle) =>
-    setAdvancedKeys(
-      produce(advancedKeys, (draft) => {
-        draft[akIndex].ak = ak
-      }),
-    )
+    setAdvancedKeys({
+      start: akIndex,
+      advancedKeys: [
+        produce(advancedKeys[akIndex], (draft) => {
+          draft.ak = ak
+        }),
+      ],
+    })
 
   useEffect(() => setUIAdvancedKey(ak), [ak])
 

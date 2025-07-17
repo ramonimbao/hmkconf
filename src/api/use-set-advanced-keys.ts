@@ -16,6 +16,12 @@
 import { useDevice } from "@/components/providers/device-provider"
 import { DeviceAdvancedKey } from "@/types/devices"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { produce } from "immer"
+
+type SetAdvancedKeysParams = {
+  start: number
+  advancedKeys: DeviceAdvancedKey[]
+}
 
 export function useSetAdvancedKeys(profile: number) {
   const { id, setAdvancedKeys } = useDevice()
@@ -24,13 +30,20 @@ export function useSetAdvancedKeys(profile: number) {
   const queryKey = [id, profile, "advancedKeys"]
 
   return useMutation({
-    mutationFn: (advancedKeys: DeviceAdvancedKey[]) =>
-      setAdvancedKeys(profile, advancedKeys),
-    onMutate: async (advancedKeys) => {
+    mutationFn: ({ start, advancedKeys }: SetAdvancedKeysParams) =>
+      setAdvancedKeys(profile, start, advancedKeys),
+    onMutate: async ({ start, advancedKeys }) => {
       await queryClient.cancelQueries({ queryKey })
       const previousAdvancedKeys =
         queryClient.getQueryData<DeviceAdvancedKey[]>(queryKey)
-      queryClient.setQueryData(queryKey, advancedKeys)
+      const tmp = produce(previousAdvancedKeys, (draft) => {
+        if (draft) {
+          for (let i = 0; i < advancedKeys.length; i++) {
+            draft[start + i] = advancedKeys[i]
+          }
+        }
+      })
+      queryClient.setQueryData(queryKey, tmp)
 
       return { previousAdvancedKeys }
     },

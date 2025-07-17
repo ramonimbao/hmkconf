@@ -16,22 +16,35 @@
 import { DEVICE_METADATA } from "@/constants/device-metadata"
 import { HE60 } from "@/constants/devices/HE60"
 import { TaskQueue } from "@/lib/task-queue"
-import { displayUInt16, isWebUsbSupported } from "@/lib/utils"
+import { displayUInt16, isWebHIDSupported } from "@/lib/utils"
 import {
   DeviceAction,
   DeviceAdvancedKey,
   DeviceAKType,
-  DeviceRequest,
+  DeviceCommand,
   DeviceState,
 } from "@/types/devices"
 import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
 
-const HMK_DEVICE_TIMOUT = 4000
+const RAW_HID_EP_SIZE = 64
 
-const HMK_DEVICE_FILTERS: USBDeviceFilter[] = DEVICE_METADATA.map(
+const ANALOG_INFO_SIZE = 3
+const KEYMAP_SIZE = 1
+const ACTUATION_MAP_SIZE = 4
+const ADVANCED_KEYS_SIZE = 12
+
+const COMMAND_PARTIAL_SIZE = (size: number) =>
+  Math.floor((RAW_HID_EP_SIZE - 1) / size)
+
+const HMK_DEVICE_TIMEOUT = 4000
+
+const HMK_DEVICE_FILTERS: HIDDeviceFilter[] = DEVICE_METADATA.map(
   ({ vendorId, productId }) => ({
     vendorId,
     productId,
+    usagePage: 0xffab,
+    usage: 0xab,
   }),
 )
 
@@ -39,15 +52,11 @@ type HMKDeviceState = DeviceState &
   (
     | {
         status: "disconnected"
-        usbDevice?: undefined
-        interfaceNum?: undefined
-        taskQueue?: undefined
+        hidDevice?: undefined
       }
     | {
         status: "connected"
-        usbDevice: USBDevice
-        interfaceNum: number
-        taskQueue: TaskQueue
+        hidDevice: HIDDevice
       }
   )
 
@@ -60,481 +69,482 @@ const initialState: HMKDeviceState = {
   status: "disconnected",
 }
 
-const findVendorSpecificInterface = (usbDevice: USBDevice): number => {
-  for (const usbInterface of usbDevice.configuration?.interfaces ?? []) {
-    for (const alternate of usbInterface.alternates) {
-      if (alternate.interfaceClass === 0xff) {
-        return usbInterface.interfaceNumber
-      }
-    }
-  }
+const taskQueue = new TaskQueue()
+const responseQueue: DataView[] = []
 
-  throw new Error("No vendor specific interface found")
-}
-
-const withTimeout = <T>(fn: () => Promise<T>, timeout?: number) =>
-  new Promise<T>(async (resolve, reject) => {
-    let canceled = false
-
-    const timer = setTimeout(() => {
-      canceled = true
-      reject(new Error("Failed to complete operation within timeout"))
-    }, timeout ?? HMK_DEVICE_TIMOUT)
-
-    const result = await fn()
-    if (!canceled) {
-      clearTimeout(timer)
-      resolve(result)
-    }
-  })
-
-const sendRaw = (
+const sendReport = (
   device: HMKDevice,
-  request: number,
-  value: number,
-  payload?: BufferSource,
+  commandId: number,
+  payload?: number[],
 ) => {
   if (device.status !== "connected") {
     throw new Error("Device not connected")
   }
 
-  return device.taskQueue.enqueue(() =>
-    withTimeout(async () => {
-      if (device.status !== "connected") {
-        throw new Error("Device not connected")
-      }
-
-      const { usbDevice, interfaceNum } = device
-      const result = await usbDevice.controlTransferOut(
-        {
-          requestType: "class",
-          recipient: "interface",
-          request,
-          value,
-          index: interfaceNum,
-        },
-        payload,
+  const buffer = [commandId]
+  if (payload) {
+    if (payload.length > RAW_HID_EP_SIZE - 1) {
+      throw new Error(
+        `Payload exceeds maximum length of ${RAW_HID_EP_SIZE - 1} bytes`,
       )
-
-      if (result.status !== "ok") {
-        throw new Error(`Failed to send request: ${result.status}`)
-      }
-    }),
-  )
-}
-
-const receiveRaw = (
-  device: HMKDevice,
-  request: number,
-  value: number,
-  length: number,
-  strictLength = true,
-) => {
-  if (device.status !== "connected") {
-    throw new Error("Device not connected")
+    }
+    buffer.push(...payload)
   }
+  buffer.push(...Array(RAW_HID_EP_SIZE - buffer.length).fill(0))
 
-  return device.taskQueue.enqueue(() =>
-    withTimeout(async () => {
-      if (device.status !== "connected") {
-        throw new Error("Device not connected")
-      }
+  return taskQueue.enqueue(
+    (abortController) =>
+      new Promise<DataView>(async (resolve, reject) => {
+        if (device.status !== "connected") {
+          throw new Error("Device not connected")
+        }
 
-      const { usbDevice, interfaceNum } = device
-      const result = await usbDevice.controlTransferIn(
-        {
-          requestType: "class",
-          recipient: "interface",
-          request,
-          value,
-          index: interfaceNum,
-        },
-        length,
-      )
+        const { hidDevice } = device
+        await hidDevice.sendReport(0, new Uint8Array(buffer))
 
-      if (result.status !== "ok" || result.data === undefined) {
-        throw new Error(`Failed to receive request: ${result.status}`)
-      }
-      if (strictLength && result.data.byteLength !== length) {
-        throw new Error(
-          `Invalid response length: expect ${length}, got ${result.data.byteLength}`,
-        )
-      }
+        const interval = setInterval(() => {
+          while (responseQueue.length > 0) {
+            const response = responseQueue.shift()
+            if (response && response.getUint8(0) === commandId) {
+              clearInterval(interval)
+              resolve(response)
+            }
+          }
+        }, 10)
 
-      return result.data
-    }),
+        abortController.signal.addEventListener("abort", () => {
+          clearInterval(interval)
+          reject(new Error("Operation was aborted"))
+        })
+
+        setTimeout(() => {
+          clearInterval(interval)
+          reject(new Error("Operation timed out"))
+        }, HMK_DEVICE_TIMEOUT)
+      }),
   )
 }
 
-export const useHMKDevice = create<HMKDevice>()((set, get) => ({
-  ...initialState,
+export const useHMKDevice = create<HMKDevice>()(
+  immer((set, get) => ({
+    ...initialState,
 
-  async connect() {
-    if (!isWebUsbSupported()) {
-      throw new Error("WebUSB is not supported")
-    }
-
-    const usbDevice = await navigator.usb.requestDevice({
-      filters: HMK_DEVICE_FILTERS,
-    })
-    const metadata = DEVICE_METADATA.find(
-      (metadata) =>
-        metadata.vendorId === usbDevice.vendorId &&
-        metadata.productId === usbDevice.productId,
-    )
-
-    if (metadata === undefined) {
-      throw new Error("Unsupported device")
-    }
-
-    if (usbDevice.opened) {
-      throw new Error("Device already opened")
-    }
-
-    await usbDevice.open()
-
-    try {
-      if (usbDevice.configuration === null) {
-        await usbDevice.selectConfiguration(1)
+    async connect() {
+      if (!isWebHIDSupported()) {
+        throw new Error("WebHID is not supported")
       }
 
-      const interfaceNum = findVendorSpecificInterface(usbDevice)
-      await usbDevice.claimInterface(interfaceNum)
-      await usbDevice.selectAlternateInterface(interfaceNum, 0)
+      const hidDevice = (
+        await navigator.hid.requestDevice({
+          filters: HMK_DEVICE_FILTERS,
+        })
+      )[0]
+      const metadata = DEVICE_METADATA.find(
+        (metadata) =>
+          metadata.vendorId === hidDevice.vendorId &&
+          metadata.productId === hidDevice.productId,
+      )
 
-      navigator.usb.addEventListener("disconnect", get().disconnect)
+      if (metadata === undefined) {
+        throw new Error("Unsupported device")
+      }
 
+      if (hidDevice.opened) {
+        throw new Error("Device already opened")
+      }
+
+      await hidDevice.open()
+
+      navigator.hid.ondisconnect = get().disconnect
+      hidDevice.oninputreport = (e: HIDInputReportEvent) => {
+        const device = get()
+        if (device.status !== "connected") {
+          return
+        }
+
+        if (e.data.byteLength !== RAW_HID_EP_SIZE) {
+          console.error(
+            `Unexpected input report length: ${e.data.byteLength}, expected ${RAW_HID_EP_SIZE} bytes`,
+          )
+          return
+        }
+
+        responseQueue.push(e.data)
+      }
+
+      responseQueue.length = 0
       set({
-        id: `HMK_DEVICE:${displayUInt16(usbDevice.vendorId)}_${displayUInt16(usbDevice.productId)}`,
+        id: `HMK_DEVICE:${displayUInt16(hidDevice.vendorId)}_${displayUInt16(hidDevice.productId)}`,
         metadata,
         status: "connected",
-        usbDevice,
-        interfaceNum,
-        taskQueue: new TaskQueue(),
+        hidDevice,
       })
-    } catch (err) {
-      console.error("Failed to connect to device", err)
-      await usbDevice.close()
-    }
-  },
+    },
 
-  async disconnect() {
-    const device = get()
-    if (device.status !== "connected") {
-      return
-    }
+    async disconnect() {
+      const device = get()
+      if (device.status !== "connected") {
+        return
+      }
 
-    navigator.usb.removeEventListener("disconnect", device.disconnect)
+      navigator.hid.ondisconnect = null
+      device.hidDevice.oninputreport = null
 
-    set({ ...initialState })
-    await device.taskQueue.clear()
-    await device.usbDevice.close()
-  },
+      set({ ...initialState })
+      await taskQueue.clear()
+      await device.hidDevice.close()
+    },
 
-  async firmwareVersion() {
-    const response = await receiveRaw(
-      get(),
-      DeviceRequest.FIRMWARE_VERSION,
-      0,
-      2,
-    )
-    return response.getUint16(0, true)
-  },
+    async firmwareVersion() {
+      const response = await sendReport(get(), DeviceCommand.FIRMWARE_VERSION)
 
-  async reboot() {
-    await sendRaw(get(), DeviceRequest.REBOOT, 0)
-  },
+      return response.getUint16(1, true)
+    },
 
-  async bootloader() {
-    await sendRaw(get(), DeviceRequest.BOOTLOADER, 0)
-  },
+    async reboot() {
+      await sendReport(get(), DeviceCommand.REBOOT)
+    },
 
-  async factoryReset() {
-    await sendRaw(get(), DeviceRequest.FACTORY_RESET, 0)
-  },
+    async bootloader() {
+      await sendReport(get(), DeviceCommand.BOOTLOADER)
+    },
 
-  async recalibrate() {
-    await sendRaw(get(), DeviceRequest.RECALIBRATE, 0)
-  },
+    async factoryReset() {
+      await sendReport(get(), DeviceCommand.FACTORY_RESET)
+    },
 
-  async keyInfo() {
-    const device = get()
-    const response = await receiveRaw(
-      device,
-      DeviceRequest.KEY_INFO,
-      0,
-      device.metadata.numKeys * 3,
-    )
+    async recalibrate() {
+      await sendReport(get(), DeviceCommand.RECALIBRATE)
+    },
 
-    return Array.from({ length: device.metadata.numKeys }, (_, i) => ({
-      adcValue: response.getUint16(i * 3, true),
-      distance: response.getUint8(i * 3 + 2),
-    }))
-  },
+    async analogInfo() {
+      const partialSize = COMMAND_PARTIAL_SIZE(ANALOG_INFO_SIZE)
+      const device = get()
 
-  async getCalibration() {
-    const device = get()
-    const response = await receiveRaw(
-      device,
-      DeviceRequest.GET_CALIBRATION,
-      0,
-      4,
-    )
-
-    return {
-      initialRestValue: response.getUint16(0, true),
-      initialBottomOutThreshold: response.getUint16(2, true),
-    }
-  },
-
-  async setCalibration(calibration) {
-    const device = get()
-    const payload = new Uint8Array([
-      calibration.initialRestValue & 0xff,
-      (calibration.initialRestValue >> 8) & 0xff,
-      calibration.initialBottomOutThreshold & 0xff,
-      (calibration.initialBottomOutThreshold >> 8) & 0xff,
-    ])
-
-    await sendRaw(device, DeviceRequest.SET_CALIBRATION, 0, payload)
-  },
-
-  async getProfile() {
-    const response = await receiveRaw(get(), DeviceRequest.GET_PROFILE, 0, 1)
-
-    return response.getUint8(0)
-  },
-
-  async log() {
-    const response = await receiveRaw(get(), DeviceRequest.LOG, 0, 1024, false)
-
-    return new TextDecoder().decode(response).split("\0")[0]
-  },
-
-  async getKeymap(profile) {
-    const device = get()
-    const response = await receiveRaw(
-      get(),
-      DeviceRequest.GET_KEYMAP,
-      profile,
-      device.metadata.numLayers * device.metadata.numKeys,
-    )
-
-    return Array.from({ length: device.metadata.numLayers }, (_, i) =>
-      Array.from({ length: device.metadata.numKeys }, (_, j) =>
-        response.getUint8(i * device.metadata.numKeys + j),
-      ),
-    )
-  },
-
-  async setKeymap(profile, keymap) {
-    const device = get()
-    const payload = new Uint8Array(keymap.flat())
-
-    if (
-      payload.length !==
-      device.metadata.numLayers * device.metadata.numKeys
-    ) {
-      throw new Error("Invalid keymap length")
-    }
-
-    await sendRaw(device, DeviceRequest.SET_KEYMAP, profile, payload)
-  },
-
-  async getActuationMap(profile) {
-    const device = get()
-    const response = await receiveRaw(
-      device,
-      DeviceRequest.GET_ACTUATION_MAP,
-      profile,
-      device.metadata.numKeys * 4,
-    )
-
-    return Array.from({ length: device.metadata.numKeys }, (_, i) => ({
-      actuationPoint: response.getUint8(i * 4),
-      rtDown: response.getUint8(i * 4 + 1),
-      rtUp: response.getUint8(i * 4 + 2),
-      continuous: response.getUint8(i * 4 + 3) === 1,
-    }))
-  },
-
-  async setActuationMap(profile, actuationMap) {
-    const device = get()
-    const payload = new Uint8Array(
-      actuationMap.flatMap(({ actuationPoint, rtDown, rtUp, continuous }) => [
-        actuationPoint,
-        rtDown,
-        rtUp,
-        continuous ? 1 : 0,
-      ]),
-    )
-
-    if (payload.length !== device.metadata.numKeys * 4) {
-      throw new Error("Invalid actuation map length")
-    }
-
-    await sendRaw(device, DeviceRequest.SET_ACTUATION_MAP, profile, payload)
-  },
-
-  async getAdvancedKeys(profile) {
-    const device = get()
-    const response = await receiveRaw(
-      device,
-      DeviceRequest.GET_ADVANCED_KEYS,
-      profile,
-      device.metadata.numAdvancedKeys * 12,
-    )
-    const advancedKeys: DeviceAdvancedKey[] = Array.from(
-      { length: device.metadata.numAdvancedKeys },
-      (_, i) => {
-        const offset = i * 12
-        const layer = response.getUint8(offset)
-        const key = response.getUint8(offset + 1)
-        const type = response.getUint8(offset + 2)
-
-        switch (type) {
-          case DeviceAKType.NULL_BIND:
-            return {
-              layer,
-              key,
-              ak: {
-                type: DeviceAKType.NULL_BIND,
-                secondaryKey: response.getUint8(offset + 3),
-                behavior: response.getUint8(offset + 4),
-                bottomOutPoint: response.getUint8(offset + 5),
-              },
-            }
-
-          case DeviceAKType.DYNAMIC_KEYSTROKE:
-            return {
-              layer,
-              key,
-              ak: {
-                type: DeviceAKType.DYNAMIC_KEYSTROKE,
-                keycodes: Array.from({ length: 4 }, (_, j) =>
-                  response.getUint8(offset + 3 + j),
-                ),
-                bitmap: Array.from({ length: 4 }, (_, j) => {
-                  const mask = response.getUint8(offset + 7 + j)
-                  return Array.from(
-                    { length: 4 },
-                    (_, k) => (mask >> (k * 2)) & 3,
-                  )
-                }),
-                bottomOutPoint: response.getUint8(offset + 11),
-              },
-            }
-
-          case DeviceAKType.TAP_HOLD:
-            return {
-              layer,
-              key,
-              ak: {
-                type: DeviceAKType.TAP_HOLD,
-                tapKeycode: response.getUint8(offset + 3),
-                holdKeycode: response.getUint8(offset + 4),
-                tappingTerm: response.getUint16(offset + 5, true),
-              },
-            }
-
-          case DeviceAKType.TOGGLE:
-            return {
-              layer,
-              key,
-              ak: {
-                type: DeviceAKType.TOGGLE,
-                keycode: response.getUint8(offset + 3),
-                tappingTerm: response.getUint16(offset + 4, true),
-              },
-            }
-
-          case DeviceAKType.NONE:
-          default:
-            return { layer, key, ak: { type: DeviceAKType.NONE } }
+      const ret = []
+      for (
+        let i = 0;
+        i < Math.ceil(device.metadata.numKeys / partialSize);
+        i++
+      ) {
+        const response = await sendReport(device, DeviceCommand.ANALOG_INFO, [
+          i,
+        ])
+        for (let j = 0; j < partialSize; j++) {
+          if (i * partialSize + j >= device.metadata.numKeys) {
+            break
+          }
+          const offset = 1 + j * ANALOG_INFO_SIZE
+          ret.push({
+            adcValue: response.getUint16(offset, true),
+            distance: response.getUint8(offset + 2),
+          })
         }
-      },
-    )
+      }
 
-    return advancedKeys.filter(({ ak }) => ak.type !== DeviceAKType.NONE)
-  },
+      return ret
+    },
 
-  async setAdvancedKeys(profile, advancedKeys) {
-    const device = get()
-    const payload = new Uint8Array([
-      ...advancedKeys.flatMap(({ layer, key, ak }) => {
-        const buffer = [layer, key, ak.type]
+    async getCalibration() {
+      const response = await sendReport(get(), DeviceCommand.GET_CALIBRATION)
 
-        switch (ak.type) {
-          case DeviceAKType.NULL_BIND:
-            buffer.push(ak.secondaryKey, ak.behavior, ak.bottomOutPoint)
-            break
+      return {
+        initialRestValue: response.getUint16(1, true),
+        initialBottomOutThreshold: response.getUint16(3, true),
+      }
+    },
 
-          case DeviceAKType.DYNAMIC_KEYSTROKE:
-            buffer.push(
-              ...ak.keycodes,
-              ...ak.bitmap.map((actions) =>
-                actions.reduce((acc, val, i) => acc | (val << (i * 2)), 0),
-              ),
-              ak.bottomOutPoint,
-            )
-            break
+    async setCalibration(calibration) {
+      await sendReport(get(), DeviceCommand.SET_CALIBRATION, [
+        calibration.initialRestValue & 0xff,
+        (calibration.initialRestValue >> 8) & 0xff,
+        calibration.initialBottomOutThreshold & 0xff,
+        (calibration.initialBottomOutThreshold >> 8) & 0xff,
+      ])
+    },
 
-          case DeviceAKType.TAP_HOLD:
-            buffer.push(ak.tapKeycode, ak.holdKeycode)
-            buffer.push(
-              (ak.tappingTerm >> 0) & 0xff,
-              (ak.tappingTerm >> 8) & 0xff,
-            )
-            break
+    async getProfile() {
+      const response = await sendReport(get(), DeviceCommand.GET_PROFILE)
 
-          case DeviceAKType.TOGGLE:
-            buffer.push(ak.keycode)
-            buffer.push(
-              (ak.tappingTerm >> 0) & 0xff,
-              (ak.tappingTerm >> 8) & 0xff,
-            )
-            break
+      return response.getUint8(1)
+    },
 
-          case DeviceAKType.NONE:
-          default:
-            break
+    async getKeymap(profile) {
+      const partialSize = COMMAND_PARTIAL_SIZE(KEYMAP_SIZE)
+      const device = get()
+
+      const ret = []
+      for (let i = 0; i < device.metadata.numLayers; i++) {
+        const layerKeymap = []
+        for (
+          let j = 0;
+          j < Math.ceil(device.metadata.numKeys / partialSize);
+          j++
+        ) {
+          const response = await sendReport(device, DeviceCommand.GET_KEYMAP, [
+            profile,
+            i,
+            j,
+          ])
+
+          for (let k = 0; k < partialSize; k++) {
+            if (j * partialSize + k >= device.metadata.numKeys) {
+              break
+            }
+            const offset = 1 + k * KEYMAP_SIZE
+            layerKeymap.push(response.getUint8(offset))
+          }
         }
+        ret.push(layerKeymap)
+      }
 
-        while (buffer.length < 12) {
-          buffer.push(0)
+      return ret
+    },
+
+    async setKeymap(profile, layer, start, keymap) {
+      const partialSize = COMMAND_PARTIAL_SIZE(KEYMAP_SIZE)
+
+      for (let i = 0; i < Math.ceil(keymap.length / partialSize); i++) {
+        const partialKeymap = keymap.slice(
+          i * partialSize,
+          Math.min(keymap.length, (i + 1) * partialSize),
+        )
+
+        await sendReport(get(), DeviceCommand.SET_KEYMAP, [
+          profile,
+          layer,
+          start + i * partialSize,
+          partialKeymap.length,
+          ...partialKeymap,
+        ])
+      }
+    },
+
+    async getActuationMap(profile) {
+      const partialSize = COMMAND_PARTIAL_SIZE(ACTUATION_MAP_SIZE)
+      const device = get()
+
+      const ret = []
+      for (
+        let i = 0;
+        i < Math.ceil(device.metadata.numKeys / partialSize);
+        i++
+      ) {
+        const response = await sendReport(
+          device,
+          DeviceCommand.GET_ACTUATION_MAP,
+          [profile, i],
+        )
+
+        for (let j = 0; j < partialSize; j++) {
+          if (i * partialSize + j >= device.metadata.numKeys) {
+            break
+          }
+          const offset = 1 + j * ACTUATION_MAP_SIZE
+          ret.push({
+            actuationPoint: response.getUint8(offset),
+            rtDown: response.getUint8(offset + 1),
+            rtUp: response.getUint8(offset + 2),
+            continuous: response.getUint8(offset + 3) !== 0,
+          })
         }
+      }
 
-        return buffer
-      }),
-      ...Array(
-        (device.metadata.numAdvancedKeys - advancedKeys.length) * 12,
-      ).fill(0),
-    ])
+      return ret
+    },
 
-    if (payload.length !== device.metadata.numAdvancedKeys * 12) {
-      throw new Error("Invalid advanced keys length")
-    }
+    async setActuationMap(profile, start, actuationMap) {
+      const partialSize = COMMAND_PARTIAL_SIZE(ACTUATION_MAP_SIZE)
 
-    await sendRaw(device, DeviceRequest.SET_ADVANCED_KEYS, profile, payload)
-  },
+      for (let i = 0; i < Math.ceil(actuationMap.length / partialSize); i++) {
+        const partialActuationMap = actuationMap.slice(
+          i * partialSize,
+          Math.min(actuationMap.length, (i + 1) * partialSize),
+        )
 
-  async getTickRate(profile) {
-    const response = await receiveRaw(
-      get(),
-      DeviceRequest.GET_TICK_RATE,
-      profile,
-      1,
-    )
+        await sendReport(get(), DeviceCommand.SET_ACTUATION_MAP, [
+          profile,
+          start + i * partialSize,
+          partialActuationMap.length,
+          ...partialActuationMap.flatMap((actuation) => [
+            actuation.actuationPoint,
+            actuation.rtDown,
+            actuation.rtUp,
+            actuation.continuous ? 1 : 0,
+          ]),
+        ])
+      }
+    },
 
-    return response.getUint8(0)
-  },
+    async getAdvancedKeys(profile) {
+      const partialSize = COMMAND_PARTIAL_SIZE(ADVANCED_KEYS_SIZE)
+      const device = get()
 
-  async setTickRate(profile, tickRate) {
-    await sendRaw(
-      get(),
-      DeviceRequest.SET_TICK_RATE,
-      profile,
-      new Uint8Array([tickRate]),
-    )
-  },
-}))
+      const ret: DeviceAdvancedKey[] = []
+      for (
+        let i = 0;
+        i < Math.ceil(device.metadata.numAdvancedKeys / partialSize);
+        i++
+      ) {
+        const response = await sendReport(
+          device,
+          DeviceCommand.GET_ADVANCED_KEYS,
+          [profile, i],
+        )
+
+        for (let j = 0; j < partialSize; j++) {
+          if (i * partialSize + j >= device.metadata.numAdvancedKeys) {
+            break
+          }
+          const offset = 1 + j * ADVANCED_KEYS_SIZE
+          const layer = response.getUint8(offset)
+          const key = response.getUint8(offset + 1)
+          const type = response.getUint8(offset + 2)
+
+          switch (type) {
+            case DeviceAKType.NULL_BIND:
+              ret.push({
+                layer,
+                key,
+                ak: {
+                  type: DeviceAKType.NULL_BIND,
+                  secondaryKey: response.getUint8(offset + 3),
+                  behavior: response.getUint8(offset + 4),
+                  bottomOutPoint: response.getUint8(offset + 5),
+                },
+              })
+              break
+
+            case DeviceAKType.DYNAMIC_KEYSTROKE:
+              ret.push({
+                layer,
+                key,
+                ak: {
+                  type: DeviceAKType.DYNAMIC_KEYSTROKE,
+                  keycodes: Array.from({ length: 4 }, (_, j) =>
+                    response.getUint8(offset + 3 + j),
+                  ),
+                  bitmap: Array.from({ length: 4 }, (_, j) => {
+                    const mask = response.getUint8(offset + 7 + j)
+                    return Array.from(
+                      { length: 4 },
+                      (_, k) => (mask >> (k * 2)) & 3,
+                    )
+                  }),
+                  bottomOutPoint: response.getUint8(offset + 11),
+                },
+              })
+              break
+
+            case DeviceAKType.TAP_HOLD:
+              ret.push({
+                layer,
+                key,
+                ak: {
+                  type: DeviceAKType.TAP_HOLD,
+                  tapKeycode: response.getUint8(offset + 3),
+                  holdKeycode: response.getUint8(offset + 4),
+                  tappingTerm: response.getUint16(offset + 5, true),
+                },
+              })
+              break
+
+            case DeviceAKType.TOGGLE:
+              ret.push({
+                layer,
+                key,
+                ak: {
+                  type: DeviceAKType.TOGGLE,
+                  keycode: response.getUint8(offset + 3),
+                  tappingTerm: response.getUint16(offset + 4, true),
+                },
+              })
+              break
+
+            case DeviceAKType.NONE:
+            default:
+              ret.push({
+                layer,
+                key,
+                ak: { type: DeviceAKType.NONE },
+              })
+              break
+          }
+        }
+      }
+
+      return ret
+    },
+
+    async setAdvancedKeys(profile, start, advancedKeys) {
+      const partialSize = COMMAND_PARTIAL_SIZE(ADVANCED_KEYS_SIZE)
+
+      for (let i = 0; i < Math.ceil(advancedKeys.length / partialSize); i++) {
+        const partialAdvancedKeys = advancedKeys.slice(
+          i * partialSize,
+          Math.min(advancedKeys.length, (i + 1) * partialSize),
+        )
+
+        await sendReport(get(), DeviceCommand.SET_ADVANCED_KEYS, [
+          profile,
+          start + i * partialSize,
+          partialAdvancedKeys.length,
+          ...partialAdvancedKeys.flatMap(({ layer, key, ak }) => {
+            const buffer = [layer, key, ak.type]
+
+            switch (ak.type) {
+              case DeviceAKType.NULL_BIND:
+                buffer.push(ak.secondaryKey, ak.behavior, ak.bottomOutPoint)
+                break
+
+              case DeviceAKType.DYNAMIC_KEYSTROKE:
+                buffer.push(
+                  ...ak.keycodes,
+                  ...ak.bitmap.map((actions) =>
+                    actions.reduce((acc, val, i) => acc | (val << (i * 2)), 0),
+                  ),
+                  ak.bottomOutPoint,
+                )
+                break
+
+              case DeviceAKType.TAP_HOLD:
+                buffer.push(ak.tapKeycode, ak.holdKeycode)
+                buffer.push(
+                  (ak.tappingTerm >> 0) & 0xff,
+                  (ak.tappingTerm >> 8) & 0xff,
+                )
+                break
+
+              case DeviceAKType.TOGGLE:
+                buffer.push(ak.keycode)
+                buffer.push(
+                  (ak.tappingTerm >> 0) & 0xff,
+                  (ak.tappingTerm >> 8) & 0xff,
+                )
+                break
+
+              case DeviceAKType.NONE:
+              default:
+                break
+            }
+            buffer.push(...Array(ADVANCED_KEYS_SIZE - buffer.length).fill(0))
+
+            return buffer
+          }),
+        ])
+      }
+    },
+
+    async getTickRate(profile) {
+      const response = await sendReport(get(), DeviceCommand.GET_TICK_RATE, [
+        profile,
+      ])
+
+      return response.getUint8(1)
+    },
+
+    async setTickRate(profile, tickRate) {
+      await sendReport(get(), DeviceCommand.SET_TICK_RATE, [profile, tickRate])
+    },
+  })),
+)
