@@ -34,8 +34,8 @@ const KEYMAP_SIZE = 1
 const ACTUATION_MAP_SIZE = 4
 const ADVANCED_KEYS_SIZE = 12
 
-const COMMAND_PARTIAL_SIZE = (size: number) =>
-  Math.floor((RAW_HID_EP_SIZE - 1) / size)
+const COMMAND_PARTIAL_SIZE = (size: number, headerSize: number) =>
+  Math.floor((RAW_HID_EP_SIZE - 1 - headerSize) / size)
 
 const HMK_DEVICE_TIMEOUT = 4000
 
@@ -218,7 +218,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async analogInfo() {
-      const partialSize = COMMAND_PARTIAL_SIZE(ANALOG_INFO_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(ANALOG_INFO_SIZE, 0)
       const device = get()
 
       const ret = []
@@ -270,7 +270,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async getKeymap(profile) {
-      const partialSize = COMMAND_PARTIAL_SIZE(KEYMAP_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(KEYMAP_SIZE, 0)
       const device = get()
 
       const ret = []
@@ -302,7 +302,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async setKeymap(profile, layer, start, keymap) {
-      const partialSize = COMMAND_PARTIAL_SIZE(KEYMAP_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(KEYMAP_SIZE, 4)
 
       for (let i = 0; i < Math.ceil(keymap.length / partialSize); i++) {
         const partialKeymap = keymap.slice(
@@ -321,7 +321,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async getActuationMap(profile) {
-      const partialSize = COMMAND_PARTIAL_SIZE(ACTUATION_MAP_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(ACTUATION_MAP_SIZE, 0)
       const device = get()
 
       const ret = []
@@ -354,7 +354,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async setActuationMap(profile, start, actuationMap) {
-      const partialSize = COMMAND_PARTIAL_SIZE(ACTUATION_MAP_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(ACTUATION_MAP_SIZE, 3)
 
       for (let i = 0; i < Math.ceil(actuationMap.length / partialSize); i++) {
         const partialActuationMap = actuationMap.slice(
@@ -377,7 +377,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async getAdvancedKeys(profile) {
-      const partialSize = COMMAND_PARTIAL_SIZE(ADVANCED_KEYS_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(ADVANCED_KEYS_SIZE, 0)
       const device = get()
 
       const ret: DeviceAdvancedKey[] = []
@@ -477,7 +477,7 @@ export const useHMKDevice = create<HMKDevice>()(
     },
 
     async setAdvancedKeys(profile, start, advancedKeys) {
-      const partialSize = COMMAND_PARTIAL_SIZE(ADVANCED_KEYS_SIZE)
+      const partialSize = COMMAND_PARTIAL_SIZE(ADVANCED_KEYS_SIZE, 3)
 
       for (let i = 0; i < Math.ceil(advancedKeys.length / partialSize); i++) {
         const partialAdvancedKeys = advancedKeys.slice(
