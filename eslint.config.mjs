@@ -17,6 +17,11 @@ const eslintConfig = [
   ...tanstackEslintPluginQuery.configs["flat/recommended"],
   ...eslintPluginTailwindCSS.configs["flat/recommended"],
   eslintPluginPrettierRecommended,
+  {
+    rules: {
+      "tailwindcss/no-custom-classname": "off",
+    },
+  },
 ]
 
 export default eslintConfig

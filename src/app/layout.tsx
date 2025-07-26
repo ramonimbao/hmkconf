@@ -18,6 +18,7 @@ import { Geist } from "next/font/google"
 import "./globals.css"
 import { QueryClientProvider } from "@/components/providers/query-client-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { Toaster } from "@/components/ui/toaster"
 import { cn } from "@/lib/utils"
 
 const geist = Geist({ subsets: ["latin"] })
@@ -46,6 +47,7 @@ export default function RootLayout({
             <div className="relative flex min-h-screen flex-col bg-background">
               {children}
             </div>
+            <Toaster position="bottom-right" />
           </ThemeProvider>
         </QueryClientProvider>
       </body>
