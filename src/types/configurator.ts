@@ -31,6 +31,9 @@ export type ConfiguratorState = {
   debug: {
     logEnabled: boolean
   }
+  settings: {
+    loading: boolean
+  }
 }
 
 export type ConfiguratorAction = {
@@ -51,6 +54,9 @@ export type ConfiguratorAction = {
   }
   debug: {
     setLogEnabled(enabled: boolean): void
+  }
+  settings: {
+    setLoading(loading: boolean): void
   }
 }
 

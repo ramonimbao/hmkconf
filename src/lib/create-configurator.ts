@@ -35,6 +35,9 @@ const initialState: ConfiguratorState = {
   debug: {
     logEnabled: false,
   },
+  settings: {
+    loading: false,
+  },
 }
 
 export function createConfigurator() {
@@ -49,6 +52,7 @@ export function createConfigurator() {
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
           debug: { ...state.debug, ...initialState.debug },
+          settings: { ...state.settings, ...initialState.settings },
         })),
       setTab: (tab) => set({ tab }),
       setProfile: (profile) =>
@@ -59,6 +63,7 @@ export function createConfigurator() {
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
           debug: { ...state.debug, ...initialState.debug },
+          settings: { ...state.settings, ...initialState.settings },
         })),
 
       remap: {
@@ -108,6 +113,15 @@ export function createConfigurator() {
         setLogEnabled: (enabled) =>
           set((state) => {
             state.debug.logEnabled = enabled
+          }),
+      },
+
+      settings: {
+        ...initialState.settings,
+
+        setLoading: (loading) =>
+          set((state) => {
+            state.settings.loading = loading
           }),
       },
     })),

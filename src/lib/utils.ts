@@ -16,6 +16,7 @@
 import { SWITCH_DISTANCE } from "@/constants/devices"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import z from "zod"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -43,4 +44,11 @@ export function displayDistance(distance: number) {
 
 export function asyncDelay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export function zodIgnoreOnError<T>(schema: z.ZodType<T>) {
+  return z.any().transform((data) => {
+    const { success, data: parsedData } = schema.safeParse(data)
+    return success ? parsedData : undefined
+  })
 }

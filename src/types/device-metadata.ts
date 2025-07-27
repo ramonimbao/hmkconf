@@ -13,12 +13,12 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { z } from "zod"
+import z from "zod"
 
 const keyboardLayoutSchema = z.array(
   z.array(
     z.object({
-      key: z.number().int().min(0).max(255),
+      key: z.int().min(0).max(255),
       w: z.number().min(1).default(1),
       h: z.number().min(1).default(1),
       x: z.number().default(0),
@@ -32,14 +32,14 @@ export type KeyboardLayout = z.infer<typeof keyboardLayoutSchema>
 export const deviceMetadataSchema = z
   .object({
     name: z.string(),
-    vendorId: z.number().int().min(0x0000).max(0xffff),
-    productId: z.number().int().min(0x0000).max(0xffff),
-    numProfiles: z.number().int().min(1).max(8),
-    numLayers: z.number().int().min(1).max(8),
-    numKeys: z.number().int().min(1).max(256),
-    numAdvancedKeys: z.number().int().min(1).max(64),
+    vendorId: z.int().min(0x0000).max(0xffff),
+    productId: z.int().min(0x0000).max(0xffff),
+    numProfiles: z.int().min(1).max(8),
+    numLayers: z.int().min(1).max(8),
+    numKeys: z.int().min(1).max(256),
+    numAdvancedKeys: z.int().min(1).max(64),
     layout: keyboardLayoutSchema,
-    defaultKeymap: z.array(z.array(z.number().int().min(0).max(255))),
+    defaultKeymap: z.array(z.array(z.int().min(0).max(255))),
   })
   .refine(
     (data) =>

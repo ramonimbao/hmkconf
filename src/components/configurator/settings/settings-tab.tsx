@@ -31,6 +31,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { ExportButton } from "./export-button"
+import { ImportButton } from "./import-button"
 
 export function SettingsTab() {
   const { isDemo } = useDevice()
@@ -42,6 +44,20 @@ export function SettingsTab() {
   return (
     <ScrollArea className="flex-1">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4">
+        <div className="flex flex-col">
+          <p className="font-semibold leading-none tracking-tight">
+            Import/Export Config
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Import or export the device configuration as a JSON file. This can
+            be useful for backing up your configuration or sharing it with
+            others.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <ExportButton />
+            <ImportButton />
+          </div>
+        </div>
         <div className="flex flex-col">
           <p className="font-semibold leading-none tracking-tight">
             Restart Device

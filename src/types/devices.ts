@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { z } from "zod"
+import z from "zod"
 import { DeviceMetadata } from "./device-metadata"
 
 export enum DeviceCommand {
@@ -51,16 +51,16 @@ export type DeviceAnalogInfo = {
 }
 
 export const deviceCalibrationSchema = z.object({
-  initialRestValue: z.number().int().min(0),
-  initialBottomOutThreshold: z.number().int().min(0),
+  initialRestValue: z.int().min(0),
+  initialBottomOutThreshold: z.int().min(0),
 })
 
 export type DeviceCalibration = z.infer<typeof deviceCalibrationSchema>
 
 export const deviceActuationSchema = z.object({
-  actuationPoint: z.number().int().min(0).max(255),
-  rtDown: z.number().int().min(0).max(255),
-  rtUp: z.number().int().min(0).max(255),
+  actuationPoint: z.int().min(0).max(255),
+  rtDown: z.int().min(0).max(255),
+  rtUp: z.int().min(0).max(255),
   continuous: z.boolean(),
 })
 
@@ -106,18 +106,18 @@ export enum DeviceDKSAction {
 
 export const deviceAKDynamicKeystroke = z.object({
   type: z.literal(DeviceAKType.DYNAMIC_KEYSTROKE),
-  keycodes: z.array(z.number().int().min(0).max(255)).length(4),
+  keycodes: z.array(z.int().min(0).max(255)).length(4),
   bitmap: z.array(z.array(z.enum(DeviceDKSAction)).length(4)).length(4),
-  bottomOutPoint: z.number().int().min(0).max(255),
+  bottomOutPoint: z.int().min(0).max(255),
 })
 
 export type DeviceAKDynamicKeystroke = z.infer<typeof deviceAKDynamicKeystroke>
 
 export const deviceAKTapHold = z.object({
   type: z.literal(DeviceAKType.TAP_HOLD),
-  tapKeycode: z.number().int().min(0).max(255),
-  holdKeycode: z.number().int().min(0).max(255),
-  tappingTerm: z.number().int().min(0).max(65535),
+  tapKeycode: z.int().min(0).max(255),
+  holdKeycode: z.int().min(0).max(255),
+  tappingTerm: z.int().min(0).max(65535),
   holdOnOtherKeyPress: z.boolean(),
 })
 
@@ -125,15 +125,15 @@ export type DeviceAKTapHold = z.infer<typeof deviceAKTapHold>
 
 export const deviceAKToggle = z.object({
   type: z.literal(DeviceAKType.TOGGLE),
-  keycode: z.number().int().min(0).max(255),
-  tappingTerm: z.number().int().min(0).max(65535),
+  keycode: z.int().min(0).max(255),
+  tappingTerm: z.int().min(0).max(65535),
 })
 
 export type DeviceAKToggle = z.infer<typeof deviceAKToggle>
 
 export const deviceAdvancedKeySchema = z.object({
-  layer: z.number().int().min(0).max(7),
-  key: z.number().int().min(0).max(255),
+  layer: z.int().min(0).max(7),
+  key: z.int().min(0).max(255),
   ak: z.union([
     deviceAKNoneSchema,
     deviceAKNullBind,

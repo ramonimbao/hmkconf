@@ -100,7 +100,11 @@ const sendReport = (
         }
 
         const { hidDevice } = device
-        await hidDevice.sendReport(0, new Uint8Array(buffer))
+        try {
+          await hidDevice.sendReport(0, new Uint8Array(buffer))
+        } catch (error) {
+          reject(error)
+        }
 
         const interval = setInterval(() => {
           while (responseQueue.length > 0) {
@@ -147,7 +151,7 @@ export const useHMKDevice = create<HMKDevice>()(
       const hidDevice = hidDevices[0]
 
       if (!hidDevice) {
-        throw new Error("No device selected")
+        return
       }
 
       const metadata = DEVICE_METADATA.find(
