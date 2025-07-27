@@ -18,7 +18,7 @@ import { Geist } from "next/font/google"
 import "./globals.css"
 import { QueryClientProvider } from "@/components/providers/query-client-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 
 const geist = Geist({ subsets: ["latin"] })
