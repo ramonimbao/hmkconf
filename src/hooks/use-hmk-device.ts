@@ -134,26 +134,36 @@ export const useHMKDevice = create<HMKDevice>()(
         throw new Error("WebHID is not supported")
       }
 
-      const hidDevice = (
-        await navigator.hid.requestDevice({
-          filters: HMK_DEVICE_FILTERS,
-        })
-      )[0]
+      const hidDevices = await navigator.hid.getDevices()
+
+      if (hidDevices.length === 0) {
+        hidDevices.push(
+          ...(await navigator.hid.requestDevice({
+            filters: HMK_DEVICE_FILTERS,
+          })),
+        )
+      }
+
+      const hidDevice = hidDevices[0]
+
+      if (!hidDevice) {
+        throw new Error("No device selected")
+      }
+
       const metadata = DEVICE_METADATA.find(
         (metadata) =>
           metadata.vendorId === hidDevice.vendorId &&
           metadata.productId === hidDevice.productId,
       )
 
-      if (metadata === undefined) {
+      if (!metadata) {
+        await hidDevice.forget()
         throw new Error("Unsupported device")
       }
 
-      if (hidDevice.opened) {
-        throw new Error("Device already opened")
+      if (!hidDevice.opened) {
+        await hidDevice.open()
       }
-
-      await hidDevice.open()
 
       navigator.hid.ondisconnect = get().disconnect
       hidDevice.oninputreport = (e: HIDInputReportEvent) => {
@@ -190,9 +200,11 @@ export const useHMKDevice = create<HMKDevice>()(
       navigator.hid.ondisconnect = null
       device.hidDevice.oninputreport = null
 
-      set({ ...initialState })
       await taskQueue.clear()
       await device.hidDevice.close()
+      await device.hidDevice.forget()
+
+      set({ ...initialState })
     },
 
     async firmwareVersion() {
