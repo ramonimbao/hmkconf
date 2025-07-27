@@ -91,11 +91,7 @@ export enum DeviceNullBindBehavior {
 export const deviceAKNullBind = z.object({
   type: z.literal(DeviceAKType.NULL_BIND),
   secondaryKey: z.number().min(0).max(255),
-  behavior: z
-    .number()
-    .refine((val) => Object.values(DeviceNullBindBehavior).includes(val), {
-      error: "Invalid Null Bind behavior",
-    }),
+  behavior: z.enum(DeviceNullBindBehavior),
   bottomOutPoint: z.number().min(0).max(255),
 })
 
@@ -111,19 +107,7 @@ export enum DeviceDKSAction {
 export const deviceAKDynamicKeystroke = z.object({
   type: z.literal(DeviceAKType.DYNAMIC_KEYSTROKE),
   keycodes: z.array(z.number().int().min(0).max(255)).length(4),
-  bitmap: z
-    .array(
-      z
-        .array(
-          z
-            .number()
-            .refine((val) => Object.values(DeviceDKSAction).includes(val), {
-              error: "Invalid Dynamic Keystroke action",
-            }),
-        )
-        .length(4),
-    )
-    .length(4),
+  bitmap: z.array(z.array(z.enum(DeviceDKSAction)).length(4)).length(4),
   bottomOutPoint: z.number().int().min(0).max(255),
 })
 
