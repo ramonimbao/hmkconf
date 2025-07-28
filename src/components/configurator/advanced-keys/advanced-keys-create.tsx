@@ -34,7 +34,7 @@ export const AdvancedKeysCreate = () => {
   const { metadata } = useDevice()
   const {
     keymap,
-    advancedKeys,
+    numAdvancedKeys,
     newAKType,
     newAKKeys,
     newAKKeysIndex,
@@ -71,19 +71,21 @@ export const AdvancedKeysCreate = () => {
               }
               size="sm"
               onClick={() => {
-                if (advancedKeys.length >= metadata.numAdvancedKeys) {
+                if (numAdvancedKeys >= metadata.numAdvancedKeys) {
                   return
                 }
 
                 const keys = newAKKeys.filter((key) => key !== null)
-                setAdvancedKeys([
-                  ...advancedKeys,
-                  AK_TYPE_TO_METADATA[newAKType].create(
-                    layer,
-                    keys,
-                    keys.map((key) => keymap[layer][key]),
-                  ),
-                ])
+                setAdvancedKeys({
+                  start: numAdvancedKeys,
+                  advancedKeys: [
+                    AK_TYPE_TO_METADATA[newAKType].create(
+                      layer,
+                      keys,
+                      keys.map((key) => keymap[layer][key]),
+                    ),
+                  ],
+                })
                 setNewAKType(DeviceAKType.NONE)
                 setNewAKKeys([null, null])
                 setNewAKKeysIndex(null)

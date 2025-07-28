@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DEFAULT_ACTUATION } from "@/constants/devices"
+import { DEFAULT_ACTUATION, DEFAULT_ADVANCED_KEY } from "@/constants/devices"
 import { HE60 as DEMO_DEVICE } from "@/constants/devices/HE60"
 import {
   DeviceAction,
@@ -31,6 +31,7 @@ type DemoDeviceState = DeviceState & {
     keymap: number[][]
     actuationMap: DeviceActuation[]
     advancedKeys: DeviceAdvancedKey[]
+    tickRate: number
   }[]
 }
 
@@ -47,7 +48,8 @@ const initialState: DemoDeviceState = {
   profile: Array.from({ length: DEMO_DEVICE.numProfiles }, () => ({
     keymap: DEMO_DEVICE.defaultKeymap,
     actuationMap: Array(DEMO_DEVICE.numKeys).fill(DEFAULT_ACTUATION),
-    advancedKeys: [],
+    advancedKeys: Array(DEMO_DEVICE.numAdvancedKeys).fill(DEFAULT_ADVANCED_KEY),
+    tickRate: 30,
   })),
 }
 
@@ -75,7 +77,7 @@ export const useDemoDevice = create<DemoDevice>()(
 
     async recalibrate() {},
 
-    async keyInfo() {
+    async analogInfo() {
       return Array(DEMO_DEVICE.numKeys).fill({
         adcValue: 0,
         distance: 0,
@@ -86,7 +88,7 @@ export const useDemoDevice = create<DemoDevice>()(
       return get().calibration
     },
 
-    async setCalibration(calibration: DeviceCalibration) {
+    async setCalibration(calibration) {
       set((state) => {
         state.calibration = calibration
       })
@@ -96,17 +98,15 @@ export const useDemoDevice = create<DemoDevice>()(
       return 0
     },
 
-    async log() {
-      return ""
-    },
-
     async getKeymap(profile) {
       return get().profile[profile].keymap
     },
 
-    async setKeymap(profile, keymap) {
+    async setKeymap(profile, layer, start, keymap) {
       set((state) => {
-        state.profile[profile].keymap = keymap
+        for (let i = 0; i < keymap.length; i++) {
+          state.profile[profile].keymap[layer][start + i] = keymap[i]
+        }
       })
     },
 
@@ -114,9 +114,11 @@ export const useDemoDevice = create<DemoDevice>()(
       return get().profile[profile].actuationMap
     },
 
-    async setActuationMap(profile, actuationMap) {
+    async setActuationMap(profile, start, actuationMap) {
       set((state) => {
-        state.profile[profile].actuationMap = actuationMap
+        for (let i = 0; i < actuationMap.length; i++) {
+          state.profile[profile].actuationMap[start + i] = actuationMap[i]
+        }
       })
     },
 
@@ -124,9 +126,21 @@ export const useDemoDevice = create<DemoDevice>()(
       return get().profile[profile].advancedKeys
     },
 
-    async setAdvancedKeys(profile, advancedKeys) {
+    async setAdvancedKeys(profile, start, advancedKeys) {
       set((state) => {
-        state.profile[profile].advancedKeys = advancedKeys
+        for (let i = 0; i < advancedKeys.length; i++) {
+          state.profile[profile].advancedKeys[start + i] = advancedKeys[i]
+        }
+      })
+    },
+
+    async getTickRate(profile) {
+      return get().profile[profile].tickRate
+    },
+
+    async setTickRate(profile, tickRate) {
+      set((state) => {
+        state.profile[profile].tickRate = tickRate
       })
     },
   })),

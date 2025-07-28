@@ -37,6 +37,7 @@ import {
   DynamicKeystrokeSliderHeader,
 } from "./dynamic-keystroke-slider"
 import { KeyTesterTab } from "./key-tester-tab"
+import { TickRateTab } from "./tick-rate-tab"
 
 export function DynamicKeystrokeEditor() {
   const { profile } = useConfigurator()
@@ -53,18 +54,20 @@ export function DynamicKeystrokeEditor() {
 
   const updateActuation = (actuation: DeviceActuation) =>
     isSuccess &&
-    setActuationMap(
-      produce(actuationMap, (draft) => {
-        draft[advancedKeys[akIndex].key] = actuation
-      }),
-    )
+    setActuationMap({
+      start: advancedKeys[akIndex].key,
+      actuationMap: [actuation],
+    })
 
   const updateAdvancedKey = (ak: DeviceAKDynamicKeystroke) =>
-    setAdvancedKeys(
-      produce(advancedKeys, (draft) => {
-        draft[akIndex].ak = ak
-      }),
-    )
+    setAdvancedKeys({
+      start: akIndex,
+      advancedKeys: [
+        produce(advancedKeys[akIndex], (draft) => {
+          draft.ak = ak
+        }),
+      ],
+    })
 
   useEffect(() => {
     if (isSuccess) {
@@ -158,6 +161,7 @@ export function DynamicKeystrokeEditor() {
             <TabsTrigger value="bindings">Bindings</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
             <TabsTrigger value="key-tester">Key Tester</TabsTrigger>
+            <TabsTrigger value="tick-rate">Tick Rate</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="bindings">
@@ -204,6 +208,9 @@ export function DynamicKeystrokeEditor() {
         </TabsContent>
         <TabsContent value="key-tester">
           <KeyTesterTab />
+        </TabsContent>
+        <TabsContent value="tick-rate">
+          <TickRateTab />
         </TabsContent>
       </Tabs>
     </div>

@@ -60,22 +60,30 @@ export function NullBindEditor() {
   const [uiActuation, setUIActuation] = useState(DEFAULT_ACTUATION)
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
-  const updateActuation = (actuation: DeviceActuation) =>
-    isSuccess &&
-    setActuationMap(
-      produce(actuationMap, (draft) => {
-        for (const key of [advancedKeys[akIndex].key, ak.secondaryKey]) {
-          draft[key] = actuation
-        }
-      }),
-    )
+  const updateActuation = (actuation: DeviceActuation) => {
+    if (!isSuccess) {
+      return
+    }
+
+    setActuationMap({
+      start: advancedKeys[akIndex].key,
+      actuationMap: [actuation],
+    })
+    setActuationMap({
+      start: ak.secondaryKey,
+      actuationMap: [actuation],
+    })
+  }
 
   const updateAdvancedKey = (ak: DeviceAKNullBind) =>
-    setAdvancedKeys(
-      produce(advancedKeys, (draft) => {
-        draft[akIndex].ak = ak
-      }),
-    )
+    setAdvancedKeys({
+      start: akIndex,
+      advancedKeys: [
+        produce(advancedKeys[akIndex], (draft) => {
+          draft.ak = ak
+        }),
+      ],
+    })
 
   useEffect(() => {
     if (isSuccess) {

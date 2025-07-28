@@ -23,7 +23,7 @@ import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
 import { Toggle } from "@radix-ui/react-toggle"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
-import { createContext, Dispatch, useContext, useState } from "react"
+import { createContext, Dispatch, useContext, useMemo, useState } from "react"
 import {
   KeyboardEditor,
   KeyboardEditorHeader,
@@ -42,6 +42,7 @@ type AdvancedKeys = {
   keymap: number[][]
   normalKeymap: number[][]
   advancedKeys: DeviceAdvancedKey[]
+  numAdvancedKeys: number
   akIndices: (number | null)[][]
   newAKType: DeviceAKType
   newAKKeys: [number | null, number | null]
@@ -70,6 +71,13 @@ export function AdvancedKeysTab() {
     null,
   ])
   const [newAKKeysIndex, setNewAKKeysIndex] = useState<number | null>(null)
+
+  const numAdvancedKeys = useMemo(
+    () =>
+      advancedKeys?.filter((ak) => ak.ak.type !== DeviceAKType.NONE).length ??
+      0,
+    [advancedKeys],
+  )
 
   return (
     <KeyboardEditor>
@@ -107,9 +115,17 @@ export function AdvancedKeysTab() {
                     e.preventDefault()
                     const akIndex = akIndices[layer][key]
                     if (akIndex !== null) {
-                      setAdvancedKeys(
-                        advancedKeys.filter((_, i) => i !== akIndex),
-                      )
+                      setAdvancedKeys({
+                        start: akIndex,
+                        advancedKeys: [
+                          ...advancedKeys.slice(akIndex + 1),
+                          {
+                            layer: 0,
+                            key: 0,
+                            ak: { type: DeviceAKType.NONE },
+                          },
+                        ],
+                      })
                       setAKIndex(null)
                     }
                   }}
@@ -175,6 +191,7 @@ export function AdvancedKeysTab() {
               keymap,
               normalKeymap,
               advancedKeys,
+              numAdvancedKeys,
               akIndices,
               newAKType,
               newAKKeys,

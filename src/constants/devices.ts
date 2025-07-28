@@ -15,6 +15,7 @@
 
 import {
   DeviceActuation,
+  DeviceAdvancedKey,
   DeviceAdvancedKeyMetadata,
   DeviceAKType,
   DeviceDKSAction,
@@ -33,6 +34,14 @@ export const DEFAULT_ACTUATION: DeviceActuation = {
   rtDown: 0,
   rtUp: 0,
   continuous: false,
+}
+
+export const DEFAULT_ADVANCED_KEY: DeviceAdvancedKey = {
+  layer: 0,
+  key: 0,
+  ak: {
+    type: DeviceAKType.NONE,
+  },
 }
 
 export const DEFAULT_BOTTOM_OUT_POINT = 230

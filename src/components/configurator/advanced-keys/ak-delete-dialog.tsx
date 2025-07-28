@@ -29,6 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { DeviceAKType } from "@/types/devices"
 import { ReactNode } from "react"
 
 interface AKDeleteDialogProps {
@@ -66,7 +67,17 @@ export function AKDeleteDialog({ akIndex, children }: AKDeleteDialogProps) {
             })}
             onClick={() =>
               isSuccess &&
-              setAdvancedKeys(advancedKeys.filter((_, i) => i !== akIndex))
+              setAdvancedKeys({
+                start: akIndex,
+                advancedKeys: [
+                  ...advancedKeys.slice(akIndex + 1),
+                  {
+                    layer: 0,
+                    key: 0,
+                    ak: { type: DeviceAKType.NONE },
+                  },
+                ],
+              })
             }
           >
             Delete

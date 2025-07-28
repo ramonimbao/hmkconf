@@ -22,7 +22,6 @@ import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { Keycode } from "@/types/keycodes"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
-import { produce } from "immer"
 import {
   KeyboardEditor,
   KeyboardEditorHeader,
@@ -50,7 +49,13 @@ export function RemapTab() {
       return
     }
 
-    setKeymap(profile0Keymap)
+    for (let i = 0; i < metadata.numLayers; i++) {
+      setKeymap({
+        layer: i,
+        start: 0,
+        keymap: profile0Keymap[i],
+      })
+    }
     setKey(null)
   }
 
@@ -59,11 +64,7 @@ export function RemapTab() {
       return
     }
 
-    setKeymap(
-      produce(keymap, (draft) => {
-        draft[layer] = metadata.defaultKeymap[layer]
-      }),
-    )
+    setKeymap({ layer, start: 0, keymap: metadata.defaultKeymap[layer] })
     setKey(null)
   }
 
@@ -76,11 +77,11 @@ export function RemapTab() {
       return
     }
 
-    setKeymap(
-      produce(keymap, (draft) => {
-        draft[layer][key] = keycode
-      }),
-    )
+    setKeymap({
+      layer,
+      start: key,
+      keymap: [keycode],
+    })
     if (moveToNextKey) {
       for (let i = 0; i < metadata.layout.length; i++) {
         for (let j = 0; j < metadata.layout[i].length; j++) {

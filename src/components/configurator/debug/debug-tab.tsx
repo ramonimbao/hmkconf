@@ -15,8 +15,7 @@
 
 "use client"
 
-import { useKeyInfo } from "@/api/use-key-info"
-import { useLog } from "@/api/use-log"
+import { useAnalogInfo } from "@/api/use-analog-info"
 import { useRecalibrate } from "@/api/use-recalibrate"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -27,7 +26,6 @@ import {
 } from "@/components/ui/tooltip"
 import { cn, displayDistance } from "@/lib/utils"
 import { TriangleAlert } from "lucide-react"
-import { useEffect } from "react"
 import {
   KeyTesterKeyPress,
   KeyTesterKeyRelease,
@@ -41,15 +39,8 @@ import {
 } from "../common/keyboard-editor"
 
 export function DebugTab() {
-  const { isSuccess: isKeyInfoSuccess, data: keyInfo } = useKeyInfo()
-  const { isSuccess: isLogSuccess, data: log } = useLog()
+  const { isSuccess, data: analogInfo } = useAnalogInfo()
   const { mutate: recalibrate } = useRecalibrate()
-
-  useEffect(() => {
-    if (isLogSuccess && log) {
-      console.log(log)
-    }
-  }, [isLogSuccess, log])
 
   return (
     <KeyboardEditor>
@@ -73,7 +64,7 @@ export function DebugTab() {
           </TooltipProvider>
         </KeyboardEditorHeader>
         <KeyboardEditorKeyboard
-          disabled={!isKeyInfoSuccess}
+          disabled={!isSuccess}
           elt={(key) => (
             <div
               className={cn(
@@ -81,10 +72,10 @@ export function DebugTab() {
                 "size-full flex-col gap-0 text-xs",
               )}
             >
-              {isKeyInfoSuccess && (
+              {isSuccess && (
                 <>
-                  <p>{keyInfo[key].adcValue}</p>
-                  <p>{displayDistance(keyInfo[key].distance)}</p>
+                  <p>{analogInfo[key].adcValue}</p>
+                  <p>{displayDistance(analogInfo[key].distance)}</p>
                 </>
               )}
             </div>
@@ -93,18 +84,20 @@ export function DebugTab() {
       </KeyboardEditorLayout>
       <KeyboardEditorLayout>
         <div className="mx-auto flex w-full max-w-5xl">
-          <div className="flex flex-1 flex-col p-4">
-            <p className="font-semibold leading-none tracking-tight">
-              Recalibrate
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Recalibration will erase and resample the stored minimum and
-              maximum ADC values for each switch. Ensure that all keys are fully
-              released before recalibrating, and press each key down completely
-              once calibration is finished.
-            </p>
-            <div className="mt-3">
-              <Button onClick={() => recalibrate()}>Recalibrate</Button>
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <div>
+              <p className="font-semibold leading-none tracking-tight">
+                Recalibrate
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Recalibration will erase and resample the stored minimum and
+                maximum ADC values for each switch. Ensure that all keys are
+                fully released before recalibrating, and press each key down
+                completely once calibration is finished.
+              </p>
+              <div className="mt-3">
+                <Button onClick={() => recalibrate()}>Recalibrate</Button>
+              </div>
             </div>
           </div>
           <div className="grid w-80 shrink-0 gap-4 p-4">

@@ -25,8 +25,8 @@ export function displayUInt16(value: number) {
   return `0x${value.toString(16).toUpperCase().padStart(4, "0")}`
 }
 
-export function isWebUsbSupported() {
-  return !!navigator.usb
+export function isWebHIDSupported() {
+  return !!navigator.hid
 }
 
 export function switchDistanceToDistance(distance: number) {
@@ -39,4 +39,8 @@ export function distanceToSwitchDistance(distance: number) {
 
 export function displayDistance(distance: number) {
   return (distanceToSwitchDistance(distance) / 20).toFixed(2)
+}
+
+export function asyncDelay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

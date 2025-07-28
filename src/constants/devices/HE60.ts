@@ -118,8 +118,8 @@ export const HE60: DeviceMetadata = deviceMetadataSchema.parse({
       Keycode.KC_8,
       Keycode.KC_9,
       Keycode.KC_0,
-      Keycode.KC_EQL,
       Keycode.KC_MINS,
+      Keycode.KC_EQL,
       Keycode._______,
       Keycode.KC_BSPC,
       Keycode._______, // Row 1

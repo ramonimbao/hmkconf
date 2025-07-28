@@ -22,7 +22,6 @@ import {
   SWITCH_DISTANCE,
 } from "@/constants/devices"
 import { DeviceActuation } from "@/types/devices"
-import { produce } from "immer"
 import { useEffect, useState } from "react"
 import { DistanceSlider } from "../common/distance-slider"
 import { Switch } from "../common/switch"
@@ -41,15 +40,24 @@ export function ActuationSettings() {
   const [uiActuation, setUIActuation] =
     useState<DeviceActuation>(DEFAULT_ACTUATION)
 
-  const updateActuation = (actuation: DeviceActuation) =>
-    !disabled &&
-    setActuationMap(
-      produce(actuationMap, (draft) => {
-        for (const key of keys) {
-          draft[key] = actuation
-        }
-      }),
-    )
+  const updateActuation = (actuation: DeviceActuation) => {
+    if (disabled) {
+      return
+    }
+
+    const minKey = Math.min(...keys)
+    const maxKey = Math.max(...keys)
+    const newActuationMap = actuationMap.slice(minKey, maxKey + 1)
+
+    for (const key of keys) {
+      newActuationMap[key - minKey] = actuation
+    }
+
+    setActuationMap({
+      start: minKey,
+      actuationMap: newActuationMap,
+    })
+  }
 
   useEffect(() => {
     if (!isSuccess) {

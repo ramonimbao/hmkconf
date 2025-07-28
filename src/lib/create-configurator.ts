@@ -32,6 +32,9 @@ const initialState: ConfiguratorState = {
     layer: 0,
     akIndex: null,
   },
+  debug: {
+    logEnabled: false,
+  },
 }
 
 export function createConfigurator() {
@@ -45,6 +48,7 @@ export function createConfigurator() {
           remap: { ...state.remap, ...initialState.remap },
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
+          debug: { ...state.debug, ...initialState.debug },
         })),
       setTab: (tab) => set({ tab }),
       setProfile: (profile) =>
@@ -54,6 +58,7 @@ export function createConfigurator() {
           remap: { ...state.remap, ...initialState.remap },
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
+          debug: { ...state.debug, ...initialState.debug },
         })),
 
       remap: {
@@ -94,6 +99,15 @@ export function createConfigurator() {
         setAKIndex: (akIndex) =>
           set((state) => {
             state.advancedKeys.akIndex = akIndex
+          }),
+      },
+
+      debug: {
+        ...initialState.debug,
+
+        setLogEnabled: (enabled) =>
+          set((state) => {
+            state.debug.logEnabled = enabled
           }),
       },
     })),

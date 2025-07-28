@@ -56,7 +56,8 @@ export function AdvancedKeysEditor() {
   const disabled =
     !isSuccess ||
     akIndex === null ||
-    akIndex >= advancedKeys.length ||
+    akIndex >=
+      advancedKeys.filter(({ ak }) => ak.type !== DeviceAKType.NONE).length ||
     advancedKeys[akIndex].ak.type === DeviceAKType.NONE
 
   useLayoutEffect(() => {

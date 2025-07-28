@@ -15,24 +15,27 @@
 
 import { DeviceMetadata } from "./device-metadata"
 
-export enum DeviceRequest {
+export enum DeviceCommand {
   FIRMWARE_VERSION = 0,
   REBOOT,
   BOOTLOADER,
   FACTORY_RESET,
   RECALIBRATE,
-  KEY_INFO,
+  ANALOG_INFO,
   GET_CALIBRATION,
   SET_CALIBRATION,
   GET_PROFILE,
-  LOG,
-  // Requests below use `wValue` to specify the profile number
+
   GET_KEYMAP = 128,
   SET_KEYMAP,
   GET_ACTUATION_MAP,
   SET_ACTUATION_MAP,
   GET_ADVANCED_KEYS,
   SET_ADVANCED_KEYS,
+  GET_TICK_RATE,
+  SET_TICK_RATE,
+
+  UNKNOWN = 255,
 }
 
 export type DeviceState = {
@@ -41,7 +44,7 @@ export type DeviceState = {
   isDemo: boolean
 }
 
-export type DeviceKeyInfo = {
+export type DeviceAnalogInfo = {
   adcValue: number
   distance: number
 }
@@ -131,23 +134,31 @@ export type DeviceAction = {
   bootloader(): Promise<void>
   factoryReset(): Promise<void>
   recalibrate(): Promise<void>
-  keyInfo(): Promise<DeviceKeyInfo[]>
+  analogInfo(): Promise<DeviceAnalogInfo[]>
   getCalibration(): Promise<DeviceCalibration>
   setCalibration(calibration: DeviceCalibration): Promise<void>
   getProfile(): Promise<number>
-  log(): Promise<string>
   getKeymap(profile: number): Promise<number[][]>
-  setKeymap(profile: number, keymap: number[][]): Promise<void>
+  setKeymap(
+    profile: number,
+    layer: number,
+    start: number,
+    keymap: number[],
+  ): Promise<void>
   getActuationMap(profile: number): Promise<DeviceActuation[]>
   setActuationMap(
     profile: number,
-    actuationMap: DeviceActuation[],
+    start: number,
+    actuation: DeviceActuation[],
   ): Promise<void>
   getAdvancedKeys(profile: number): Promise<DeviceAdvancedKey[]>
   setAdvancedKeys(
     profile: number,
+    start: number,
     advancedKeys: DeviceAdvancedKey[],
   ): Promise<void>
+  getTickRate(profile: number): Promise<number>
+  setTickRate(profile: number, tickRate: number): Promise<void>
 }
 
 export type Device = DeviceState & DeviceAction

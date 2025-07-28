@@ -16,14 +16,14 @@
 import { useDevice } from "@/components/providers/device-provider"
 import { useQuery } from "@tanstack/react-query"
 
-const REFETCH_INTERVAL = 1000 / 30
+const REFETCH_INTERVAL = 1000
 
-export function useKeyInfo() {
-  const { id, keyInfo } = useDevice()
+export function useGetTickRate(profile: number) {
+  const { id, getTickRate } = useDevice()
 
   return useQuery({
-    queryKey: [id, "keyInfo"],
-    queryFn: keyInfo,
+    queryKey: [id, profile, "tickRate"],
+    queryFn: () => getTickRate(profile),
     refetchInterval: REFETCH_INTERVAL,
   })
 }
