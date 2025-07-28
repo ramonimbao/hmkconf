@@ -17,7 +17,7 @@
 
 import { useHMKDevice } from "@/hooks/use-hmk-device"
 import { createConfigurator } from "@/lib/create-configurator"
-import { useEffect, useLayoutEffect } from "react"
+import { useLayoutEffect } from "react"
 import { isWebHIDSupported } from "@/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
 import { Configurator } from "./configurator/configurator"
