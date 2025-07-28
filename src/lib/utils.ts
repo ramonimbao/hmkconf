@@ -26,7 +26,7 @@ export function displayUInt16(value: number) {
 }
 
 export function isWebHIDSupported() {
-  return !!navigator.hid
+  return typeof window !== "undefined" && !!navigator.hid
 }
 
 export function switchDistanceToDistance(distance: number) {

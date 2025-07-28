@@ -19,7 +19,7 @@ import { useHMKDevice } from "@/hooks/use-hmk-device"
 import { createConfigurator } from "@/lib/create-configurator"
 import { isWebHIDSupported } from "@/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
-import { useEffect, useLayoutEffect } from "react"
+import { useLayoutEffect } from "react"
 import { Configurator } from "./configurator/configurator"
 import { ConfiguratorLayout } from "./configurator/layout"
 import { ConfiguratorProvider } from "./providers/configurator-provider"
@@ -42,10 +42,6 @@ export function AppConfigurator() {
       hmkDevice.connect()
     }
   }, [hmkDevice, queryClient, reset])
-
-  useEffect(() => {
-    setWebHIDSupported(isWebHIDSupported())
-  }, [])
 
   return (
     <ConfiguratorProvider configurator={useAppConfigurator()}>
