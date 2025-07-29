@@ -13,7 +13,8 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { HE16 } from "./devices/HE16"
 import { HE60 } from "./devices/HE60"
 import { M256_WHE } from "./devices/M256-WHE"
 
-export const DEVICE_METADATA = [HE60, M256_WHE]
+export const DEVICE_METADATA = [HE16, HE60, M256_WHE]
