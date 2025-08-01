@@ -39,12 +39,14 @@ const COMMAND_PARTIAL_SIZE = (size: number, headerSize: number) =>
 
 const HMK_DEVICE_TIMEOUT = 4000
 
+const HMK_DEVICE_USAGE_PAGE = 0xffab
+const HMK_DEVICE_USAGE_ID = 0xab
 const HMK_DEVICE_FILTERS: HIDDeviceFilter[] = DEVICE_METADATA.map(
   ({ vendorId, productId }) => ({
     vendorId,
     productId,
-    usagePage: 0xffab,
-    usage: 0xab,
+    usagePage: HMK_DEVICE_USAGE_PAGE,
+    usage: HMK_DEVICE_USAGE_ID,
   }),
 )
 
@@ -138,7 +140,14 @@ export const useHMKDevice = create<HMKDevice>()(
         throw new Error("WebHID is not supported")
       }
 
-      const hidDevices = await navigator.hid.getDevices()
+      responseQueue.length = 0
+      await taskQueue.clear()
+
+      const hidDevices = (await navigator.hid.getDevices()).filter(
+        (device) =>
+          device.collections[0].usagePage === HMK_DEVICE_USAGE_PAGE &&
+          device.collections[0].usage === HMK_DEVICE_USAGE_ID,
+      )
 
       if (hidDevices.length === 0) {
         hidDevices.push(
@@ -186,7 +195,6 @@ export const useHMKDevice = create<HMKDevice>()(
         responseQueue.push(e.data)
       }
 
-      responseQueue.length = 0
       set({
         id: `HMK_DEVICE:${displayUInt16(hidDevice.vendorId)}_${displayUInt16(hidDevice.productId)}`,
         metadata,
@@ -204,6 +212,7 @@ export const useHMKDevice = create<HMKDevice>()(
       navigator.hid.ondisconnect = null
       device.hidDevice.oninputreport = null
 
+      responseQueue.length = 0
       await taskQueue.clear()
       await device.hidDevice.close()
       await device.hidDevice.forget()
