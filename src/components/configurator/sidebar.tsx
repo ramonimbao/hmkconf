@@ -51,7 +51,7 @@ export function ConfiguratorSidebar() {
   const router = useRouter()
 
   const onDisconnect = async () => {
-    await disconnect()
+    await disconnect(true)
     if (isDemo) {
       router.replace("/")
     }

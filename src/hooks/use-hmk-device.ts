@@ -178,7 +178,7 @@ export const useHMKDevice = create<HMKDevice>()(
         await hidDevice.open()
       }
 
-      navigator.hid.ondisconnect = get().disconnect
+      navigator.hid.ondisconnect = () => get().disconnect(false)
       hidDevice.oninputreport = (e: HIDInputReportEvent) => {
         const device = get()
         if (device.status !== "connected") {
@@ -203,7 +203,7 @@ export const useHMKDevice = create<HMKDevice>()(
       })
     },
 
-    async disconnect() {
+    async disconnect(forget: boolean) {
       const device = get()
       if (device.status !== "connected") {
         return
@@ -215,7 +215,9 @@ export const useHMKDevice = create<HMKDevice>()(
       responseQueue.length = 0
       await taskQueue.clear()
       await device.hidDevice.close()
-      await device.hidDevice.forget()
+      if (forget) {
+        await device.hidDevice.forget()
+      }
 
       set({ ...initialState })
     },

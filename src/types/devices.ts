@@ -147,7 +147,7 @@ export type DeviceAdvancedKey = z.infer<typeof deviceAdvancedKeySchema>
 
 export type DeviceAction = {
   connect(): Promise<void>
-  disconnect(): Promise<void>
+  disconnect(forget: boolean): Promise<void>
   firmwareVersion(): Promise<number>
   reboot(): Promise<void>
   bootloader(): Promise<void>
