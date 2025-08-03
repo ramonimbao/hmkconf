@@ -13,16 +13,38 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DeviceActuation } from "@/types/devices"
+import { DeviceGamepadAnalogCurve } from "./devices"
 
-export const SWITCH_DISTANCE = 80
+export enum GamepadButton {
+  GP_BUTTON_NONE = 0,
+  GP_BUTTON_A,
+  GP_BUTTON_B,
+  GP_BUTTON_X,
+  GP_BUTTON_Y,
+  GP_BUTTON_UP,
+  GP_BUTTON_DOWN,
+  GP_BUTTON_LEFT,
+  GP_BUTTON_RIGHT,
+  GP_BUTTON_START,
+  GP_BUTTON_BACK,
+  GP_BUTTON_HOME,
+  GP_BUTTON_LS,
+  GP_BUTTON_RS,
+  GP_BUTTON_LB,
+  GP_BUTTON_RB,
+  GP_BUTTON_LS_UP,
+  GP_BUTTON_LS_DOWN,
+  GP_BUTTON_LS_LEFT,
+  GP_BUTTON_LS_RIGHT,
+  GP_BUTTON_RS_UP,
+  GP_BUTTON_RS_DOWN,
+  GP_BUTTON_RS_LEFT,
+  GP_BUTTON_RS_RIGHT,
+  GP_BUTTON_LT,
+  GP_BUTTON_RT,
+}
 
-export const DEFAULT_ACTUATION_POINT = 128
-export const DEFAULT_RT_DOWN = 32
-
-export const DEFAULT_ACTUATION: DeviceActuation = {
-  actuationPoint: DEFAULT_ACTUATION_POINT,
-  rtDown: 0,
-  rtUp: 0,
-  continuous: false,
+export type GamepadAnalogCurvePreset = {
+  name: string
+  curve: DeviceGamepadAnalogCurve
 }

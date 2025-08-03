@@ -28,8 +28,9 @@ export type ConfiguratorState = {
     layer: number
     akIndex: number | null
   }
-  debug: {
-    logEnabled: boolean
+  gamepad: {
+    key: number | null
+    editorTab: string
   }
   settings: {
     loading: boolean
@@ -52,8 +53,9 @@ export type ConfiguratorAction = {
     setLayer(layer: number): void
     setAKIndex(akIndex: number | null): void
   }
-  debug: {
-    setLogEnabled(enabled: boolean): void
+  gamepad: {
+    setKey(key: number | null): void
+    setEditorTab(editorTab: string): void
   }
   settings: {
     setLoading(loading: boolean): void

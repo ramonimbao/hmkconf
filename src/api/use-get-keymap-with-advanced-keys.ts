@@ -20,7 +20,7 @@ import { produce } from "immer"
 import { useGetAdvancedKeys } from "./use-get-advanced-keys"
 import { useGetKeymap } from "./use-get-keymap"
 
-export function useGetKeymapWithAdvancedKeys(profile: number):
+type GetKeymapWithAdvancedKeysReturnType =
   | {
       isSuccess: false
       keymap?: undefined
@@ -34,7 +34,11 @@ export function useGetKeymapWithAdvancedKeys(profile: number):
       normalKeymap: number[][]
       advancedKeys: DeviceAdvancedKey[]
       akIndices: (number | null)[][]
-    } {
+    }
+
+export function useGetKeymapWithAdvancedKeys(
+  profile: number,
+): GetKeymapWithAdvancedKeysReturnType {
   const { metadata } = useDevice()
 
   const { isSuccess: isKeymapSuccess, data: keymap } = useGetKeymap(profile)

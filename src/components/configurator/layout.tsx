@@ -46,6 +46,7 @@ export function ConfiguratorLayout({
               <TabsTrigger value="remap">Remap</TabsTrigger>
               <TabsTrigger value="performance">Performance</TabsTrigger>
               <TabsTrigger value="advanced-keys">Advanced Keys</TabsTrigger>
+              <TabsTrigger value="gamepad">Gamepad</TabsTrigger>
               <TabsTrigger value="debug">Debug</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>

@@ -33,6 +33,7 @@ const ANALOG_INFO_SIZE = 3
 const KEYMAP_SIZE = 1
 const ACTUATION_MAP_SIZE = 4
 const ADVANCED_KEYS_SIZE = 12
+const GAMEPAD_BUTTON_SIZE = 1
 
 const COMMAND_PARTIAL_SIZE = (size: number, headerSize: number) =>
   Math.floor((RAW_HID_EP_SIZE - 1 - headerSize) / size)
@@ -294,6 +295,24 @@ export const useHMKDevice = create<HMKDevice>()(
       const response = await sendReport(get(), DeviceCommand.GET_PROFILE)
 
       return response.getUint8(1)
+    },
+
+    async getOptions() {
+      const response = await sendReport(get(), DeviceCommand.GET_OPTIONS)
+      const optionsRaw = response.getUint16(1, true)
+
+      return {
+        xinputEnabled: (optionsRaw & 0x0001) !== 0,
+      }
+    },
+
+    async setOptions(options) {
+      const optionsRaw = (options.xinputEnabled ? 1 : 0) << 0
+
+      await sendReport(get(), DeviceCommand.SET_OPTIONS, [
+        optionsRaw & 0xff,
+        (optionsRaw >> 8) & 0xff,
+      ])
     },
 
     async getKeymap(profile) {
@@ -574,6 +593,89 @@ export const useHMKDevice = create<HMKDevice>()(
 
     async setTickRate(profile, tickRate) {
       await sendReport(get(), DeviceCommand.SET_TICK_RATE, [profile, tickRate])
+    },
+
+    async getGamepadButtons(profile) {
+      const partialSize = COMMAND_PARTIAL_SIZE(GAMEPAD_BUTTON_SIZE, 0)
+      const device = get()
+
+      const ret = []
+      for (
+        let i = 0;
+        i < Math.ceil(device.metadata.numKeys / partialSize);
+        i++
+      ) {
+        const response = await sendReport(
+          device,
+          DeviceCommand.GET_GAMEPAD_BUTTONS,
+          [profile, i],
+        )
+
+        for (let j = 0; j < partialSize; j++) {
+          if (i * partialSize + j >= device.metadata.numKeys) {
+            break
+          }
+          const offset = 1 + j * KEYMAP_SIZE
+          ret.push(response.getUint8(offset))
+        }
+      }
+
+      return ret
+    },
+
+    async setGamepadButtons(profile, start, buttons) {
+      const partialSize = COMMAND_PARTIAL_SIZE(GAMEPAD_BUTTON_SIZE, 3)
+
+      for (let i = 0; i < Math.ceil(buttons.length / partialSize); i++) {
+        const partialButtons = buttons.slice(
+          i * partialSize,
+          Math.min(buttons.length, (i + 1) * partialSize),
+        )
+
+        await sendReport(get(), DeviceCommand.SET_GAMEPAD_BUTTONS, [
+          profile,
+          start + i * partialSize,
+          partialButtons.length,
+          ...partialButtons,
+        ])
+      }
+    },
+
+    async getGamepadOptions(profile) {
+      const response = await sendReport(
+        get(),
+        DeviceCommand.GET_GAMEPAD_OPTIONS,
+        [profile],
+      )
+
+      const analogCurve = Array.from({ length: 4 }, (_, i) => ({
+        x: response.getUint8(1 + i * 2),
+        y: response.getUint8(2 + i * 2),
+      }))
+      const optionsRaw = response.getUint8(9)
+
+      return {
+        analogCurve,
+        keyboardEnabled: (optionsRaw & 0x01) !== 0,
+        gamepadOverride: (optionsRaw & 0x02) !== 0,
+        squareJoystick: (optionsRaw & 0x04) !== 0,
+        snappyJoystick: (optionsRaw & 0x08) !== 0,
+      }
+    },
+
+    async setGamepadOptions(profile, options) {
+      const buffer = [profile]
+      for (const { x, y } of options.analogCurve) {
+        buffer.push(x, y)
+      }
+      buffer.push(
+        ((options.keyboardEnabled ? 1 : 0) << 0) |
+          ((options.gamepadOverride ? 1 : 0) << 1) |
+          ((options.squareJoystick ? 1 : 0) << 2) |
+          ((options.snappyJoystick ? 1 : 0) << 3),
+      )
+
+      await sendReport(get(), DeviceCommand.SET_GAMEPAD_OPTIONS, buffer)
     },
   })),
 )

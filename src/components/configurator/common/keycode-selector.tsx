@@ -20,43 +20,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { categoryToKeycodes, keycodeToMetadata } from "@/constants/keycodes"
+import { categoryToKeycodes } from "@/constants/keycodes"
 import { cn } from "@/lib/utils"
-import { HTMLAttributes, ReactNode, useMemo } from "react"
+import { HTMLAttributes, useMemo } from "react"
 import { KeycodeButton } from "./keycode-button"
-
-interface KeycodeSelectorTooltipProps {
-  keycode: number
-  children: ReactNode
-}
-
-function KeycodeSelectorTooltip({
-  keycode,
-  children,
-}: KeycodeSelectorTooltipProps) {
-  const keycodeMetadata = useMemo(() => keycodeToMetadata(keycode), [keycode])
-
-  if (keycodeMetadata.tooltip === undefined) {
-    return children
-  }
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className="max-w-56">
-          <p>{keycodeMetadata.tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
-}
+import { KeycodeButtonTooltip } from "./keycode-button-tooltip"
 
 interface KeycodeSelectorProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
@@ -103,12 +71,12 @@ export function KeycodeSelector({
                       height: size,
                     }}
                   >
-                    <KeycodeSelectorTooltip keycode={keycode}>
+                    <KeycodeButtonTooltip keycode={keycode}>
                       <KeycodeButton
                         keycode={keycode}
                         onClick={() => onKeycodeSelected(keycode)}
                       />
-                    </KeycodeSelectorTooltip>
+                    </KeycodeButtonTooltip>
                   </div>
                 ))}
               </div>

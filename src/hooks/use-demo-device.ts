@@ -13,24 +13,32 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DEFAULT_ACTUATION, DEFAULT_ADVANCED_KEY } from "@/constants/devices"
+import { DEFAULT_ADVANCED_KEY } from "@/constants/advanced-keys"
+import { DEFAULT_ACTUATION } from "@/constants/devices"
 import { HE60 as DEMO_DEVICE } from "@/constants/devices/HE60"
+import { DEFAULT_GAMEPAD_OPTIONS } from "@/constants/gamepad"
 import {
   DeviceAction,
   DeviceActuation,
   DeviceAdvancedKey,
   DeviceCalibration,
+  DeviceGamepadOptions,
+  DeviceOptions,
   DeviceState,
 } from "@/types/devices"
+import { GamepadButton } from "@/types/gamepad"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
 
 type DemoDeviceState = DeviceState & {
   calibration: DeviceCalibration
+  options: DeviceOptions
   profile: {
     keymap: number[][]
     actuationMap: DeviceActuation[]
     advancedKeys: DeviceAdvancedKey[]
+    gamepadButtons: number[]
+    gamepadOptions: DeviceGamepadOptions
     tickRate: number
   }[]
 }
@@ -45,10 +53,17 @@ const initialState: DemoDeviceState = {
     initialRestValue: 0,
     initialBottomOutThreshold: 0,
   },
+  options: {
+    xinputEnabled: true,
+  },
   profile: Array.from({ length: DEMO_DEVICE.numProfiles }, () => ({
     keymap: DEMO_DEVICE.defaultKeymap,
     actuationMap: Array(DEMO_DEVICE.numKeys).fill(DEFAULT_ACTUATION),
     advancedKeys: Array(DEMO_DEVICE.numAdvancedKeys).fill(DEFAULT_ADVANCED_KEY),
+    gamepadButtons: Array(DEMO_DEVICE.numKeys).fill(
+      GamepadButton.GP_BUTTON_NONE,
+    ),
+    gamepadOptions: DEFAULT_GAMEPAD_OPTIONS,
     tickRate: 30,
   })),
 }
@@ -98,6 +113,16 @@ export const useDemoDevice = create<DemoDevice>()(
       return 0
     },
 
+    async getOptions() {
+      return get().options
+    },
+
+    async setOptions(options) {
+      set((state) => {
+        state.options = options
+      })
+    },
+
     async getKeymap(profile) {
       return get().profile[profile].keymap
     },
@@ -141,6 +166,28 @@ export const useDemoDevice = create<DemoDevice>()(
     async setTickRate(profile, tickRate) {
       set((state) => {
         state.profile[profile].tickRate = tickRate
+      })
+    },
+
+    async getGamepadButtons(profile) {
+      return get().profile[profile].gamepadButtons
+    },
+
+    async setGamepadButtons(profile, start, buttons) {
+      set((state) => {
+        for (let i = 0; i < buttons.length; i++) {
+          state.profile[profile].gamepadButtons[start + i] = buttons[i]
+        }
+      })
+    },
+
+    async getGamepadOptions(profile) {
+      return get().profile[profile].gamepadOptions
+    },
+
+    async setGamepadOptions(profile, options) {
+      set((state) => {
+        state.profile[profile].gamepadOptions = options
       })
     },
   })),

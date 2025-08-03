@@ -26,6 +26,8 @@ export enum DeviceCommand {
   GET_CALIBRATION,
   SET_CALIBRATION,
   GET_PROFILE,
+  GET_OPTIONS,
+  SET_OPTIONS,
 
   GET_KEYMAP = 128,
   SET_KEYMAP,
@@ -35,6 +37,10 @@ export enum DeviceCommand {
   SET_ADVANCED_KEYS,
   GET_TICK_RATE,
   SET_TICK_RATE,
+  GET_GAMEPAD_BUTTONS,
+  SET_GAMEPAD_BUTTONS,
+  GET_GAMEPAD_OPTIONS,
+  SET_GAMEPAD_OPTIONS,
 
   UNKNOWN = 255,
 }
@@ -56,6 +62,12 @@ export const deviceCalibrationSchema = z.object({
 })
 
 export type DeviceCalibration = z.infer<typeof deviceCalibrationSchema>
+
+export const deviceOptionsSchema = z.object({
+  xinputEnabled: z.boolean(),
+})
+
+export type DeviceOptions = z.infer<typeof deviceOptionsSchema>
 
 export const deviceActuationSchema = z.object({
   actuationPoint: z.int().min(0).max(255),
@@ -145,6 +157,29 @@ export const deviceAdvancedKeySchema = z.object({
 
 export type DeviceAdvancedKey = z.infer<typeof deviceAdvancedKeySchema>
 
+export const deviceGamepadAnalogCurveSchema = z
+  .array(
+    z.object({
+      x: z.number().min(0).max(255),
+      y: z.number().min(0).max(255),
+    }),
+  )
+  .length(4)
+
+export type DeviceGamepadAnalogCurve = z.infer<
+  typeof deviceGamepadAnalogCurveSchema
+>
+
+export const deviceGamepadOptionsSchema = z.object({
+  analogCurve: deviceGamepadAnalogCurveSchema,
+  keyboardEnabled: z.boolean(),
+  gamepadOverride: z.boolean(),
+  squareJoystick: z.boolean(),
+  snappyJoystick: z.boolean(),
+})
+
+export type DeviceGamepadOptions = z.infer<typeof deviceGamepadOptionsSchema>
+
 export type DeviceAction = {
   connect(): Promise<void>
   disconnect(forget: boolean): Promise<void>
@@ -156,6 +191,8 @@ export type DeviceAction = {
   analogInfo(): Promise<DeviceAnalogInfo[]>
   getCalibration(): Promise<DeviceCalibration>
   setCalibration(calibration: DeviceCalibration): Promise<void>
+  getOptions(): Promise<DeviceOptions>
+  setOptions(options: DeviceOptions): Promise<void>
   getProfile(): Promise<number>
   getKeymap(profile: number): Promise<number[][]>
   setKeymap(
@@ -178,21 +215,17 @@ export type DeviceAction = {
   ): Promise<void>
   getTickRate(profile: number): Promise<number>
   setTickRate(profile: number, tickRate: number): Promise<void>
+  getGamepadButtons(profile: number): Promise<number[]>
+  setGamepadButtons(
+    profile: number,
+    start: number,
+    buttons: number[],
+  ): Promise<void>
+  getGamepadOptions(profile: number): Promise<DeviceGamepadOptions>
+  setGamepadOptions(
+    profile: number,
+    options: DeviceGamepadOptions,
+  ): Promise<void>
 }
 
 export type Device = DeviceState & DeviceAction
-
-export type DeviceAdvancedKeyMetadata = {
-  type: DeviceAKType
-  name: string
-  description: string
-  numKeys: number
-  keycodes: number[]
-  create(layer: number, keys: number[], keymap: number[]): DeviceAdvancedKey
-}
-
-export type DeviceNullBindBehaviorMetadata = {
-  behavior: DeviceNullBindBehavior
-  name: string
-  description: string
-}

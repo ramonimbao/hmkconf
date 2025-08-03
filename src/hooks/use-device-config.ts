@@ -23,6 +23,14 @@ export function useDeviceConfig() {
   const queryClient = useQueryClient()
 
   const schema = deviceConfigSchema
+    .refine(
+      (data) =>
+        data.metadata.vendorId === device.metadata.vendorId &&
+        data.metadata.productId === device.metadata.productId,
+      {
+        error: "Device metadata does not match the provided configuration.",
+      },
+    )
     .refine((data) => data.profiles.length === device.metadata.numProfiles, {
       error: `Expected ${device.metadata.numProfiles} profiles`,
     })
@@ -58,20 +66,36 @@ export function useDeviceConfig() {
         error: `Expected advancedKeys to have ${device.metadata.numAdvancedKeys} keys`,
       },
     )
+    .refine(
+      (data) =>
+        data.profiles.every(({ gamepadButtons }) =>
+          gamepadButtons
+            ? gamepadButtons.length === device.metadata.numKeys
+            : true,
+        ),
+      {
+        error: `Expected gamepadButtons to have ${device.metadata.numKeys} buttons`,
+      },
+    )
 
   const getDeviceConfig = async () => {
     const firmwareVersion = await device.firmwareVersion()
+    const options = await device.getOptions()
     const profiles = await Promise.all(
       [...Array(device.metadata.numProfiles)].map(async (_, i) => {
         const keymap = await device.getKeymap(i)
         const actuationMap = await device.getActuationMap(i)
         const advancedKeys = await device.getAdvancedKeys(i)
+        const gamepadButtons = await device.getGamepadButtons(i)
+        const gamepadOptions = await device.getGamepadOptions(i)
         const tickRate = await device.getTickRate(i)
 
         return {
           keymap,
           actuationMap,
           advancedKeys,
+          gamepadButtons,
+          gamepadOptions,
           tickRate,
         }
       }),
@@ -84,25 +108,31 @@ export function useDeviceConfig() {
         productId: device.metadata.productId,
         firmwareVersion,
       },
+      options,
       profiles,
     }
   }
 
   const setDeviceConfig = async (config: unknown) => {
-    const { metadata, profiles } = schema.parse(config)
+    const { options, profiles } = schema.parse(config)
 
-    if (
-      metadata.vendorId !== device.metadata.vendorId ||
-      metadata.productId !== device.metadata.productId
-    ) {
-      throw new Error(
-        "Device metadata does not match the provided configuration.",
-      )
+    if (options) {
+      await device.setOptions(options)
+      await queryClient.invalidateQueries({
+        queryKey: [device.id, "options"],
+      })
     }
 
     await Promise.all(
       profiles.map(async (profile, i) => {
-        const { keymap, actuationMap, advancedKeys, tickRate } = profile
+        const {
+          keymap,
+          actuationMap,
+          advancedKeys,
+          gamepadButtons,
+          gamepadOptions,
+          tickRate,
+        } = profile
 
         if (keymap) {
           await Promise.all(
@@ -126,6 +156,20 @@ export function useDeviceConfig() {
           await device.setAdvancedKeys(i, 0, advancedKeys)
           await queryClient.invalidateQueries({
             queryKey: [device.id, i, "advancedKeys"],
+          })
+        }
+
+        if (gamepadButtons) {
+          await device.setGamepadButtons(i, 0, gamepadButtons)
+          await queryClient.invalidateQueries({
+            queryKey: [device.id, i, "gamepadButtons"],
+          })
+        }
+
+        if (gamepadOptions) {
+          await device.setGamepadOptions(i, gamepadOptions)
+          await queryClient.invalidateQueries({
+            queryKey: [device.id, i, "gamepadOptions"],
           })
         }
 

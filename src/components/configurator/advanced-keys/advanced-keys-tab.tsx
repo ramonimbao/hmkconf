@@ -18,7 +18,7 @@
 import { useGetKeymapWithAdvancedKeys } from "@/api/use-get-keymap-with-advanced-keys"
 import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
-import { AK_TYPE_TO_METADATA } from "@/constants/devices"
+import { AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
 import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
 import { Toggle } from "@radix-ui/react-toggle"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"

@@ -32,8 +32,9 @@ const initialState: ConfiguratorState = {
     layer: 0,
     akIndex: null,
   },
-  debug: {
-    logEnabled: false,
+  gamepad: {
+    key: null,
+    editorTab: "setup",
   },
   settings: {
     loading: false,
@@ -51,7 +52,7 @@ export function createConfigurator() {
           remap: { ...state.remap, ...initialState.remap },
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
-          debug: { ...state.debug, ...initialState.debug },
+          gamepad: { ...state.gamepad, ...initialState.gamepad },
           settings: { ...state.settings, ...initialState.settings },
         })),
       setTab: (tab) => set({ tab }),
@@ -62,7 +63,7 @@ export function createConfigurator() {
           remap: { ...state.remap, ...initialState.remap },
           performance: { ...state.performance, ...initialState.performance },
           advancedKeys: { ...state.advancedKeys, ...initialState.advancedKeys },
-          debug: { ...state.debug, ...initialState.debug },
+          gamepad: { ...state.gamepad, ...initialState.gamepad },
           settings: { ...state.settings, ...initialState.settings },
         })),
 
@@ -107,12 +108,16 @@ export function createConfigurator() {
           }),
       },
 
-      debug: {
-        ...initialState.debug,
+      gamepad: {
+        ...initialState.gamepad,
 
-        setLogEnabled: (enabled) =>
+        setKey: (key) =>
           set((state) => {
-            state.debug.logEnabled = enabled
+            state.gamepad.key = key
+          }),
+        setEditorTab: (editorTab) =>
+          set((state) => {
+            state.gamepad.editorTab = editorTab
           }),
       },
 

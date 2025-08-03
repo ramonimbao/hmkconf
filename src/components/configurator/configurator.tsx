@@ -16,6 +16,7 @@
 import { TabsContent } from "@radix-ui/react-tabs"
 import { AdvancedKeysTab } from "./advanced-keys/advanced-keys-tab"
 import { DebugTab } from "./debug/debug-tab"
+import { GamepadTab } from "./gamepad/gamepad-tab"
 import { PerformanceTab } from "./performance/performance-tab"
 import { RemapTab } from "./remap/remap-tab"
 import { SettingsTab } from "./settings/settings-tab"
@@ -36,6 +37,9 @@ export function Configurator() {
         </TabsContent>
         <TabsContent value="advanced-keys">
           <AdvancedKeysTab />
+        </TabsContent>
+        <TabsContent value="gamepad">
+          <GamepadTab />
         </TabsContent>
         <TabsContent value="debug">
           <DebugTab />

@@ -48,10 +48,8 @@ export function DebugTab() {
         <KeyboardEditorHeader>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger
-                className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-              >
-                <TriangleAlert />
+              <TooltipTrigger className="inline-flex gap-2 text-xs">
+                <TriangleAlert className="size-4" />
                 Warning
               </TooltipTrigger>
               <TooltipContent className="max-w-56">

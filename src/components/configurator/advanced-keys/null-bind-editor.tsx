@@ -27,10 +27,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
-  DEFAULT_ACTUATION,
   DEFAULT_BOTTOM_OUT_POINT,
-  DEFAULT_RT_DOWN,
   NULL_BIND_BEHAVIOR_METADATA,
+} from "@/constants/advanced-keys"
+import {
+  DEFAULT_ACTUATION,
+  DEFAULT_RT_DOWN,
   SWITCH_DISTANCE,
 } from "@/constants/devices"
 import { distanceToSwitchDistance } from "@/lib/utils"
@@ -61,10 +63,6 @@ export function NullBindEditor() {
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
   const updateActuation = (actuation: DeviceActuation) => {
-    if (!isSuccess) {
-      return
-    }
-
     setActuationMap({
       start: advancedKeys[akIndex].key,
       actuationMap: [actuation],

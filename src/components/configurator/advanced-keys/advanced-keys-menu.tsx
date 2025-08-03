@@ -24,7 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { AK_METADATA, AK_TYPE_TO_METADATA } from "@/constants/devices"
+import { AK_METADATA, AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
 import { DeviceAKType } from "@/types/devices"
 import { Edit, Plus, Trash } from "lucide-react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"

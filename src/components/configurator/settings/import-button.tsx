@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { useDeviceConfig } from "@/hooks/use-device-config"
 import { useEffect, useRef } from "react"
 import { toast } from "sonner"
+import { ZodError } from "zod"
 
 const MAX_CONFIG_SIZE = 5 * 1024 * 1024
 
@@ -63,8 +64,10 @@ export function ImportButton() {
           toast.error(
             "Failed to import config: Invalid JSON format in the config file",
           )
-        } else if (error instanceof Error) {
-          toast.error(`Failed to import config: ${error.message}`)
+        } else if (error instanceof ZodError) {
+          toast.error(`Failed to import config: ${error.issues[0].message}`)
+        } else {
+          console.error("Failed to import config:", error)
         }
       } finally {
         setLoading(false)

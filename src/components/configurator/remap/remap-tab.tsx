@@ -60,10 +60,6 @@ export function RemapTab() {
   }
 
   const resetThisLayerKeymap = () => {
-    if (!isSuccess) {
-      return
-    }
-
     setKeymap({ layer, start: 0, keymap: metadata.defaultKeymap[layer] })
     setKey(null)
   }
@@ -73,10 +69,6 @@ export function RemapTab() {
     keycode: number,
     moveToNextKey?: boolean,
   ) => {
-    if (!isSuccess) {
-      return
-    }
-
     setKeymap({
       layer,
       start: key,

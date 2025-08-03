@@ -18,12 +18,9 @@
 import { useGetAdvancedKeys } from "@/api/use-get-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
-import { AK_TYPE_TO_METADATA } from "@/constants/devices"
-import {
-  DeviceAdvancedKey,
-  DeviceAdvancedKeyMetadata,
-  DeviceAKType,
-} from "@/types/devices"
+import { AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
+import { DeviceAdvancedKeyMetadata } from "@/types/advanced-keys"
+import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
 import { createContext, useContext, useLayoutEffect } from "react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { AKDeleteDialog } from "./ak-delete-dialog"

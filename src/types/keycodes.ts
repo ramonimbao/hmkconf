@@ -299,6 +299,33 @@ export enum Keycode {
   AK_DYNAMIC_KEYSTROKE = 0x102,
   AK_TAP_HOLD = 0x103,
   AK_TOGGLE = 0x104,
+
+  // Gamepad keycodes (for display purposes only)
+  GP_BUTTON_A = 0x200,
+  GP_BUTTON_B = 0x201,
+  GP_BUTTON_X = 0x202,
+  GP_BUTTON_Y = 0x203,
+  GP_BUTTON_UP = 0x204,
+  GP_BUTTON_DOWN = 0x205,
+  GP_BUTTON_LEFT = 0x206,
+  GP_BUTTON_RIGHT = 0x207,
+  GP_BUTTON_START = 0x208,
+  GP_BUTTON_BACK = 0x209,
+  GP_BUTTON_HOME = 0x20a,
+  GP_BUTTON_LS = 0x20b,
+  GP_BUTTON_RS = 0x20c,
+  GP_BUTTON_LB = 0x20d,
+  GP_BUTTON_RB = 0x20e,
+  GP_BUTTON_LS_UP = 0x20f,
+  GP_BUTTON_LS_DOWN = 0x210,
+  GP_BUTTON_LS_LEFT = 0x211,
+  GP_BUTTON_LS_RIGHT = 0x212,
+  GP_BUTTON_RS_UP = 0x213,
+  GP_BUTTON_RS_DOWN = 0x214,
+  GP_BUTTON_RS_LEFT = 0x215,
+  GP_BUTTON_RS_RIGHT = 0x216,
+  GP_BUTTON_LT = 0x217,
+  GP_BUTTON_RT = 0x218,
 }
 
 export const MO = (layer: number) => Keycode.SP_MO_MIN | layer
