@@ -22,6 +22,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function displayVersion(version: number) {
+  return `${version >> 8}.${version & 0xff}`
+}
+
 export function displayUInt16(value: number) {
   return `0x${value.toString(16).toUpperCase().padStart(4, "0")}`
 }

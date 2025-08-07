@@ -13,6 +13,8 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+export const HMK_FIRMWARE_VERSION = 0x0101
+
 export const HMK_RAW_HID_EP_SIZE = 64
 
 export const HMK_ANALOG_INFO_SIZE = 3

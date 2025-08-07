@@ -15,7 +15,11 @@
 
 import { DEVICE_METADATA } from "@/constants/device-metadata"
 import { HE60 } from "@/constants/devices/HE60"
-import { HMK_DEVICE_USAGE_ID, HMK_DEVICE_USAGE_PAGE } from "@/constants/libhmk"
+import {
+  HMK_DEVICE_USAGE_ID,
+  HMK_DEVICE_USAGE_PAGE,
+  HMK_FIRMWARE_VERSION,
+} from "@/constants/libhmk"
 import { getActuationMap, setActuationMap } from "@/lib/commands/actuation-map"
 import { getAdvancedKeys, setAdvancedKeys } from "@/lib/commands/advanced-keys"
 import {
@@ -40,7 +44,7 @@ import {
 import { getKeymap, setKeymap } from "@/lib/commands/keymap"
 import { getTickRate, setTickRate } from "@/lib/commands/tick-rate"
 import { clearTaskQueue, setupHIDDevice } from "@/lib/hid"
-import { displayUInt16, isWebHIDSupported } from "@/lib/utils"
+import { displayUInt16, displayVersion, isWebHIDSupported } from "@/lib/utils"
 import {
   HMKConnectedDevice,
   HMKDevice,
@@ -66,6 +70,16 @@ const f = <T extends unknown[], U>(
       throw new Error("Device is not connected")
     }
     return command(device, ...args)
+  }
+}
+
+const disconnect = async (device: HMKConnectedDevice, forget: boolean) => {
+  navigator.hid.ondisconnect = null
+  await clearTaskQueue(device)
+
+  await device.hidDevice.close()
+  if (forget) {
+    await device.hidDevice.forget()
   }
 }
 
@@ -129,23 +143,19 @@ export const useHMKDevice = create<HMKDevice>()(
       navigator.hid.ondisconnect = () => get().disconnect(false)
       await setupHIDDevice(connectedDevice)
 
+      const version = await firmwareVersion(connectedDevice)
+      if (version < HMK_FIRMWARE_VERSION) {
+        await disconnect(connectedDevice, true)
+        throw new Error(
+          `Device firmware version v${displayVersion(version)} is outdated. Please update to at least v${displayVersion(HMK_FIRMWARE_VERSION)}.`,
+        )
+      }
+
       set(connectedDevice)
     },
 
     async disconnect(forget: boolean) {
-      const device = get()
-      if (device.status !== "connected") {
-        return
-      }
-
-      navigator.hid.ondisconnect = null
-      await clearTaskQueue(device)
-
-      await device.hidDevice.close()
-      if (forget) {
-        await device.hidDevice.forget()
-      }
-
+      await f(get, disconnect)(forget)
       set({ ...initialState })
     },
 
