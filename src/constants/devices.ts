@@ -13,14 +13,14 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DeviceActuation } from "@/types/devices"
+import { HMKActuation } from "@/types/libhmk"
 
 export const SWITCH_DISTANCE = 80
 
 export const DEFAULT_ACTUATION_POINT = 128
 export const DEFAULT_RT_DOWN = 32
 
-export const DEFAULT_ACTUATION: DeviceActuation = {
+export const DEFAULT_ACTUATION: HMKActuation = {
   actuationPoint: DEFAULT_ACTUATION_POINT,
   rtDown: 0,
   rtUp: 0,

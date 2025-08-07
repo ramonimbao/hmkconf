@@ -14,13 +14,13 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceAdvancedKey } from "@/types/devices"
+import { HMKAdvancedKey } from "@/types/libhmk"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { produce } from "immer"
 
 type SetAdvancedKeysParams = {
   start: number
-  advancedKeys: DeviceAdvancedKey[]
+  advancedKeys: HMKAdvancedKey[]
 }
 
 export function useSetAdvancedKeys(profile: number) {
@@ -35,7 +35,7 @@ export function useSetAdvancedKeys(profile: number) {
     onMutate: async ({ start, advancedKeys }) => {
       await queryClient.cancelQueries({ queryKey })
       const previousAdvancedKeys =
-        queryClient.getQueryData<DeviceAdvancedKey[]>(queryKey)
+        queryClient.getQueryData<HMKAdvancedKey[]>(queryKey)
       const tmp = produce(previousAdvancedKeys, (draft) => {
         if (draft) {
           for (let i = 0; i < advancedKeys.length; i++) {

@@ -17,28 +17,27 @@ import { DEFAULT_ADVANCED_KEY } from "@/constants/advanced-keys"
 import { DEFAULT_ACTUATION } from "@/constants/devices"
 import { HE60 as DEMO_DEVICE } from "@/constants/devices/HE60"
 import { DEFAULT_GAMEPAD_OPTIONS } from "@/constants/gamepad"
-import {
-  DeviceAction,
-  DeviceActuation,
-  DeviceAdvancedKey,
-  DeviceCalibration,
-  DeviceGamepadOptions,
-  DeviceOptions,
-  DeviceState,
-} from "@/types/devices"
+import { DeviceAction, DeviceState } from "@/types/device"
 import { GamepadButton } from "@/types/gamepad"
+import {
+  HMKActuation,
+  HMKAdvancedKey,
+  HMKCalibration,
+  HMKGamepadOptions,
+  HMKOptions,
+} from "@/types/libhmk"
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
 
 type DemoDeviceState = DeviceState & {
-  calibration: DeviceCalibration
-  options: DeviceOptions
+  calibration: HMKCalibration
+  options: HMKOptions
   profile: {
     keymap: number[][]
-    actuationMap: DeviceActuation[]
-    advancedKeys: DeviceAdvancedKey[]
+    actuationMap: HMKActuation[]
+    advancedKeys: HMKAdvancedKey[]
     gamepadButtons: number[]
-    gamepadOptions: DeviceGamepadOptions
+    gamepadOptions: HMKGamepadOptions
     tickRate: number
   }[]
 }

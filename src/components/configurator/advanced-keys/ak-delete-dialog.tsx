@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { DeviceAKType } from "@/types/devices"
+import { HMKAKType } from "@/types/libhmk"
 import { ReactNode } from "react"
 
 interface AKDeleteDialogProps {
@@ -74,7 +74,7 @@ export function AKDeleteDialog({ akIndex, children }: AKDeleteDialogProps) {
                   {
                     layer: 0,
                     key: 0,
-                    ak: { type: DeviceAKType.NONE },
+                    ak: { type: HMKAKType.NONE },
                   },
                 ],
               })

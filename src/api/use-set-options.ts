@@ -14,7 +14,7 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceOptions } from "@/types/devices"
+import { HMKOptions } from "@/types/libhmk"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useSetOptions() {
@@ -24,10 +24,10 @@ export function useSetOptions() {
   const queryKey = [id, "options"]
 
   return useMutation({
-    mutationFn: (options: DeviceOptions) => setOptions(options),
+    mutationFn: (options: HMKOptions) => setOptions(options),
     onMutate: async (options) => {
       await queryClient.cancelQueries({ queryKey })
-      const previousOptions = queryClient.getQueryData<DeviceOptions>(queryKey)
+      const previousOptions = queryClient.getQueryData<HMKOptions>(queryKey)
       queryClient.setQueryData(queryKey, options)
 
       return { previousOptions }

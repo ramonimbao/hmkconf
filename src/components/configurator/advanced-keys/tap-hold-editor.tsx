@@ -20,8 +20,8 @@ import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MAX_TAPPING_TERM, MIN_TAPPING_TERM } from "@/constants/advanced-keys"
-import { DeviceAKTapHold } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
+import { HMKAKTapHold } from "@/types/libhmk"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import { useEffect, useState } from "react"
@@ -35,14 +35,14 @@ import { TickRateTab } from "./tick-rate-tab"
 export function TapHoldEditor() {
   const { profile } = useConfigurator()
   const { advancedKeys, akIndex } = useAdvancedKeysEditor()
-  const ak = advancedKeys[akIndex].ak as DeviceAKTapHold
+  const ak = advancedKeys[akIndex].ak as HMKAKTapHold
 
   const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
   const [selectedKey, setSelectedKey] = useState("")
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
-  const updateAdvancedKey = (ak: DeviceAKTapHold) =>
+  const updateAdvancedKey = (ak: HMKAKTapHold) =>
     setAdvancedKeys({
       start: akIndex,
       advancedKeys: [

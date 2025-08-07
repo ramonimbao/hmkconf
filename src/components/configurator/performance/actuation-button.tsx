@@ -19,12 +19,12 @@ import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { keycodeToMetadata } from "@/constants/keycodes"
 import { cn, displayDistance } from "@/lib/utils"
-import { DeviceActuation } from "@/types/devices"
+import { HMKActuation } from "@/types/libhmk"
 import { ComponentProps, useMemo } from "react"
 
 interface ActuationButtonProps extends ComponentProps<typeof Button> {
   keycode: number
-  actuation: DeviceActuation
+  actuation: HMKActuation
 }
 
 export function ActuationButton({

@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { DeviceDKSAction } from "@/types/devices"
+import { HMKDKSAction } from "@/types/libhmk"
 import { produce } from "immer"
 import {
   ArrowDownFromLine,
@@ -57,21 +57,21 @@ const GRIP_TOP = SLIDER_HEIGHT / 2 - GRIP_HEIGHT / 2
 
 const nodeLeft = (i: number) => SLIDER_GAP * i
 
-const getIntervals = (bitmap: DeviceDKSAction[]) => {
+const getIntervals = (bitmap: HMKDKSAction[]) => {
   const intervals: [number, number][] = []
 
   let start = -1
   for (let i = 0; i < 4; i++) {
-    if (bitmap[i] === DeviceDKSAction.HOLD) {
+    if (bitmap[i] === HMKDKSAction.HOLD) {
       continue
     }
     if (start !== -1) {
       intervals.push([start, i])
       start = -1
     }
-    if (bitmap[i] === DeviceDKSAction.PRESS) {
+    if (bitmap[i] === HMKDKSAction.PRESS) {
       start = i
-    } else if (bitmap[i] === DeviceDKSAction.TAP) {
+    } else if (bitmap[i] === HMKDKSAction.TAP) {
       intervals.push([i, i])
     }
   }
@@ -83,12 +83,12 @@ const intervalWidth = ([l, r]: [number, number]) =>
   l === r ? 0 : SLIDER_GAP * (r - l) - NODE_SPACING
 
 interface DynamicKeystrokeSliderState {
-  bitmap: DeviceDKSAction[]
+  bitmap: HMKDKSAction[]
   intervals: [number, number][]
-  uiBitmap: DeviceDKSAction[]
+  uiBitmap: HMKDKSAction[]
   uiIntervals: [number, number][]
-  onBitmapChange: (bitmap: DeviceDKSAction[]) => void
-  setUIBitmap: Dispatch<DeviceDKSAction[]>
+  onBitmapChange: (bitmap: HMKDKSAction[]) => void
+  setUIBitmap: Dispatch<HMKDKSAction[]>
 }
 
 const DynamicKeystrokeSliderContext =
@@ -121,14 +121,14 @@ function DynamicKeystrokeBar({ i }: { i: number }) {
           onBitmapChange(
             produce(uiBitmap, (draft) => {
               for (let j = i + 1; j < interval[1]; j++) {
-                draft[j] = DeviceDKSAction.HOLD
+                draft[j] = HMKDKSAction.HOLD
               }
-              if (draft[interval[1]] === DeviceDKSAction.RELEASE) {
-                draft[interval[1]] = DeviceDKSAction.HOLD
+              if (draft[interval[1]] === HMKDKSAction.RELEASE) {
+                draft[interval[1]] = HMKDKSAction.HOLD
               }
               draft[i] = uiIntervals.some(([l, r]) => l !== r && r === i)
-                ? DeviceDKSAction.RELEASE
-                : DeviceDKSAction.HOLD
+                ? HMKDKSAction.RELEASE
+                : HMKDKSAction.HOLD
             }),
           )
         }
@@ -185,18 +185,15 @@ function DynamicKeystrokeDraggable({ i }: { i: number }) {
 
     setUIBitmap(
       produce(uiBitmap, (draft) => {
-        draft[i] = i === closest ? DeviceDKSAction.TAP : DeviceDKSAction.PRESS
+        draft[i] = i === closest ? HMKDKSAction.TAP : HMKDKSAction.PRESS
         for (let j = i + 1; j < Math.max(interval[1], closest); j++) {
-          draft[j] = DeviceDKSAction.HOLD
+          draft[j] = HMKDKSAction.HOLD
         }
-        if (
-          interval[1] !== -1 &&
-          draft[interval[1]] === DeviceDKSAction.RELEASE
-        ) {
-          draft[interval[1]] = DeviceDKSAction.HOLD
+        if (interval[1] !== -1 && draft[interval[1]] === HMKDKSAction.RELEASE) {
+          draft[interval[1]] = HMKDKSAction.HOLD
         }
-        if (draft[closest] === DeviceDKSAction.HOLD) {
-          draft[closest] = DeviceDKSAction.RELEASE
+        if (draft[closest] === HMKDKSAction.HOLD) {
+          draft[closest] = HMKDKSAction.RELEASE
         }
       }),
     )
@@ -243,8 +240,8 @@ function DynamicKeystrokeDraggable({ i }: { i: number }) {
 }
 
 interface DynamicKeystrokeSliderProps extends HTMLAttributes<HTMLDivElement> {
-  bitmap: DeviceDKSAction[]
-  onBitmapChange: (bitmap: DeviceDKSAction[]) => void
+  bitmap: HMKDKSAction[]
+  onBitmapChange: (bitmap: HMKDKSAction[]) => void
 }
 
 export function DynamicKeystrokeSlider({
@@ -254,7 +251,7 @@ export function DynamicKeystrokeSlider({
   style,
   ...props
 }: DynamicKeystrokeSliderProps) {
-  const [uiBitmap, setUIBitmap] = useState(Array(4).fill(DeviceDKSAction.HOLD))
+  const [uiBitmap, setUIBitmap] = useState(Array(4).fill(HMKDKSAction.HOLD))
 
   const intervals = useMemo(() => getIntervals(bitmap), [bitmap])
   const uiIntervals = useMemo(() => getIntervals(uiBitmap), [uiBitmap])

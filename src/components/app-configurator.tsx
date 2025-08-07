@@ -19,7 +19,8 @@ import { useHMKDevice } from "@/hooks/use-hmk-device"
 import { createConfigurator } from "@/lib/create-configurator"
 import { isWebHIDSupported } from "@/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { toast } from "sonner"
 import { Configurator } from "./configurator/configurator"
 import { ConfiguratorLayout } from "./configurator/layout"
 import { ConfiguratorProvider } from "./providers/configurator-provider"
@@ -36,6 +37,18 @@ export function AppConfigurator() {
 
   const [webHIDSupported, setWebHIDSupported] = useState(false)
 
+  const connect = useCallback(async () => {
+    try {
+      await hmkDevice.connect()
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Failed to connect: ${error.message}`)
+      } else {
+        console.error(error)
+      }
+    }
+  }, [hmkDevice])
+
   // Prevent SSR errors by only checking WebHID support on the client side
   useEffect(() => setWebHIDSupported(isWebHIDSupported()), [])
 
@@ -44,9 +57,9 @@ export function AppConfigurator() {
       queryClient.clear()
       reset()
     } else if (webHIDSupported) {
-      hmkDevice.connect()
+      connect()
     }
-  }, [hmkDevice, queryClient, reset, webHIDSupported])
+  }, [connect, hmkDevice.status, queryClient, reset, webHIDSupported])
 
   return (
     <ConfiguratorProvider configurator={useAppConfigurator()}>
@@ -58,7 +71,7 @@ export function AppConfigurator() {
         ) : (
           <div className="flex w-full flex-1 flex-col items-center justify-center p-12">
             {webHIDSupported ? (
-              <Button onClick={hmkDevice.connect}>Authorize Device</Button>
+              <Button onClick={connect}>Authorize Device</Button>
             ) : (
               <p>WebHID is not supported in this browser.</p>
             )}

@@ -29,7 +29,7 @@ import {
   GAMEPAD_ANALOG_CURVE_PRESETS,
 } from "@/constants/gamepad"
 import { cn, displayDistance } from "@/lib/utils"
-import { DeviceGamepadAnalogCurve } from "@/types/devices"
+import { HMKGamepadAnalogCurve } from "@/types/libhmk"
 import { produce } from "immer"
 import {
   createContext,
@@ -60,8 +60,8 @@ const analogCurveViewToCurve = ({ x, y }: { x: number; y: number }) => ({
 })
 
 interface GamepadAnalogCurveState {
-  uiAnalogCurve: DeviceGamepadAnalogCurve
-  setUIAnalogCurve: Dispatch<DeviceGamepadAnalogCurve>
+  uiAnalogCurve: HMKGamepadAnalogCurve
+  setUIAnalogCurve: Dispatch<HMKGamepadAnalogCurve>
   onAnalogCurveChange: () => void
 }
 
@@ -175,7 +175,7 @@ export function GamepadAnalogCurve({
   const { isSuccess, data: gamepadOptions } = useGetGamepadOptions(profile)
   const { mutate: setGamepadOptions } = useSetGamepadOptions(profile)
 
-  const [uiAnalogCurve, setUIAnalogCurve] = useState<DeviceGamepadAnalogCurve>(
+  const [uiAnalogCurve, setUIAnalogCurve] = useState<HMKGamepadAnalogCurve>(
     GAMEPAD_ANALOG_CURVE_PRESETS[0].curve.map(analogCurveToView),
   )
 

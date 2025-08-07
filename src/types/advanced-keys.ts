@@ -13,23 +13,19 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  DeviceAdvancedKey,
-  DeviceAKType,
-  DeviceNullBindBehavior,
-} from "./devices"
+import { HMKAdvancedKey, HMKAKType, HMKNullBindBehavior } from "./libhmk"
 
 export type DeviceAdvancedKeyMetadata = {
-  type: DeviceAKType
+  type: HMKAKType
   name: string
   description: string
   numKeys: number
   keycodes: number[]
-  create(layer: number, keys: number[], keymap: number[]): DeviceAdvancedKey
+  create(layer: number, keys: number[], keymap: number[]): HMKAdvancedKey
 }
 
 export type DeviceNullBindBehaviorMetadata = {
-  behavior: DeviceNullBindBehavior
+  behavior: HMKNullBindBehavior
   name: string
   description: string
 }

@@ -13,22 +13,18 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client"
+import { DeviceAction, DeviceState } from "./device"
 
-import { Device } from "@/types/device"
-import { createContext, ReactNode, useContext } from "react"
-
-const DeviceContext = createContext<Device>({} as Device)
-
-export const useDevice = () => useContext(DeviceContext)
-
-interface DeviceProviderProps {
-  device: Device
-  children: ReactNode
+export type HMKDisconnectedDevice = DeviceState & {
+  status: "disconnected"
+  hidDevice?: undefined
 }
 
-export function DeviceProvider({ device, children }: DeviceProviderProps) {
-  return (
-    <DeviceContext.Provider value={device}>{children}</DeviceContext.Provider>
-  )
+export type HMKConnectedDevice = DeviceState & {
+  status: "connected"
+  hidDevice: HIDDevice
 }
+
+export type HMKDeviceState = HMKDisconnectedDevice | HMKConnectedDevice
+
+export type HMKDevice = HMKDeviceState & DeviceAction

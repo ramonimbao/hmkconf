@@ -67,7 +67,7 @@ export function ImportButton() {
         } else if (error instanceof ZodError) {
           toast.error(`Failed to import config: ${error.issues[0].message}`)
         } else {
-          console.error("Failed to import config:", error)
+          console.error(error)
         }
       } finally {
         setLoading(false)

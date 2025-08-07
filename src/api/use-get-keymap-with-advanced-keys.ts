@@ -14,8 +14,8 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
+import { HMKAdvancedKey, HMKAKType } from "@/types/libhmk"
 import { produce } from "immer"
 import { useGetAdvancedKeys } from "./use-get-advanced-keys"
 import { useGetKeymap } from "./use-get-keymap"
@@ -32,7 +32,7 @@ type GetKeymapWithAdvancedKeysReturnType =
       isSuccess: true
       keymap: number[][]
       normalKeymap: number[][]
-      advancedKeys: DeviceAdvancedKey[]
+      advancedKeys: HMKAdvancedKey[]
       akIndices: (number | null)[][]
     }
 
@@ -56,26 +56,26 @@ export function useGetKeymapWithAdvancedKeys(
     for (let i = 0; i < advancedKeys.length; i++) {
       const { layer, key, ak } = advancedKeys[i]
 
-      if (ak.type !== DeviceAKType.NONE) {
+      if (ak.type !== HMKAKType.NONE) {
         akIndices[layer][key] = i
       }
 
       switch (ak.type) {
-        case DeviceAKType.NULL_BIND:
+        case HMKAKType.NULL_BIND:
           draft[layer][key] = Keycode.AK_NULL_BIND_PRIMARY
           draft[layer][ak.secondaryKey] = Keycode.AK_NULL_BIND_SECONDARY
           akIndices[layer][ak.secondaryKey] = i
           break
 
-        case DeviceAKType.DYNAMIC_KEYSTROKE:
+        case HMKAKType.DYNAMIC_KEYSTROKE:
           draft[layer][key] = Keycode.AK_DYNAMIC_KEYSTROKE
           break
 
-        case DeviceAKType.TAP_HOLD:
+        case HMKAKType.TAP_HOLD:
           draft[layer][key] = Keycode.AK_TAP_HOLD
           break
 
-        case DeviceAKType.TOGGLE:
+        case HMKAKType.TOGGLE:
           draft[layer][key] = Keycode.AK_TOGGLE
           break
 

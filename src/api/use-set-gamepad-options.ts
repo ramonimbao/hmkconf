@@ -14,7 +14,7 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceGamepadOptions } from "@/types/devices"
+import { HMKGamepadOptions } from "@/types/libhmk"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useSetGamepadOptions(profile: number) {
@@ -24,12 +24,12 @@ export function useSetGamepadOptions(profile: number) {
   const queryKey = [id, profile, "gamepadOptions"]
 
   return useMutation({
-    mutationFn: (options: DeviceGamepadOptions) =>
+    mutationFn: (options: HMKGamepadOptions) =>
       setGamepadOptions(profile, options),
     onMutate: async (options) => {
       await queryClient.cancelQueries({ queryKey })
       const previousOptions =
-        queryClient.getQueryData<DeviceGamepadOptions>(queryKey)
+        queryClient.getQueryData<HMKGamepadOptions>(queryKey)
       queryClient.setQueryData(queryKey, options)
 
       return { previousOptions }

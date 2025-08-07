@@ -14,13 +14,13 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceActuation } from "@/types/devices"
+import { HMKActuation } from "@/types/libhmk"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { produce } from "immer"
 
 type SetActuationMapParams = {
   start: number
-  actuationMap: DeviceActuation[]
+  actuationMap: HMKActuation[]
 }
 
 export function useSetActuationMap(profile: number) {
@@ -35,7 +35,7 @@ export function useSetActuationMap(profile: number) {
     onMutate: async ({ start, actuationMap }) => {
       await queryClient.cancelQueries({ queryKey })
       const previousActuationMap =
-        queryClient.getQueryData<DeviceActuation[]>(queryKey)
+        queryClient.getQueryData<HMKActuation[]>(queryKey)
       queryClient.setQueryData(
         queryKey,
         produce(previousActuationMap, (draft) => {

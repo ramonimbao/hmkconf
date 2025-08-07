@@ -14,7 +14,7 @@
  */
 
 import { useDevice } from "@/components/providers/device-provider"
-import { DeviceCalibration } from "@/types/devices"
+import { HMKCalibration } from "@/types/libhmk"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useSetCalibration() {
@@ -24,11 +24,11 @@ export function useSetCalibration() {
   const queryKey = [id, "calibration"]
 
   return useMutation({
-    mutationFn: (calibration: DeviceCalibration) => setCalibration(calibration),
+    mutationFn: (calibration: HMKCalibration) => setCalibration(calibration),
     onMutate: async (calibration) => {
       await queryClient.cancelQueries({ queryKey })
       const previousCalibration =
-        queryClient.getQueryData<DeviceCalibration>(queryKey)
+        queryClient.getQueryData<HMKCalibration>(queryKey)
       queryClient.setQueryData(queryKey, calibration)
 
       return { previousCalibration }

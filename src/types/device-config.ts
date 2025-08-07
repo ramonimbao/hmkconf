@@ -16,11 +16,11 @@
 import { zodIgnoreOnError } from "@/lib/utils"
 import z from "zod"
 import {
-  deviceActuationSchema,
-  deviceAdvancedKeySchema,
-  deviceGamepadOptionsSchema,
-  deviceOptionsSchema,
-} from "./devices"
+  hmkActuationSchema,
+  hmkAdvancedKeySchema,
+  hmkGamepadOptionsSchema,
+  hmkOptionsSchema,
+} from "./libhmk"
 
 export const deviceConfigMetadataSchema = z.object({
   vendorId: z.int().min(0x0000).max(0xffff),
@@ -32,10 +32,10 @@ export type DeviceConfigMetadata = z.infer<typeof deviceConfigMetadataSchema>
 
 export const deviceConfigProfileSchema = z.object({
   keymap: zodIgnoreOnError(z.array(z.array(z.int().min(0).max(255)))),
-  actuationMap: zodIgnoreOnError(z.array(deviceActuationSchema)),
-  advancedKeys: zodIgnoreOnError(z.array(deviceAdvancedKeySchema)),
+  actuationMap: zodIgnoreOnError(z.array(hmkActuationSchema)),
+  advancedKeys: zodIgnoreOnError(z.array(hmkAdvancedKeySchema)),
   gamepadButtons: zodIgnoreOnError(z.array(z.int().min(0).max(255))),
-  gamepadOptions: zodIgnoreOnError(deviceGamepadOptionsSchema),
+  gamepadOptions: zodIgnoreOnError(hmkGamepadOptionsSchema),
   tickRate: zodIgnoreOnError(z.int().min(0).max(255).optional()),
 })
 
@@ -44,7 +44,7 @@ export type DeviceConfigProfile = z.infer<typeof deviceConfigProfileSchema>
 export const deviceConfigSchema = z.object({
   timestamp: z.iso.date(),
   metadata: deviceConfigMetadataSchema,
-  options: zodIgnoreOnError(deviceOptionsSchema),
+  options: zodIgnoreOnError(hmkOptionsSchema),
   profiles: z.array(deviceConfigProfileSchema),
 })
 

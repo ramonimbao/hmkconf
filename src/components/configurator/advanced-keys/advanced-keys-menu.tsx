@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AK_METADATA, AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
-import { DeviceAKType } from "@/types/devices"
+import { HMKAKType } from "@/types/libhmk"
 import { Edit, Plus, Trash } from "lucide-react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { useAdvancedKeys } from "./advanced-keys-tab"
@@ -89,7 +89,7 @@ export function AdvancedKeysMenu() {
         ) : (
           <div className="mt-4 grid w-full gap-4">
             {advancedKeys
-              .filter(({ ak }) => ak.type !== DeviceAKType.NONE)
+              .filter(({ ak }) => ak.type !== HMKAKType.NONE)
               .map((advancedKeys, i) => {
                 const akMetadata = AK_TYPE_TO_METADATA[advancedKeys.ak.type]
                 return (
@@ -105,7 +105,7 @@ export function AdvancedKeysMenu() {
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          setNewAKType(DeviceAKType.NONE)
+                          setNewAKType(HMKAKType.NONE)
                           setNewAKKeys([null, null])
                           setNewAKKeysIndex(null)
                           setLayer(advancedKeys.layer)

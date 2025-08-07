@@ -21,7 +21,7 @@ import {
   DEFAULT_RT_DOWN,
   SWITCH_DISTANCE,
 } from "@/constants/devices"
-import { DeviceActuation } from "@/types/devices"
+import { HMKActuation } from "@/types/libhmk"
 import { useEffect, useState } from "react"
 import { DistanceSlider } from "../common/distance-slider"
 import { Switch } from "../common/switch"
@@ -38,9 +38,9 @@ export function ActuationSettings() {
   const disabled = !isSuccess || keys.length === 0
 
   const [uiActuation, setUIActuation] =
-    useState<DeviceActuation>(DEFAULT_ACTUATION)
+    useState<HMKActuation>(DEFAULT_ACTUATION)
 
-  const updateActuation = (actuation: DeviceActuation) => {
+  const updateActuation = (actuation: HMKActuation) => {
     if (disabled) {
       return
     }

@@ -20,7 +20,7 @@ import { useConfigurator } from "@/components/providers/configurator-provider"
 import { useDevice } from "@/components/providers/device-provider"
 import { Button } from "@/components/ui/button"
 import { AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
-import { DeviceAKType } from "@/types/devices"
+import { HMKAKType } from "@/types/libhmk"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { KeycodeButton } from "../common/keycode-button"
@@ -57,7 +57,7 @@ export const AdvancedKeysCreate = () => {
               variant="outline"
               size="sm"
               onClick={() => {
-                setNewAKType(DeviceAKType.NONE)
+                setNewAKType(HMKAKType.NONE)
                 setNewAKKeys([null, null])
                 setNewAKKeysIndex(null)
               }}
@@ -86,7 +86,7 @@ export const AdvancedKeysCreate = () => {
                     ),
                   ],
                 })
-                setNewAKType(DeviceAKType.NONE)
+                setNewAKType(HMKAKType.NONE)
                 setNewAKKeys([null, null])
                 setNewAKKeysIndex(null)
                 setAKIndex(null)

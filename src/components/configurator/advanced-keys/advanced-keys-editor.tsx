@@ -20,7 +20,7 @@ import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
 import { DeviceAdvancedKeyMetadata } from "@/types/advanced-keys"
-import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
+import { HMKAdvancedKey, HMKAKType } from "@/types/libhmk"
 import { createContext, useContext, useLayoutEffect } from "react"
 import { KeyboardEditorLayout } from "../common/keyboard-editor"
 import { AKDeleteDialog } from "./ak-delete-dialog"
@@ -31,7 +31,7 @@ import { TapHoldEditor } from "./tap-hold-editor"
 import { ToggleEditor } from "./toggle-editor"
 
 type AdvancedKeysEditorState = {
-  advancedKeys: DeviceAdvancedKey[]
+  advancedKeys: HMKAdvancedKey[]
   akMetadata: DeviceAdvancedKeyMetadata
   akIndex: number
 }
@@ -54,8 +54,8 @@ export function AdvancedKeysEditor() {
     !isSuccess ||
     akIndex === null ||
     akIndex >=
-      advancedKeys.filter(({ ak }) => ak.type !== DeviceAKType.NONE).length ||
-    advancedKeys[akIndex].ak.type === DeviceAKType.NONE
+      advancedKeys.filter(({ ak }) => ak.type !== HMKAKType.NONE).length ||
+    advancedKeys[akIndex].ak.type === HMKAKType.NONE
 
   useLayoutEffect(() => {
     if (disabled) {
@@ -96,13 +96,13 @@ export function AdvancedKeysEditor() {
               akIndex,
             }}
           >
-            {akMetadata.type === DeviceAKType.NULL_BIND ? (
+            {akMetadata.type === HMKAKType.NULL_BIND ? (
               <NullBindEditor />
-            ) : akMetadata.type === DeviceAKType.DYNAMIC_KEYSTROKE ? (
+            ) : akMetadata.type === HMKAKType.DYNAMIC_KEYSTROKE ? (
               <DynamicKeystrokeEditor />
-            ) : akMetadata.type === DeviceAKType.TAP_HOLD ? (
+            ) : akMetadata.type === HMKAKType.TAP_HOLD ? (
               <TapHoldEditor />
-            ) : akMetadata.type === DeviceAKType.TOGGLE ? (
+            ) : akMetadata.type === HMKAKType.TOGGLE ? (
               <ToggleEditor />
             ) : (
               <></>

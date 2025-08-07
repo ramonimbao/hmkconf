@@ -36,7 +36,7 @@ import {
   SWITCH_DISTANCE,
 } from "@/constants/devices"
 import { distanceToSwitchDistance } from "@/lib/utils"
-import { DeviceActuation, DeviceAKNullBind } from "@/types/devices"
+import { HMKActuation, HMKAKNullBind } from "@/types/libhmk"
 import {
   RadioGroup,
   RadioGroupIndicator,
@@ -53,7 +53,7 @@ import { KeyTesterTab } from "./key-tester-tab"
 export function NullBindEditor() {
   const { profile } = useConfigurator()
   const { advancedKeys, akIndex } = useAdvancedKeysEditor()
-  const ak = advancedKeys[akIndex].ak as DeviceAKNullBind
+  const ak = advancedKeys[akIndex].ak as HMKAKNullBind
 
   const { isSuccess, data: actuationMap } = useGetActuationMap(profile)
   const { mutate: setActuationMap } = useSetActuationMap(profile)
@@ -62,7 +62,7 @@ export function NullBindEditor() {
   const [uiActuation, setUIActuation] = useState(DEFAULT_ACTUATION)
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
-  const updateActuation = (actuation: DeviceActuation) => {
+  const updateActuation = (actuation: HMKActuation) => {
     setActuationMap({
       start: advancedKeys[akIndex].key,
       actuationMap: [actuation],
@@ -73,7 +73,7 @@ export function NullBindEditor() {
     })
   }
 
-  const updateAdvancedKey = (ak: DeviceAKNullBind) =>
+  const updateAdvancedKey = (ak: HMKAKNullBind) =>
     setAdvancedKeys({
       start: akIndex,
       advancedKeys: [

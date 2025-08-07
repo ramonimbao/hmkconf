@@ -13,22 +13,16 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client"
+export const HMK_RAW_HID_EP_SIZE = 64
 
-import { Device } from "@/types/device"
-import { createContext, ReactNode, useContext } from "react"
+export const HMK_ANALOG_INFO_SIZE = 3
+export const HMK_KEYMAP_SIZE = 1
+export const HMK_ACTUATION_MAP_SIZE = 4
+export const HMK_ADVANCED_KEYS_SIZE = 12
+export const HMK_GAMEPAD_BUTTON_SIZE = 1
 
-const DeviceContext = createContext<Device>({} as Device)
+export const COMMAND_PARTIAL_SIZE = (size: number, headerSize: number) =>
+  Math.floor((HMK_RAW_HID_EP_SIZE - 1 - headerSize) / size)
 
-export const useDevice = () => useContext(DeviceContext)
-
-interface DeviceProviderProps {
-  device: Device
-  children: ReactNode
-}
-
-export function DeviceProvider({ device, children }: DeviceProviderProps) {
-  return (
-    <DeviceContext.Provider value={device}>{children}</DeviceContext.Provider>
-  )
-}
+export const HMK_DEVICE_USAGE_PAGE = 0xffab
+export const HMK_DEVICE_USAGE_ID = 0xab

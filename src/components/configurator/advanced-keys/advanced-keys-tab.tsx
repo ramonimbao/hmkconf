@@ -19,7 +19,7 @@ import { useGetKeymapWithAdvancedKeys } from "@/api/use-get-keymap-with-advanced
 import { useSetAdvancedKeys } from "@/api/use-set-advanced-keys"
 import { useConfigurator } from "@/components/providers/configurator-provider"
 import { AK_TYPE_TO_METADATA } from "@/constants/advanced-keys"
-import { DeviceAdvancedKey, DeviceAKType } from "@/types/devices"
+import { HMKAdvancedKey, HMKAKType } from "@/types/libhmk"
 import { Toggle } from "@radix-ui/react-toggle"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
@@ -41,13 +41,13 @@ import { Loader } from "./loader"
 type AdvancedKeys = {
   keymap: number[][]
   normalKeymap: number[][]
-  advancedKeys: DeviceAdvancedKey[]
+  advancedKeys: HMKAdvancedKey[]
   numAdvancedKeys: number
   akIndices: (number | null)[][]
-  newAKType: DeviceAKType
+  newAKType: HMKAKType
   newAKKeys: [number | null, number | null]
   newAKKeysIndex: number | null
-  setNewAKType: Dispatch<DeviceAKType>
+  setNewAKType: Dispatch<HMKAKType>
   setNewAKKeys: Dispatch<[number | null, number | null]>
   setNewAKKeysIndex: Dispatch<number | null>
 }
@@ -65,7 +65,7 @@ export function AdvancedKeysTab() {
     useGetKeymapWithAdvancedKeys(profile)
   const { mutate: setAdvancedKeys } = useSetAdvancedKeys(profile)
 
-  const [newAKType, setNewAKType] = useState(DeviceAKType.NONE)
+  const [newAKType, setNewAKType] = useState(HMKAKType.NONE)
   const [newAKKeys, setNewAKKeys] = useState<[number | null, number | null]>([
     null,
     null,
@@ -74,8 +74,7 @@ export function AdvancedKeysTab() {
 
   const numAdvancedKeys = useMemo(
     () =>
-      advancedKeys?.filter((ak) => ak.ak.type !== DeviceAKType.NONE).length ??
-      0,
+      advancedKeys?.filter((ak) => ak.ak.type !== HMKAKType.NONE).length ?? 0,
     [advancedKeys],
   )
 
@@ -84,14 +83,14 @@ export function AdvancedKeysTab() {
       <KeyboardEditorLayout isKeyboard>
         <KeyboardEditorHeader>
           <LayerSelector
-            disabled={newAKType !== DeviceAKType.NONE || akIndex !== null}
+            disabled={newAKType !== HMKAKType.NONE || akIndex !== null}
             layer={layer}
             setLayer={setLayer}
           />
         </KeyboardEditorHeader>
         {!isSuccess ? (
           <KeyboardEditorSkeleton />
-        ) : newAKType === DeviceAKType.NONE ? (
+        ) : newAKType === HMKAKType.NONE ? (
           <ToggleGroup
             type="single"
             value={akIndex === null ? "" : akIndex.toString()}
@@ -122,7 +121,7 @@ export function AdvancedKeysTab() {
                           {
                             layer: 0,
                             key: 0,
-                            ak: { type: DeviceAKType.NONE },
+                            ak: { type: HMKAKType.NONE },
                           },
                         ],
                       })
@@ -201,7 +200,7 @@ export function AdvancedKeysTab() {
               setNewAKKeysIndex,
             }}
           >
-            {newAKType === DeviceAKType.NONE ? (
+            {newAKType === HMKAKType.NONE ? (
               <AdvancedKeysMenu />
             ) : (
               <AdvancedKeysCreate />

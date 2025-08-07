@@ -13,8 +13,8 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DeviceGamepadOptions } from "@/types/devices"
 import { GamepadAnalogCurvePreset } from "@/types/gamepad"
+import { HMKGamepadOptions } from "@/types/libhmk"
 
 export const GAMEPAD_ANALOG_CURVE_MIN_X = 4
 
@@ -84,7 +84,7 @@ export const GAMEPAD_ANALOG_CURVE_PRESETS: GamepadAnalogCurvePreset[] = [
   },
 ]
 
-export const DEFAULT_GAMEPAD_OPTIONS: DeviceGamepadOptions = {
+export const DEFAULT_GAMEPAD_OPTIONS: HMKGamepadOptions = {
   analogCurve: GAMEPAD_ANALOG_CURVE_PRESETS[0].curve,
   keyboardEnabled: true,
   gamepadOverride: false,

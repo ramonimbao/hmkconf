@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DeviceGamepadAnalogCurve } from "./devices"
+import { HMKGamepadAnalogCurve } from "./libhmk"
 
 export enum GamepadButton {
   GP_BUTTON_NONE = 0,
@@ -46,5 +46,5 @@ export enum GamepadButton {
 
 export type GamepadAnalogCurvePreset = {
   name: string
-  curve: DeviceGamepadAnalogCurve
+  curve: HMKGamepadAnalogCurve
 }

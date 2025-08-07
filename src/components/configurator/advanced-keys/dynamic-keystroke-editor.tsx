@@ -22,8 +22,8 @@ import { useConfigurator } from "@/components/providers/configurator-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DEFAULT_ACTUATION, SWITCH_DISTANCE } from "@/constants/devices"
 import { distanceToSwitchDistance } from "@/lib/utils"
-import { DeviceActuation, DeviceAKDynamicKeystroke } from "@/types/devices"
 import { Keycode } from "@/types/keycodes"
+import { HMKActuation, HMKAKDynamicKeystroke } from "@/types/libhmk"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { produce } from "immer"
 import { Info } from "lucide-react"
@@ -42,7 +42,7 @@ import { TickRateTab } from "./tick-rate-tab"
 export function DynamicKeystrokeEditor() {
   const { profile } = useConfigurator()
   const { advancedKeys, akIndex } = useAdvancedKeysEditor()
-  const ak = advancedKeys[akIndex].ak as DeviceAKDynamicKeystroke
+  const ak = advancedKeys[akIndex].ak as HMKAKDynamicKeystroke
 
   const { isSuccess, data: actuationMap } = useGetActuationMap(profile)
   const { mutate: setActuationMap } = useSetActuationMap(profile)
@@ -52,14 +52,14 @@ export function DynamicKeystrokeEditor() {
   const [uiActuation, setUIActuation] = useState(DEFAULT_ACTUATION)
   const [uiAdvancedKey, setUIAdvancedKey] = useState(ak)
 
-  const updateActuation = (actuation: DeviceActuation) =>
+  const updateActuation = (actuation: HMKActuation) =>
     isSuccess &&
     setActuationMap({
       start: advancedKeys[akIndex].key,
       actuationMap: [actuation],
     })
 
-  const updateAdvancedKey = (ak: DeviceAKDynamicKeystroke) =>
+  const updateAdvancedKey = (ak: HMKAKDynamicKeystroke) =>
     setAdvancedKeys({
       start: akIndex,
       advancedKeys: [

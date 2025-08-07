@@ -13,22 +13,22 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client"
+import { HMKConnectedDevice } from "@/types/hmk-device"
+import { HMKCommand } from "@/types/libhmk"
+import { sendCommandReport } from "../hid"
 
-import { Device } from "@/types/device"
-import { createContext, ReactNode, useContext } from "react"
+export async function getTickRate(device: HMKConnectedDevice, profile: number) {
+  const response = await sendCommandReport(device, HMKCommand.GET_TICK_RATE, [
+    profile,
+  ])
 
-const DeviceContext = createContext<Device>({} as Device)
-
-export const useDevice = () => useContext(DeviceContext)
-
-interface DeviceProviderProps {
-  device: Device
-  children: ReactNode
+  return response.getUint8(1)
 }
 
-export function DeviceProvider({ device, children }: DeviceProviderProps) {
-  return (
-    <DeviceContext.Provider value={device}>{children}</DeviceContext.Provider>
-  )
+export async function setTickRate(
+  device: HMKConnectedDevice,
+  profile: number,
+  tickRate: number,
+) {
+  await sendCommandReport(device, HMKCommand.SET_TICK_RATE, [profile, tickRate])
 }
