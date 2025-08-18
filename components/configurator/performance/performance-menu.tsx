@@ -55,7 +55,11 @@ export function PerformanceMenu() {
       <FixedScrollArea>
         <div className="flex flex-col gap-4 p-4">
           <DistanceSliderProvider
-            description="Set the specific distance at which a key press and release is registered."
+            description={
+              rtEnabled
+                ? "Set the specific distance at which Rapid Trigger activates and deactivates."
+                : "Set the specific distance at which a key press and release is registered."
+            }
             disabled={disabled}
             title="Actuation Point"
           >

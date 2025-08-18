@@ -28,7 +28,7 @@ export function KeyTesterTab() {
           <KeyTesterKeyPress className="h-24 max-w-72" />
         </div>
         <div className="flex flex-col gap-2">
-          <div className="text-sm font-medium">Pressed Keys</div>
+          <div className="text-sm font-medium">Released Keys</div>
           <KeyTesterKeyRelease className="h-24 max-w-72" />
         </div>
       </div>
