@@ -15,7 +15,7 @@
 
 "use client"
 
-import { CableIcon } from "lucide-react"
+import { CableIcon, PaintbrushIcon } from "lucide-react"
 import Link from "next/link"
 import { useEffect } from "react"
 import { toast } from "sonner"
@@ -65,13 +65,20 @@ export function AppConfigurator() {
         <h1 className="text-5xl leading-none font-extrabold tracking-tight">
           hmkconf
         </h1>
-        <div className="flex items-center gap-4">
-          <Button onClick={handleConnect}>
-            <CableIcon /> Authorize Keyboard
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/demo" replace>
-              Demo
+        <div className="grid gap-4">
+          <div className="flex items-center gap-4">
+            <Button onClick={handleConnect}>
+              <CableIcon /> Authorize Keyboard
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/demo" replace>
+                Demo
+              </Link>
+            </Button>
+          </div>
+          <Button asChild variant="link">
+            <Link href="/metadata" replace>
+              <PaintbrushIcon /> Edit Keyboard Metadata
             </Link>
           </Button>
         </div>
