@@ -15,7 +15,6 @@
 
 import { cva, VariantProps } from "class-variance-authority"
 
-import { Skeleton } from "@/components/ui/skeleton"
 import { toggleVariants } from "@/components/ui/toggle"
 import { cn } from "@/lib/utils"
 
@@ -53,5 +52,5 @@ export function KeyButton({
 }
 
 export function KeyButtonSkeleton() {
-  return <Skeleton className="size-full rounded-md" />
+  return <div className="size-full rounded-md border opacity-50" />
 }

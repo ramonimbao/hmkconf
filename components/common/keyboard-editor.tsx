@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useMemo, useRef } from "react"
+import { useRef } from "react"
 import { useResizeObserver } from "usehooks-ts"
 
 import {
@@ -76,18 +76,15 @@ export function KeyboardEditorKeyboard({
   } = useKeyboardLayout({ layout })
 
   const ref = useRef({} as HTMLDivElement)
-  const { width: containerWidth, height: containerHeight } = useResizeObserver({
-    ref,
-  })
+  const { width: containerWidth = 0, height: containerHeight = 0 } =
+    useResizeObserver({
+      ref,
+    })
 
-  const fontSize = useMemo(() => {
-    if (containerWidth && containerHeight) {
-      return Math.min(
-        containerWidth / unitToEM(width),
-        containerHeight / unitToEM(height),
-      )
-    }
-  }, [containerWidth, containerHeight, height, width])
+  const fontSize = Math.min(
+    containerWidth / unitToEM(width),
+    containerHeight / unitToEM(height),
+  )
 
   return (
     <div className={cn("size-full p-4", className)} {...props}>
@@ -96,7 +93,7 @@ export function KeyboardEditorKeyboard({
         ref={ref}
         style={{ fontSize: `${fontSize}px` }}
       >
-        {fontSize && (
+        {fontSize > 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="relative" style={getUnitSizeCSS(width, height)}>
               {layout.flatMap((row) =>

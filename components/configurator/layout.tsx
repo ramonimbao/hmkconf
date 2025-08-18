@@ -33,7 +33,7 @@ export function ConfiguratorLayout({
 }: React.ComponentProps<typeof Tabs>) {
   const { tab, setTab } = useConfigurator()
 
-  const { width = 0, height = 0 } = useWindowSize({
+  const { width = Infinity, height = Infinity } = useWindowSize({
     initializeWithValue: false,
   })
 
