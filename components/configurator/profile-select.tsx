@@ -53,6 +53,7 @@ export function ProfileSelect({
               <Tooltip>
                 <TooltipTrigger>
                   <KeyboardIcon className="size-4" />
+                  <span className="sr-only">Active</span>
                 </TooltipTrigger>
                 <TooltipContent>Current active profile</TooltipContent>
               </Tooltip>
