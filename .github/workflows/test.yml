@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: ESLint Check
+    name: Linting Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -26,5 +26,5 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
-      - name: Run ESLint
-        run: bunx eslint --ext .js,.ts,.jsx,.tsx
+      - name: Run Lint
+        run: bun lint

@@ -13,18 +13,27 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { PaintbrushIcon } from "lucide-react"
+import Link from "next/link"
+
 import { GithubLink } from "./github-link"
 import { ThemeSwitcher } from "./theme-switcher"
+import { Button } from "./ui/button"
 
 export function Footer() {
   return (
-    <footer className="flex flex-col border-t">
-      <div className="mx-auto flex w-full max-w-[1800px] items-center justify-between gap-4 p-4">
+    <footer className="flex h-16 items-center border-t">
+      <div className="flex flex-1 items-center px-4">
         <h1 className="text-xl font-extrabold tracking-tight">hmkconf</h1>
-        <div className="flex items-center gap-2">
-          <GithubLink />
-          <ThemeSwitcher />
-        </div>
+      </div>
+      <div className="flex items-center gap-2 px-4">
+        <Button asChild variant="link">
+          <Link href="/metadata" replace>
+            <PaintbrushIcon /> Edit Keyboard Metadata
+          </Link>
+        </Button>
+        <GithubLink />
+        <ThemeSwitcher />
       </div>
     </footer>
   )

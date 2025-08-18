@@ -18,7 +18,9 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 
+import { QueryClientProvider } from "@/components/providers/query-client-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,11 +47,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="relative flex min-h-screen flex-col bg-background font-sans">
-            {children}
-          </div>
-        </ThemeProvider>
+        <QueryClientProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="relative flex min-h-screen flex-col bg-background font-sans">
+              {children}
+            </div>
+          </ThemeProvider>
+        </QueryClientProvider>
+        <Toaster />
       </body>
     </html>
   )

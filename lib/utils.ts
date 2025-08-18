@@ -19,3 +19,45 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export function isWebHIDSupported() {
+  return !!navigator.hid
+}
+
+export function optMap<T, U>(value: T | null | undefined, f: (value: T) => U) {
+  return value !== null && value !== undefined ? f(value) : undefined
+}
+
+export function partitionIntArray(arr: number[]) {
+  const uniqueSortedArr = Array.from(new Set(arr)).sort((a, b) => a - b)
+  const partitions: [number, number][] = []
+  let curr: number[] = []
+
+  for (const x of uniqueSortedArr) {
+    if (curr.length === 0 || curr[curr.length - 1] + 1 === x) {
+      curr.push(x)
+    } else {
+      partitions.push([curr[0], curr.length])
+      curr = [x]
+    }
+  }
+
+  if (curr.length > 0) {
+    partitions.push([curr[0], curr.length])
+  }
+
+  return partitions
+}
+
+export function uInt16ToUInt8s(value: number) {
+  return [value & 0xff, (value >> 8) & 0xff]
+}
+
+export function uInt32ToUInt8s(value: number) {
+  return [
+    value & 0xff,
+    (value >> 8) & 0xff,
+    (value >> 16) & 0xff,
+    (value >> 24) & 0xff,
+  ]
+}
