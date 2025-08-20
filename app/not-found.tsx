@@ -25,8 +25,8 @@ export default function NotFound() {
         <h1 className="text-5xl leading-none font-extrabold tracking-tight">
           Page Not Found
         </h1>
-        <div className="mt-4 flex items-center gap-4">
-          <Button asChild>
+        <div className="mt-8 flex items-center gap-4">
+          <Button asChild size="lg">
             <Link href="/" replace>
               Go Home
             </Link>

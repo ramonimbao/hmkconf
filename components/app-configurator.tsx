@@ -16,6 +16,7 @@
 "use client"
 
 import { CableIcon } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useEffect } from "react"
 import { toast } from "sonner"
@@ -61,19 +62,45 @@ export function AppConfigurator() {
 
   return (
     <>
-      <div className="flex h-screen flex-col items-center justify-center gap-4 p-8">
-        <h1 className="text-5xl leading-none font-extrabold tracking-tight">
-          hmkconf
-        </h1>
-        <div className="flex items-center gap-4">
-          <Button onClick={handleConnect}>
-            <CableIcon /> Authorize Keyboard
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/demo" replace>
-              Demo
-            </Link>
-          </Button>
+      <div className="flex min-h-screen flex-col py-32">
+        <div className="mx-auto flex max-w-7xl flex-col items-center px-6">
+          <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+            <h1 className="text-5xl leading-none font-extrabold tracking-tight">
+              hmkconf
+            </h1>
+            <p className="mt-4 text-lg font-medium text-pretty text-muted-foreground">
+              A web-based configurator for libhmk keyboards. Customize keyboard
+              bindings, adjust actuation points, enable Rapid Trigger, and more.
+            </p>
+            <div className="mt-8 flex items-center gap-4">
+              <Button onClick={handleConnect} size="lg">
+                <CableIcon /> Connect Keyboard
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/demo" replace>
+                  Try Demo
+                </Link>
+              </Button>
+            </div>
+          </div>
+          <div className="mt-16">
+            <div className="overflow-hidden rounded-xl border bg-card shadow">
+              <Image
+                alt="Screenshot of the configuration interface"
+                className="not-dark:hidden"
+                src="/screenshot-dark.png"
+                width="1024"
+                height="768"
+              />
+              <Image
+                alt="Screenshot of the configuration interface"
+                className="dark:hidden"
+                src="/screenshot.png"
+                width="1024"
+                height="768"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <Footer />
