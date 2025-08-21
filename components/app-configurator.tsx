@@ -77,9 +77,7 @@ export function AppConfigurator() {
                 <CableIcon /> Connect Keyboard
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link href="/demo" replace>
-                  Try Demo
-                </Link>
+                <Link href="/demo">Try Demo</Link>
               </Button>
             </div>
           </div>

@@ -27,9 +27,7 @@ export default function NotFound() {
         </h1>
         <div className="mt-8 flex items-center gap-4">
           <Button asChild size="lg">
-            <Link href="/" replace>
-              Go Home
-            </Link>
+            <Link href="/">Go Home</Link>
           </Button>
         </div>
       </div>

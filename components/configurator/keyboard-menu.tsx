@@ -19,7 +19,7 @@ import {
   LogOutIcon,
   UnplugIcon,
 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 import { displayUInt16 } from "@/lib/ui"
 
@@ -34,7 +34,6 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar"
 
 export function KeyboardMenu() {
   const { metadata, isDemo, forget } = useKeyboard()
-  const router = useRouter()
 
   return (
     <SidebarMenu>
@@ -65,9 +64,11 @@ export function KeyboardMenu() {
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
           >
             {isDemo ? (
-              <DropdownMenuItem onSelect={() => router.replace("/")}>
-                <LogOutIcon />
-                Exit Demo
+              <DropdownMenuItem asChild>
+                <Link href="/">
+                  <LogOutIcon />
+                  Exit Demo
+                </Link>
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem onSelect={forget}>
