@@ -62,7 +62,11 @@ export function createConfigurator() {
         setProfile: (profile) =>
           set((state) => ({
             ...store.getInitialState(),
-            global: { tab: state.global.tab, profile },
+            global: {
+              ...store.getInitialState().global,
+              tab: state.global.tab,
+              profile,
+            },
           })),
       },
 
