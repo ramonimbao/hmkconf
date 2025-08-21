@@ -15,6 +15,8 @@
 
 import { Slot } from "@radix-ui/react-slot"
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
+import { useState } from "react"
+import { useEventListener } from "usehooks-ts"
 
 import { KeyboardEditorKeyboard } from "@/components/common/keyboard-editor"
 import { useConfigurator } from "@/components/providers/configurator-provider"
@@ -42,15 +44,13 @@ export function PerformanceKeyboard() {
     layer: 0,
   })
 
+  const [dragging, setDragging] = useState(false)
   const isSuccess = actuationMapSuccess && keymapSuccess
 
+  useEventListener("mouseup", () => setDragging(false))
+
   return (
-    <ToggleGroup
-      asChild
-      onValueChange={(keys) => setKeys(keys.map((key) => parseInt(key)))}
-      type="multiple"
-      value={keys.map(String)}
-    >
+    <ToggleGroup asChild type="multiple" value={keys.map(String)}>
       <KeyboardEditorKeyboard
         layout={layout}
         keyGenerator={(key) => {
@@ -64,16 +64,18 @@ export function PerformanceKeyboard() {
           return (
             <ToggleGroupItem asChild value={key.toString()}>
               <Slot
-                onClick={(e) => e.preventDefault()}
-                onMouseDown={(e) =>
-                  e.buttons === 1 &&
-                  setKeys(
-                    keys.includes(key)
-                      ? keys.filter((k) => k !== key)
-                      : [...keys, key],
-                  )
-                }
+                onMouseDown={(e) => {
+                  if (e.buttons === 1) {
+                    setDragging(true)
+                    setKeys(
+                      keys.includes(key)
+                        ? keys.filter((k) => k !== key)
+                        : [...keys, key],
+                    )
+                  }
+                }}
                 onMouseEnter={(e) =>
+                  dragging &&
                   e.buttons === 1 &&
                   !keys.includes(key) &&
                   setKeys([...keys, key])

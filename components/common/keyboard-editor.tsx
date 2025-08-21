@@ -90,7 +90,7 @@ export function KeyboardEditorKeyboard({
   }, [containerHeight, containerWidth, height, width])
 
   return (
-    <div className={cn("size-full p-4", className)} {...props}>
+    <div className={cn("size-full p-4 select-none", className)} {...props}>
       <div
         className="relative size-full"
         ref={ref}
