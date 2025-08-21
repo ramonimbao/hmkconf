@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorGlobal } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { ANALOG_CURVE_PRESETS } from "@/constants/gamepad"
 import { MAX_DISTANCE, MIN_DISTANCE } from "@/constants/libhmk"
@@ -21,7 +21,7 @@ import { useDisplayGamepad } from "@/hooks/use-display-gamepad"
 import { useSetGamepadOptions } from "@/queries/set-gamepad-options"
 
 export function GamepadAnalogCurvePresets() {
-  const { profile } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
 
   const { isSuccess, gamepadOptions } = useDisplayGamepad({
     profile,

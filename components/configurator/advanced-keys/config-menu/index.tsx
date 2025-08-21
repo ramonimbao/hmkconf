@@ -15,7 +15,10 @@
 
 import { createContext, useContext } from "react"
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { useDisplayAdvancedKeys } from "@/hooks/use-display-advanced-keys"
 import { getAdvancedKeyMetadata } from "@/lib/advanced-keys"
 import { useSetAdvancedKeys } from "@/queries/set-advanced-keys"
@@ -42,10 +45,8 @@ const AdvancedKeysConfigContext = createContext({} as AdvancedKeysConfigProps)
 export const useAdvancedKeysConfig = () => useContext(AdvancedKeysConfigContext)
 
 export function AdvancedKeysConfigMenu() {
-  const {
-    profile,
-    advancedKeys: { index },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { index } = useConfiguratorAdvancedKeys()
 
   const { isSuccess, advancedKeys } = useDisplayAdvancedKeys({ profile })
   const { mutate: setAdvancedKeys } = useSetAdvancedKeys({ profile })

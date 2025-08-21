@@ -17,7 +17,10 @@ import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { useMemo } from "react"
 
 import { KeyboardEditorKeyboard } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { useDisplayAdvancedKeys } from "@/hooks/use-display-advanced-keys"
 import { HMKAKType } from "@/types/libhmk"
@@ -26,10 +29,9 @@ import { KeyButtonSkeleton } from "../common/key-button"
 import { KeycodeButton, KeycodeButtonTooltip } from "../common/keycode-button"
 
 export function AdvancedKeysKeyboard() {
-  const {
-    profile,
-    advancedKeys: { layer, index, newType, keys, setIndex, setKey },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { layer, index, newType, keys, setIndex, setKey } =
+    useConfiguratorAdvancedKeys()
   const {
     metadata: { layout },
   } = useKeyboard()

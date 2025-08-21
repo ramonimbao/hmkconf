@@ -13,7 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorAdvancedKeys } from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -25,9 +25,7 @@ export function AdvancedKeysConfigLayout({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const {
-    advancedKeys: { setIndex },
-  } = useConfigurator()
+  const { setIndex } = useConfiguratorAdvancedKeys()
 
   const {
     index,

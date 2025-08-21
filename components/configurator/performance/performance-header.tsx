@@ -14,7 +14,10 @@
  */
 
 import { KeyboardEditorHeader } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGlobal,
+  useConfiguratorPerformance,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { Button } from "@/components/ui/button"
 import { Toggle } from "@/components/ui/toggle"
@@ -24,10 +27,9 @@ import { partitionIntArray } from "@/lib/utils"
 import { useSetActuationMap } from "@/queries/set-actuation-map"
 
 export function PerformanceHeader() {
-  const {
-    profile,
-    performance: { keys, showKeymap, setKeys, setShowKeymap },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { keys, showKeymap, setKeys, setShowKeymap } =
+    useConfiguratorPerformance()
   const {
     metadata: { layout },
   } = useKeyboard()

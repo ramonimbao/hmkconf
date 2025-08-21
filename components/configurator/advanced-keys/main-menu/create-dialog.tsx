@@ -17,7 +17,10 @@ import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 import { useMemo } from "react"
 
 import { FixedScrollArea } from "@/components/common/fixed-scroll-area"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { useDisplayAdvancedKeys } from "@/hooks/use-display-advanced-keys"
 import { getAdvancedKeyMetadata } from "@/lib/advanced-keys"
@@ -28,18 +31,9 @@ import { KeyButton } from "../../common/key-button"
 import { KeycodeButton } from "../../common/keycode-button"
 
 export function AdvancedKeysCreateDialog() {
-  const {
-    profile,
-    advancedKeys: {
-      layer,
-      newType,
-      keyIndex,
-      keys,
-      setIndex,
-      setNewType,
-      setKeyIndex,
-    },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { layer, newType, keyIndex, keys, setIndex, setNewType, setKeyIndex } =
+    useConfiguratorAdvancedKeys()
 
   const { isSuccess, keymap, addAdvancedKey } = useDisplayAdvancedKeys({
     profile,

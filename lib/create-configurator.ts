@@ -22,8 +22,10 @@ import { HMKAKType } from "@/types/libhmk"
 import { getAdvancedKeyMetadata } from "./advanced-keys"
 
 const initialState: ConfiguratorState = {
-  tab: "remap",
-  profile: 0,
+  global: {
+    tab: "remap",
+    profile: 0,
+  },
   remap: {
     layer: 0,
     key: null,
@@ -49,14 +51,20 @@ export function createConfigurator() {
   return create<Configurator>()(
     immer((set, _, store) => ({
       ...initialState,
-      reset: () => set(store.getInitialState()),
-      setTab: (tab) => set({ tab }),
-      setProfile: (profile) =>
-        set((state) => ({
-          ...store.getInitialState(),
-          tab: state.tab,
-          profile,
-        })),
+
+      global: {
+        ...initialState.global,
+        reset: () => set(store.getInitialState()),
+        setTab: (tab) =>
+          set((state) => {
+            state.global.tab = tab
+          }),
+        setProfile: (profile) =>
+          set((state) => ({
+            ...store.getInitialState(),
+            global: { tab: state.global.tab, profile },
+          })),
+      },
 
       remap: {
         ...initialState.remap,
@@ -75,7 +83,11 @@ export function createConfigurator() {
         ...initialState.performance,
         setKeys: (keys) =>
           set((state) => {
-            state.performance.keys = keys
+            if (typeof keys === "function") {
+              state.performance.keys = keys(state.performance.keys)
+            } else {
+              state.performance.keys = keys
+            }
           }),
         setShowKeymap: (show) =>
           set((state) => {
@@ -116,15 +128,16 @@ export function createConfigurator() {
           }),
         setKey: (key) =>
           set((state) => {
-            const keyIndex = state.advancedKeys.keys.indexOf(key)
-            if (keyIndex !== -1) {
-              state.advancedKeys.keys[keyIndex] = null
-              state.advancedKeys.keyIndex = keyIndex
+            const index = state.advancedKeys.keys.indexOf(key)
+            if (index !== -1) {
+              state.advancedKeys.keys[index] = null
+              state.advancedKeys.keyIndex = index
             } else if (state.advancedKeys.keyIndex !== null) {
               state.advancedKeys.keys[state.advancedKeys.keyIndex] = key
 
-              const nextIndex = state.advancedKeys.keys.indexOf(null)
-              state.advancedKeys.keyIndex = nextIndex !== -1 ? nextIndex : null
+              const nextNullIndex = state.advancedKeys.keys.indexOf(null)
+              state.advancedKeys.keyIndex =
+                nextNullIndex !== -1 ? nextNullIndex : null
             }
           }),
       },

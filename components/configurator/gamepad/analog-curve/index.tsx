@@ -15,7 +15,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorGlobal } from "@/components/providers/configurator-provider"
 import { CURVE_VIEW_HEIGHT, CURVE_VIEW_WIDTH } from "@/constants/gamepad"
 import { DEFAULT_ANALOG_CURVE } from "@/constants/libhmk/gamepad"
 import { useDisplayGamepad } from "@/hooks/use-display-gamepad"
@@ -37,7 +37,7 @@ const AnalogCurveContext = createContext({} as AnalogCurveProps)
 export const useAnalogCurve = () => useContext(AnalogCurveContext)
 
 export function GamepadAnalogCurve() {
-  const { profile } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
 
   const { isSuccess, gamepadOptions } = useDisplayGamepad({
     profile,

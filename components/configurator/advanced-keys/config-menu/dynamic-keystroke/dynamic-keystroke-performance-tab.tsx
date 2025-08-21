@@ -19,7 +19,7 @@ import {
   DistanceSlider,
   DistanceSliderProvider,
 } from "@/components/configurator/common/distance-slider"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorGlobal } from "@/components/providers/configurator-provider"
 import { distanceToUnit } from "@/lib/distance"
 import { optMap } from "@/lib/utils"
 import { useGetActuationMap } from "@/queries/get-actuation-map"
@@ -29,7 +29,7 @@ import { useDynamicKeystroke } from "."
 import { useAdvancedKeysConfig } from ".."
 
 export function DynamicKeystrokePerformanceTab() {
-  const { profile } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
   const {
     advancedKey: { key },
     updateAdvancedKey,

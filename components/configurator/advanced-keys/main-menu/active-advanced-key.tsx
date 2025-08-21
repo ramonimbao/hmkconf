@@ -15,7 +15,10 @@
 
 import { EditIcon, TrashIcon } from "lucide-react"
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import { useDisplayAdvancedKeys } from "@/hooks/use-display-advanced-keys"
 import {
@@ -38,10 +41,8 @@ export function ActiveAdvancedKey({
   index: number
   advancedKey: HMKAdvancedKey
 }) {
-  const {
-    profile,
-    advancedKeys: { setLayer, setIndex },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { setLayer, setIndex } = useConfiguratorAdvancedKeys()
 
   const { layer } = advancedKey
   const { icon: Icon } = getAdvancedKeyMetadata(advancedKey.action.type)

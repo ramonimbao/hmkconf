@@ -15,14 +15,14 @@
 
 import { InfoIcon } from "lucide-react"
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorGlobal } from "@/components/providers/configurator-provider"
 import { useGetTickRate } from "@/queries/get-tick-rate"
 import { useSetTickRate } from "@/queries/set-tick-rate"
 
 import { CommitSlider, CommitSliderProvider } from "../../common/commit-slider"
 
 export function TickRateMenu() {
-  const { profile } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
 
   const { isSuccess, data: tickRate } = useGetTickRate({ profile })
   const { mutate: setTickRate } = useSetTickRate({ profile })

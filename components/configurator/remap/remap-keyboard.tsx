@@ -16,7 +16,10 @@
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 
 import { KeyboardEditorKeyboard } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGlobal,
+  useConfiguratorRemap,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { useGetKeymap } from "@/queries/get-keymap"
 import { useSetKeymap } from "@/queries/set-keymap"
@@ -26,10 +29,8 @@ import { KeyButtonSkeleton } from "../common/key-button"
 import { KeycodeButton, KeycodeButtonTooltip } from "../common/keycode-button"
 
 export function RemapKeyboard() {
-  const {
-    profile,
-    remap: { layer, key, setKey },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { layer, key, setKey } = useConfiguratorRemap()
   const {
     metadata: { layout },
   } = useKeyboard()

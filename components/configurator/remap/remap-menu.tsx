@@ -14,7 +14,10 @@
  */
 
 import { FixedScrollArea } from "@/components/common/fixed-scroll-area"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGlobal,
+  useConfiguratorRemap,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { useKeyboardLayout } from "@/hooks/use-keyboard-layout"
 import { useSetKeymap } from "@/queries/set-keymap"
@@ -22,10 +25,8 @@ import { useSetKeymap } from "@/queries/set-keymap"
 import { KeycodeAccordions } from "../common/keycode-accordions"
 
 export function RemapMenu() {
-  const {
-    profile,
-    remap: { layer, key, setKey },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { layer, key, setKey } = useConfiguratorRemap()
   const {
     metadata: { layout },
   } = useKeyboard()

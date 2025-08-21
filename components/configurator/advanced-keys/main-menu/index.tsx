@@ -14,7 +14,10 @@
  */
 
 import { FixedScrollArea } from "@/components/common/fixed-scroll-area"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { Button } from "@/components/ui/button"
 import { ADVANCED_KEYS_METADATA } from "@/constants/advanced-keys"
@@ -23,10 +26,8 @@ import { useDisplayAdvancedKeys } from "@/hooks/use-display-advanced-keys"
 import { ActiveAdvancedKey } from "./active-advanced-key"
 
 export function AdvancedKeysCreateMenu() {
-  const {
-    profile,
-    advancedKeys: { setIndex, setNewType },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { setIndex, setNewType } = useConfiguratorAdvancedKeys()
   const {
     metadata: { numAdvancedKeys },
   } = useKeyboard()

@@ -20,7 +20,7 @@ import { useWindowSize } from "usehooks-ts"
 import { MIN_WINDOW_HEIGHT, MIN_WINDOW_WIDTH } from "@/constants/ui"
 
 import { GithubLink } from "../github-link"
-import { useConfigurator } from "../providers/configurator-provider"
+import { useConfiguratorGlobal } from "../providers/configurator-provider"
 import { ThemeSwitcher } from "../theme-switcher"
 import { Separator } from "../ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "../ui/sidebar"
@@ -31,7 +31,7 @@ export function ConfiguratorLayout({
   children,
   ...props
 }: React.ComponentProps<typeof Tabs>) {
-  const { tab, setTab } = useConfigurator()
+  const { tab, setTab } = useConfiguratorGlobal()
 
   const { width = Infinity, height = Infinity } = useWindowSize({
     initializeWithValue: false,

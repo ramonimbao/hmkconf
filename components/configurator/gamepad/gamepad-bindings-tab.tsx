@@ -14,7 +14,10 @@
  */
 
 import { FixedScrollArea } from "@/components/common/fixed-scroll-area"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGamepad,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { GAMEPAD_BUTTONS } from "@/constants/gamepad"
 import { useDisplayGamepad } from "@/hooks/use-display-gamepad"
 import { gamepadButtonToDisplay } from "@/lib/gamepad"
@@ -26,10 +29,8 @@ import { KeycodeButton, KeycodeButtonTooltip } from "../common/keycode-button"
 import { Switch } from "../common/switch"
 
 export function GamepadBindingsTab() {
-  const {
-    profile,
-    gamepad: { key, setKey },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { key, setKey } = useConfiguratorGamepad()
 
   const { isSuccess, gamepadOptions } = useDisplayGamepad({
     profile,

@@ -16,13 +16,28 @@
 "use client"
 
 import { createContext, useContext, useState } from "react"
+import { useShallow } from "zustand/react/shallow"
 
 import { createConfigurator } from "@/lib/create-configurator"
-import { Configurator } from "@/types/configurator"
 
-const ConfiguratorContext = createContext({} as Configurator)
+const ConfiguratorContext = createContext(
+  {} as ReturnType<typeof createConfigurator>,
+)
 
-export const useConfigurator = () => useContext(ConfiguratorContext)
+export const useConfiguratorGlobal = () =>
+  useContext(ConfiguratorContext)(useShallow((state) => state.global))
+
+export const useConfiguratorRemap = () =>
+  useContext(ConfiguratorContext)(useShallow((state) => state.remap))
+
+export const useConfiguratorPerformance = () =>
+  useContext(ConfiguratorContext)(useShallow((state) => state.performance))
+
+export const useConfiguratorAdvancedKeys = () =>
+  useContext(ConfiguratorContext)(useShallow((state) => state.advancedKeys))
+
+export const useConfiguratorGamepad = () =>
+  useContext(ConfiguratorContext)(useShallow((state) => state.gamepad))
 
 export function ConfiguratorProvider({
   children,
@@ -30,7 +45,7 @@ export function ConfiguratorProvider({
   const [useConfigurator] = useState(createConfigurator)
 
   return (
-    <ConfiguratorContext.Provider value={useConfigurator()}>
+    <ConfiguratorContext.Provider value={useConfigurator}>
       {children}
     </ConfiguratorContext.Provider>
   )

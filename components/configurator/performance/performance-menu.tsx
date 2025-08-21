@@ -14,7 +14,10 @@
  */
 
 import { FixedScrollArea } from "@/components/common/fixed-scroll-area"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGlobal,
+  useConfiguratorPerformance,
+} from "@/components/providers/configurator-provider"
 import { DEFAULT_RT_DOWN } from "@/constants/libhmk/actuation"
 import { optMap, partitionIntArray } from "@/lib/utils"
 import { useGetActuationMap } from "@/queries/get-actuation-map"
@@ -28,10 +31,8 @@ import {
 import { Switch } from "../common/switch"
 
 export function PerformanceMenu() {
-  const {
-    profile,
-    performance: { keys },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { keys } = useConfiguratorPerformance()
 
   const { isSuccess, data: actuationMap } = useGetActuationMap({ profile })
   const { mutate: setActuationMap } = useSetActuationMap({ profile })
@@ -46,7 +47,7 @@ export function PerformanceMenu() {
     partitionIntArray(keys).forEach(([offset, len]) =>
       setActuationMap({
         offset,
-        actuation: Array(len).fill(f(actuationMap[keys[0]])),
+        actuation: Array(len).fill(f(actuationMap[keys[0] ?? 0])),
       }),
     )
 

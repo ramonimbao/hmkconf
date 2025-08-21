@@ -19,7 +19,10 @@ import { useState } from "react"
 import { useEventListener } from "usehooks-ts"
 
 import { KeyboardEditorKeyboard } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGlobal,
+  useConfiguratorPerformance,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { displayDistance } from "@/lib/distance"
 import { useGetActuationMap } from "@/queries/get-actuation-map"
@@ -29,10 +32,8 @@ import { KeyButton, KeyButtonSkeleton } from "../common/key-button"
 import { KeycodeButton } from "../common/keycode-button"
 
 export function PerformanceKeyboard() {
-  const {
-    profile,
-    performance: { keys, showKeymap, setKeys },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { keys, showKeymap, setKeys } = useConfiguratorPerformance()
   const {
     metadata: { layout },
   } = useKeyboard()
@@ -46,6 +47,27 @@ export function PerformanceKeyboard() {
 
   const [dragging, setDragging] = useState(false)
   const isSuccess = actuationMapSuccess && keymapSuccess
+
+  const handleMouseDown = (e: React.MouseEvent, key: number) => {
+    if (e.buttons === 1) {
+      setDragging(true)
+      setKeys((keys) =>
+        keys.includes(key)
+          ? keys.filter((currKey) => currKey !== key)
+          : [...keys, key],
+      )
+    }
+  }
+
+  const handleMouseEnter = (e: React.MouseEvent, key: number) =>
+    dragging &&
+    e.buttons === 1 &&
+    setKeys((keys) => {
+      if (!keys.includes(key)) {
+        keys.push(key)
+      }
+      return keys
+    })
 
   useEventListener("mouseup", () => setDragging(false))
 
@@ -64,22 +86,8 @@ export function PerformanceKeyboard() {
           return (
             <ToggleGroupItem asChild value={key.toString()}>
               <Slot
-                onMouseDown={(e) => {
-                  if (e.buttons === 1) {
-                    setDragging(true)
-                    setKeys(
-                      keys.includes(key)
-                        ? keys.filter((k) => k !== key)
-                        : [...keys, key],
-                    )
-                  }
-                }}
-                onMouseEnter={(e) =>
-                  dragging &&
-                  e.buttons === 1 &&
-                  !keys.includes(key) &&
-                  setKeys([...keys, key])
-                }
+                onMouseDown={(e) => handleMouseDown(e, key)}
+                onMouseEnter={(e) => handleMouseEnter(e, key)}
               >
                 {showKeymap ? (
                   <KeycodeButton keycode={keymap[key]} />

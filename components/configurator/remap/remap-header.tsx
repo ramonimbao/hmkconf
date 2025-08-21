@@ -14,7 +14,10 @@
  */
 
 import { KeyboardEditorHeader } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGlobal,
+  useConfiguratorRemap,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { Button } from "@/components/ui/button"
 import { useSetKeymap } from "@/queries/set-keymap"
@@ -22,10 +25,8 @@ import { useSetKeymap } from "@/queries/set-keymap"
 import { LayerSelect } from "../common/layer-select"
 
 export function RemapHeader() {
-  const {
-    profile,
-    remap: { layer, setLayer, setKey },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { layer, setLayer, setKey } = useConfiguratorRemap()
   const {
     metadata: { defaultKeymap },
   } = useKeyboard()

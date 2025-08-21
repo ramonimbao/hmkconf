@@ -16,7 +16,10 @@
 import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group"
 
 import { KeyboardEditorKeyboard } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorGamepad,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { useKeyboard } from "@/components/providers/keyboard-provider"
 import { useDisplayGamepad } from "@/hooks/use-display-gamepad"
 import { useSetGamepadButtons } from "@/queries/set-gamepad-buttons"
@@ -26,10 +29,8 @@ import { KeyButtonSkeleton } from "../common/key-button"
 import { KeycodeButton, KeycodeButtonTooltip } from "../common/keycode-button"
 
 export function GamepadKeyboard() {
-  const {
-    profile,
-    gamepad: { key, setKey },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { key, setKey } = useConfiguratorGamepad()
   const {
     metadata: { layout },
   } = useKeyboard()

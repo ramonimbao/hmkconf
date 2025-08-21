@@ -16,8 +16,10 @@
 import { HMKAKType } from "./libhmk"
 
 export type ConfiguratorState = {
-  tab: string
-  profile: number
+  global: {
+    tab: string
+    profile: number
+  }
   remap: {
     layer: number
     key: number | null
@@ -40,15 +42,17 @@ export type ConfiguratorState = {
 }
 
 export type ConfiguratorAction = {
-  reset(): void
-  setTab(tab: string): void
-  setProfile(profile: number): void
+  global: {
+    reset(): void
+    setTab(tab: string): void
+    setProfile(profile: number): void
+  }
   remap: {
     setLayer(layer: number): void
     setKey(key: number | null): void
   }
   performance: {
-    setKeys(keys: number[]): void
+    setKeys(keys: number[] | ((keys: number[]) => number[])): void
     setShowKeymap(show: boolean): void
   }
   advancedKeys: {

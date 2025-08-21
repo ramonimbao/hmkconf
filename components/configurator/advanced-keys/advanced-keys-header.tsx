@@ -14,15 +14,13 @@
  */
 
 import { KeyboardEditorHeader } from "@/components/common/keyboard-editor"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorAdvancedKeys } from "@/components/providers/configurator-provider"
 import { HMKAKType } from "@/types/libhmk"
 
 import { LayerSelect } from "../common/layer-select"
 
 export function AdvancedKeysHeader() {
-  const {
-    advancedKeys: { layer, index, newType, setLayer },
-  } = useConfigurator()
+  const { layer, index, newType, setLayer } = useConfiguratorAdvancedKeys()
 
   return (
     <KeyboardEditorHeader>

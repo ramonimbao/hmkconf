@@ -13,7 +13,10 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { useDisplayAdvancedKeys } from "@/hooks/use-display-advanced-keys"
 import { HMKAKType } from "@/types/libhmk"
 
@@ -22,10 +25,8 @@ import { AdvancedKeysCreateMenu } from "./main-menu"
 import { AdvancedKeysCreateDialog } from "./main-menu/create-dialog"
 
 export function AdvancedKeysMenu() {
-  const {
-    profile,
-    advancedKeys: { index, newType },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { index, newType } = useConfiguratorAdvancedKeys()
 
   const { isSuccess } = useDisplayAdvancedKeys({ profile })
 

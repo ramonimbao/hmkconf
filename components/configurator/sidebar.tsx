@@ -27,7 +27,7 @@ import {
 import { HMK_VERSION } from "@/constants/libhmk"
 import { displayVersion } from "@/lib/ui"
 
-import { useConfigurator } from "../providers/configurator-provider"
+import { useConfiguratorGlobal } from "../providers/configurator-provider"
 import {
   Sidebar,
   SidebarContent,
@@ -68,7 +68,7 @@ const CONTENT_TABS = [
 ]
 
 export function ConfiguratorSidebar() {
-  const { tab: currentTab } = useConfigurator()
+  const { tab: currentTab } = useConfiguratorGlobal()
 
   return (
     <TabsList>

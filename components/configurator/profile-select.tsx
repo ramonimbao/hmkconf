@@ -17,7 +17,7 @@ import { KeyboardIcon } from "lucide-react"
 
 import { useGetProfile } from "@/queries/get-profile"
 
-import { useConfigurator } from "../providers/configurator-provider"
+import { useConfiguratorGlobal } from "../providers/configurator-provider"
 import { useKeyboard } from "../providers/keyboard-provider"
 import {
   Select,
@@ -31,7 +31,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 export function ProfileSelect({
   ...props
 }: React.ComponentProps<typeof Select>) {
-  const { profile, setProfile } = useConfigurator()
+  const { profile, setProfile } = useConfiguratorGlobal()
   const { metadata } = useKeyboard()
 
   const { data: currentProfile } = useGetProfile()

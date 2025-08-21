@@ -14,7 +14,7 @@
  */
 
 import { FixedScrollArea } from "@/components/common/fixed-scroll-area"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorGlobal } from "@/components/providers/configurator-provider"
 import { useDisplayGamepad } from "@/hooks/use-display-gamepad"
 import { useSetGamepadOptions } from "@/queries/set-gamepad-options"
 
@@ -23,7 +23,7 @@ import { GamepadAnalogCurve } from "./analog-curve"
 import { GamepadAnalogCurvePresets } from "./gamepad-analog-curve-presets"
 
 export function GamepadAnalogTab() {
-  const { profile } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
 
   const { isSuccess, gamepadOptions } = useDisplayGamepad({ profile })
   const { mutate: setGamepadOptions } = useSetGamepadOptions({ profile })

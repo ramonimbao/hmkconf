@@ -18,7 +18,7 @@ import {
   DistanceSliderProvider,
 } from "@/components/configurator/common/distance-slider"
 import { Switch } from "@/components/configurator/common/switch"
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import { useConfiguratorGlobal } from "@/components/providers/configurator-provider"
 import { DEFAULT_RT_DOWN } from "@/constants/libhmk/actuation"
 import { SWITCH_DISTANCE_UNIT } from "@/constants/ui"
 import { distanceToUnit } from "@/lib/distance"
@@ -31,7 +31,7 @@ import { useNullBind } from "."
 import { useAdvancedKeysConfig } from ".."
 
 export function NullBindPerformanceTab() {
-  const { profile } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
   const {
     advancedKey: { key },
     updateAdvancedKey,

@@ -13,7 +13,10 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useConfigurator } from "@/components/providers/configurator-provider"
+import {
+  useConfiguratorAdvancedKeys,
+  useConfiguratorGlobal,
+} from "@/components/providers/configurator-provider"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -40,10 +43,8 @@ export function AdvancedKeysDeleteDialog({
   index: number
   advancedKey: HMKAdvancedKey
 }) {
-  const {
-    profile,
-    advancedKeys: { setIndex },
-  } = useConfigurator()
+  const { profile } = useConfiguratorGlobal()
+  const { setIndex } = useConfiguratorAdvancedKeys()
 
   const { title } = getAdvancedKeyMetadata(type)
   const { removeAdvancedKey } = useDisplayAdvancedKeys({ profile })
