@@ -86,6 +86,7 @@ export function AppConfigurator() {
               <Image
                 alt="Screenshot of the configuration interface"
                 className="not-dark:hidden"
+                priority
                 src="/screenshot-dark.png"
                 width="1024"
                 height="768"
@@ -93,6 +94,7 @@ export function AppConfigurator() {
               <Image
                 alt="Screenshot of the configuration interface"
                 className="dark:hidden"
+                priority
                 src="/screenshot.png"
                 width="1024"
                 height="768"
