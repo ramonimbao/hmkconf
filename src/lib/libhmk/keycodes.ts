@@ -347,6 +347,14 @@ export function MO(layer: number) {
   return Keycode.SP_MO_MIN | layer
 }
 
+export function MO_GET_LAYER(keycode: number) {
+  return keycode & 0x07
+}
+
 export function PF(profile: number) {
   return Keycode.SP_PF_MIN | profile
+}
+
+export function PF_GET_PROFILE(keycode: number) {
+  return keycode & 0x07
 }

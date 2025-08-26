@@ -12,3 +12,26 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+import { ResizableHandle as Handle } from "../ui/resizable"
+import Container from "./keyboard-editor-container.svelte"
+import Keyboard from "./keyboard-editor-keyboard.svelte"
+import Menubar from "./keyboard-editor-menubar.svelte"
+import Pane from "./keyboard-editor-pane.svelte"
+import Root from "./keyboard-editor.svelte"
+
+export {
+  Root,
+  Pane,
+  Container,
+  Handle,
+  Keyboard,
+  Menubar,
+  //
+  Root as KeyboardEditor,
+  Pane as KeyboardEditorPane,
+  Container as KeyboardEditorContainer,
+  Handle as KeyboardEditorHandle,
+  Keyboard as KeyboardEditorKeyboard,
+  Menubar as KeyboardEditorMenubar,
+}

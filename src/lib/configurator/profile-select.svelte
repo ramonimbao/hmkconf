@@ -18,25 +18,26 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as Select from "$lib/components/ui/select"
   import * as Tooltip from "$lib/components/ui/tooltip"
   import { keyboardContext } from "$lib/keyboard"
-  import { ResourceProfile } from "$lib/resources/profile.svelte"
   import { globalStateContext } from "./context.svelte"
+  import { globalQueryContext } from "./queries/global-query.svelte"
 
   const globalState = globalStateContext.get()
+  const { profile } = $derived(globalState)
   const { numProfiles } = keyboardContext.get().metadata
 
-  const profile = new ResourceProfile().profile
+  const { current: keyboardProfile } = $derived(
+    globalQueryContext.get().profile,
+  )
 </script>
 
 <Select.Root
-  bind:value={
-    () => String(globalState.profile), (v) => globalState.setProfile(Number(v))
-  }
+  bind:value={() => String(profile), (v) => globalState.setProfile(Number(v))}
   type="single"
 >
   <Select.Trigger class="w-48" size="sm">
     <span class="flex items-center gap-2">
-      Profile {globalState.profile}
-      {#if profile.current === globalState.profile}
+      Profile {profile}
+      {#if keyboardProfile === profile}
         <KeyboardIcon />
       {/if}
     </span>
@@ -46,7 +47,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <Select.Item value={String(i)}>
         <span class="flex items-center gap-2">
           Profile {i}
-          {#if profile.current === i}
+          {#if keyboardProfile === i}
             <Tooltip.Root>
               <Tooltip.Trigger>
                 <KeyboardIcon />

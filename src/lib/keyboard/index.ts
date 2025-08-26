@@ -16,6 +16,12 @@
 import { Context } from "runed"
 import type { KeyboardMetadata } from "./metadata"
 
+type GetProfileParams = { profile: number }
+type SetProfileParams<T> = { profile: number; offset: number; data: T[] }
+
+export type GetKeymapParams = GetProfileParams
+export type SetKeymapParams = SetProfileParams<number> & { layer: number }
+
 export type KeyboardState = {
   id: string
   metadata: KeyboardMetadata
@@ -27,6 +33,9 @@ export type KeyboardAction = {
   forget(): Promise<void>
 
   getProfile(): Promise<number>
+
+  getKeymap(params: GetKeymapParams): Promise<number[][]>
+  setKeymap(params: SetKeymapParams): Promise<void>
 }
 
 export type Keyboard = KeyboardState & KeyboardAction

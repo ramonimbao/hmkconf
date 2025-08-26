@@ -15,32 +15,49 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { Tabs } from "bits-ui"
+  import AdvancedKeysTab from "./advanced-keys/advanced-keys-tab.svelte"
   import { setConfiguratorStateContext } from "./context.svelte"
+  import DebugTab from "./debug/debug-tab.svelte"
+  import GamepadTab from "./gamepad/gamepad-tab.svelte"
   import ConfiguratorLayout from "./layout.svelte"
+  import PerformanceTab from "./performance/performance-tab.svelte"
+  import { setConfiguratorQueryContext } from "./queries/global-query.svelte"
+  import RemapTab from "./remap/remap-tab.svelte"
 
   setConfiguratorStateContext()
+  setConfiguratorQueryContext()
 </script>
 
 <ConfiguratorLayout>
   <Tabs.Content value="profiles">
-    {#snippet child({ props })}{/snippet}
+    <!-- {#snippet child({ props })}{/snippet} -->
   </Tabs.Content>
   <Tabs.Content value="remap">
-    {#snippet child({ props })}{/snippet}
+    {#snippet child({ props })}
+      <RemapTab {...props} />
+    {/snippet}
   </Tabs.Content>
   <Tabs.Content value="performance">
-    {#snippet child({ props })}{/snippet}
+    {#snippet child({ props })}
+      <PerformanceTab {...props} />
+    {/snippet}
   </Tabs.Content>
   <Tabs.Content value="advanced-keys">
-    {#snippet child({ props })}{/snippet}
+    {#snippet child({ props })}
+      <AdvancedKeysTab {...props} />
+    {/snippet}
   </Tabs.Content>
   <Tabs.Content value="gamepad">
-    {#snippet child({ props })}{/snippet}
+    {#snippet child({ props })}
+      <GamepadTab {...props} />
+    {/snippet}
   </Tabs.Content>
   <Tabs.Content value="debug">
-    {#snippet child({ props })}{/snippet}
+    {#snippet child({ props })}
+      <DebugTab {...props} />
+    {/snippet}
   </Tabs.Content>
   <Tabs.Content value="settings">
-    {#snippet child({ props })}{/snippet}
+    <!-- {#snippet child({ props })}{/snippet} -->
   </Tabs.Content>
 </ConfiguratorLayout>

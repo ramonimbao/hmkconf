@@ -13,15 +13,13 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { keyboardContext } from "$lib/keyboard"
-import { resource, useInterval, type ResourceReturn } from "runed"
+import Skeleton from "./key-button-skeleton.svelte"
+import Root from "./key-button.svelte"
 
-export class ResourceProfile {
-  profile: ResourceReturn<number>
-
-  constructor() {
-    const keyboard = keyboardContext.get()
-    this.profile = resource(() => {}, keyboard.getProfile)
-    useInterval(() => this.profile.refetch(), 1000)
-  }
+export {
+  Root,
+  Skeleton,
+  //
+  Root as KeyButton,
+  Skeleton as KeyButtonSkeleton,
 }

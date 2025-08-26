@@ -13,18 +13,39 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Keyboard } from "."
+import type { GetKeymapParams, Keyboard, SetKeymapParams } from "."
 import { demoMetadata } from "./metadata"
+
+const { numProfiles, defaultKeymap } = demoMetadata
+
+type DemoKeyboardState = {
+  profiles: { keymap: number[][] }[]
+}
 
 export class DemoKeyboard implements Keyboard {
   id = "demo"
   demo = true
   metadata = demoMetadata
 
+  #state: DemoKeyboardState = {
+    profiles: [...Array(numProfiles)].map(() => ({
+      keymap: defaultKeymap.map((row) => [...row]),
+    })),
+  }
+
   async disconnect() {}
   async forget() {}
 
   async getProfile() {
     return 0
+  }
+
+  async getKeymap({ profile }: GetKeymapParams) {
+    return this.#state.profiles[profile].keymap
+  }
+  async setKeymap({ profile, layer, offset, data }: SetKeymapParams) {
+    for (let i = 0; i < data.length; i++) {
+      this.#state.profiles[profile].keymap[layer][offset + i] = data[i]
+    }
   }
 }

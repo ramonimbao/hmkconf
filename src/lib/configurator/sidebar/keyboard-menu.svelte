@@ -29,7 +29,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     demo,
     metadata: { name, vendorId, productId },
   } = keyboardContext.get()
-  const sidebar = Sidebar.useSidebar()
 </script>
 
 <Sidebar.Menu>

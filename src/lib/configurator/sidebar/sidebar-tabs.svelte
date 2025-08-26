@@ -17,9 +17,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as Sidebar from "$lib/components/ui/sidebar"
   import { Tabs } from "bits-ui"
   import { globalStateContext } from "../context.svelte"
-  import { sidebarTabGroups } from "../lib/sidebar"
+  import { sidebarTabGroups } from "../lib/layout"
 
-  const globalState = globalStateContext.get()
+  const { tab } = $derived(globalStateContext.get())
 </script>
 
 {#each sidebarTabGroups as { group, tabs } (group)}
@@ -33,7 +33,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <Tabs.Trigger {value}>
             {#snippet child({ props })}
               <Sidebar.MenuButton
-                isActive={globalState.tab === value}
+                isActive={tab === value}
                 tooltipContent={label}
                 {...props}
               >
