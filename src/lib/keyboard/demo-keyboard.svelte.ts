@@ -23,4 +23,8 @@ export class DemoKeyboard implements Keyboard {
 
   async disconnect() {}
   async forget() {}
+
+  async getProfile() {
+    return 0
+  }
 }

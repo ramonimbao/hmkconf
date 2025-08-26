@@ -13,22 +13,15 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "runed"
-import type { KeyboardMetadata } from "./metadata"
+import { keyboardContext } from "$lib/keyboard"
+import { resource, useInterval, type ResourceReturn } from "runed"
 
-export type KeyboardState = {
-  id: string
-  metadata: KeyboardMetadata
-  demo: boolean
+export class ResourceProfile {
+  profile: ResourceReturn<number>
+
+  constructor() {
+    const keyboard = keyboardContext.get()
+    this.profile = resource(() => {}, keyboard.getProfile)
+    useInterval(() => this.profile.refetch(), 1000)
+  }
 }
-
-export type KeyboardAction = {
-  disconnect(): Promise<void>
-  forget(): Promise<void>
-
-  getProfile(): Promise<number>
-}
-
-export type Keyboard = KeyboardState & KeyboardAction
-
-export const keyboardContext = new Context<Keyboard>("hmk-keyboard")

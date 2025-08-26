@@ -14,12 +14,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import { KeyboardIcon } from "@lucide/svelte"
   import * as Select from "$lib/components/ui/select"
+  import * as Tooltip from "$lib/components/ui/tooltip"
   import { keyboardContext } from "$lib/keyboard"
+  import { ResourceProfile } from "$lib/resources/profile.svelte"
   import { globalStateContext } from "./context.svelte"
 
   const globalState = globalStateContext.get()
   const { numProfiles } = keyboardContext.get().metadata
+
+  const profile = new ResourceProfile().profile
 </script>
 
 <Select.Root
@@ -29,12 +34,28 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   type="single"
 >
   <Select.Trigger class="w-48" size="sm">
-    Profile {globalState.profile}
+    <span class="flex items-center gap-2">
+      Profile {globalState.profile}
+      {#if profile.current === globalState.profile}
+        <KeyboardIcon />
+      {/if}
+    </span>
   </Select.Trigger>
   <Select.Content class="w-[var(--bits-select-anchor-width)]">
     {#each { length: numProfiles }, i (i)}
       <Select.Item value={String(i)}>
-        Profile {i}
+        <span class="flex items-center gap-2">
+          Profile {i}
+          {#if profile.current === i}
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                <KeyboardIcon />
+                <span class="sr-only">Active</span>
+              </Tooltip.Trigger>
+              <Tooltip.Content>Current Active Profile</Tooltip.Content>
+            </Tooltip.Root>
+          {/if}
+        </span>
       </Select.Item>
     {/each}
   </Select.Content>
