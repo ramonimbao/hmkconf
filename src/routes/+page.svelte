@@ -1,0 +1,57 @@
+<!-- 
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<script lang="ts">
+  import { CableIcon } from "@lucide/svelte"
+  import Footer from "$lib/components/footer.svelte"
+  import { Button } from "$lib/components/ui/button"
+</script>
+
+<main class="py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-5xl font-semibold tracking-tight">hmkconf</h1>
+      <p class="mt-4 text-lg font-medium text-pretty text-muted-foreground">
+        A web-based configurator for libhmk keyboards. Customize keyboard
+        bindings, adjust actuation points, enable Rapid Trigger, and more.
+      </p>
+      <div class="mt-6 flex items-center justify-center gap-4">
+        <Button size="lg">
+          <CableIcon /> Connect Keyboard
+        </Button>
+        <Button href="/demo" size="lg" variant="outline">Try Demo</Button>
+      </div>
+    </div>
+    <div class="mt-16 grid place-items-center">
+      <div class="overflow-hidden rounded-xl border shadow-lg">
+        <img
+          class="dark:hidden"
+          alt="Screenshot"
+          src="/screenshots/screenshot.png"
+          width="1024"
+          height="768"
+        />
+        <img
+          class="not-dark:hidden"
+          alt="Screenshot"
+          src="/screenshots/screenshot-dark.png"
+          width="1024"
+          height="768"
+        />
+      </div>
+    </div>
+  </div>
+</main>
+<Footer />

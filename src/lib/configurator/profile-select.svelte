@@ -1,0 +1,41 @@
+<!-- 
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<script lang="ts">
+  import * as Select from "$lib/components/ui/select"
+  import { keyboardContext } from "$lib/keyboard"
+  import { globalStateContext } from "./context.svelte"
+
+  const globalState = globalStateContext.get()
+  const { numProfiles } = keyboardContext.get().metadata
+</script>
+
+<Select.Root
+  bind:value={
+    () => String(globalState.profile), (v) => globalState.setProfile(Number(v))
+  }
+  type="single"
+>
+  <Select.Trigger class="w-48" size="sm">
+    Profile {globalState.profile}
+  </Select.Trigger>
+  <Select.Content class="w-[var(--bits-select-anchor-width)]">
+    {#each { length: numProfiles }, i (i)}
+      <Select.Item value={String(i)}>
+        Profile {i}
+      </Select.Item>
+    {/each}
+  </Select.Content>
+</Select.Root>
