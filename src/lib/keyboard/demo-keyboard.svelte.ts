@@ -14,21 +14,28 @@
  */
 
 import { defaultActuation, type HMK_Actuation } from "$lib/libhmk/actuation"
+import {
+  defaultAdvancedKey,
+  type HMK_AdvancedKey,
+} from "$lib/libhmk/advanced-keys"
 import type {
   GetActuationMapParams,
+  GetAdvancedKeysParams,
   GetKeymapParams,
   Keyboard,
   SetActuationMapParams,
+  SetAdvancedKeysParams,
   SetKeymapParams,
 } from "."
 import { demoMetadata } from "./metadata"
 
-const { numProfiles, numKeys, defaultKeymap } = demoMetadata
+const { numProfiles, numKeys, numAdvancedKeys, defaultKeymap } = demoMetadata
 
 type DemoKeyboardState = {
   profiles: {
     keymap: number[][]
     actuationMap: HMK_Actuation[]
+    advancedKeys: HMK_AdvancedKey[]
   }[]
 }
 
@@ -41,6 +48,9 @@ export class DemoKeyboard implements Keyboard {
     profiles: [...Array(numProfiles)].map(() => ({
       keymap: defaultKeymap.map((row) => [...row]),
       actuationMap: [...Array(numKeys)].map(() => ({ ...defaultActuation })),
+      advancedKeys: [...Array(numAdvancedKeys)].map(() => ({
+        ...defaultAdvancedKey,
+      })),
     })),
   }
 
@@ -65,6 +75,14 @@ export class DemoKeyboard implements Keyboard {
   async setActuationMap({ profile, offset, data }: SetActuationMapParams) {
     for (let i = 0; i < data.length; i++) {
       this.#state.profiles[profile].actuationMap[offset + i] = data[i]
+    }
+  }
+  async getAdvancedKeys({ profile }: GetAdvancedKeysParams) {
+    return this.#state.profiles[profile].advancedKeys
+  }
+  async setAdvancedKeys({ profile, offset, data }: SetAdvancedKeysParams) {
+    for (let i = 0; i < data.length; i++) {
+      this.#state.profiles[profile].advancedKeys[offset + i] = data[i]
     }
   }
 }

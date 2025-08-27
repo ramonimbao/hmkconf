@@ -17,6 +17,9 @@ import { uint8Schema, uint16Schema } from "$lib/integer"
 import z from "zod"
 import { HMK_MAX_NUM_KEYS, HMK_MAX_NUM_LAYERS } from "."
 
+export const DEFAULT_BOTTOM_OUT_POINT = 230
+export const DEFAULT_TAPPING_TERM = 200
+
 export enum HMK_AKType {
   NONE = 0,
   NULL_BIND,
@@ -95,3 +98,9 @@ export const hmkAdvancedKeySchema = z.object({
 })
 
 export type HMK_AdvancedKey = z.infer<typeof hmkAdvancedKeySchema>
+
+export const defaultAdvancedKey: HMK_AdvancedKey = {
+  layer: 0,
+  key: 0,
+  action: { type: HMK_AKType.NONE },
+}

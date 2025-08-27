@@ -15,6 +15,10 @@
 
 import type { ResourceReturn } from "runed"
 import { ActuationQuery, actuationQueryContext } from "./actuation-query.svelte"
+import {
+  AdvancedKeysQuery,
+  advancedKeysQueryContext,
+} from "./advanced-keys-query.svelte"
 import { KeymapQuery, keymapQueryContext } from "./keymap-query.svelte"
 import { ProfileQuery, profileQueryContext } from "./profile-query.svelte"
 
@@ -42,4 +46,5 @@ export function setConfiguratorQueryContext() {
   profileQueryContext.set(new ProfileQuery())
   keymapQueryContext.set(new KeymapQuery())
   actuationQueryContext.set(new ActuationQuery())
+  advancedKeysQueryContext.set(new AdvancedKeysQuery())
 }

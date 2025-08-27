@@ -17,16 +17,32 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import type { WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
+  import { advancedKeysStateContext } from "../context.svelte"
+  import AdvancedKeysCreateMenu from "./advanced-keys-create-menu.svelte"
+  import AdvancedKeysKeyboard from "./advanced-keys-keyboard.svelte"
+  import AdvancedKeysMainMenu from "./advanced-keys-main-menu.svelte"
+  import AdvancedKeysMenubar from "./advanced-keys-menubar.svelte"
 
   const {
     ...props
   }: WithoutChildren<ComponentProps<typeof KeyboardEditor.Root>> = $props()
+
+  const { index, create } = $derived(advancedKeysStateContext.get())
 </script>
 
 <KeyboardEditor.Root {...props}>
-  <KeyboardEditor.Pane></KeyboardEditor.Pane>
+  <KeyboardEditor.Pane>
+    <AdvancedKeysKeyboard />
+    <AdvancedKeysMenubar />
+  </KeyboardEditor.Pane>
   <KeyboardEditor.Handle />
   <KeyboardEditor.Pane>
-    <KeyboardEditor.Container></KeyboardEditor.Container>
+    <KeyboardEditor.Container>
+      {#if create !== null}
+        <AdvancedKeysCreateMenu />
+      {:else if index !== null}{:else}
+        <AdvancedKeysMainMenu />
+      {/if}
+    </KeyboardEditor.Container>
   </KeyboardEditor.Pane>
 </KeyboardEditor.Root>

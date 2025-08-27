@@ -14,6 +14,7 @@
  */
 
 import type { HMK_Actuation } from "$lib/libhmk/actuation"
+import type { HMK_AdvancedKey } from "$lib/libhmk/advanced-keys"
 import { Context } from "runed"
 import type { KeyboardMetadata } from "./metadata"
 
@@ -25,6 +26,9 @@ export type SetKeymapParams = SetProfileParams<number> & { layer: number }
 
 export type GetActuationMapParams = GetProfileParams
 export type SetActuationMapParams = SetProfileParams<HMK_Actuation>
+
+export type GetAdvancedKeysParams = GetProfileParams
+export type SetAdvancedKeysParams = SetProfileParams<HMK_AdvancedKey>
 
 export type KeyboardState = {
   id: string
@@ -42,6 +46,8 @@ export type KeyboardAction = {
   setKeymap(params: SetKeymapParams): Promise<void>
   getActuationMap(params: GetActuationMapParams): Promise<HMK_Actuation[]>
   setActuationMap(params: SetActuationMapParams): Promise<void>
+  getAdvancedKeys(params: GetAdvancedKeysParams): Promise<HMK_AdvancedKey[]>
+  setAdvancedKeys(params: SetAdvancedKeysParams): Promise<void>
 }
 
 export type Keyboard = KeyboardState & KeyboardAction

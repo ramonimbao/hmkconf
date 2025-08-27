@@ -47,6 +47,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     } = $props()
 
   const mergedProps = $derived({
+    children,
     class: cn(keyButtonVariants({ size }), className),
     ...props,
   })

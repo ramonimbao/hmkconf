@@ -68,6 +68,10 @@ export class ConfiguratorAdvancedKeysState {
     this.index = null
     this.create = null
   }
+  setIndex(index: number | null) {
+    this.index = index
+    this.create = null
+  }
   createOpen(type: HMK_AKType) {
     if (type === HMK_AKType.NONE) return
     const { numKeys } = getAdvancedKeyMetadata(type)

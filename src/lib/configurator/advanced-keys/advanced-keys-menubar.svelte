@@ -14,19 +14,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { cn } from "$lib/utils"
-  import type { HTMLAttributes } from "svelte/elements"
+  import { KeyboardEditorMenubar } from "$lib/components/keyboard-editor"
+  import LayerSelect from "$lib/components/layer-select.svelte"
+  import { advancedKeysStateContext } from "../context.svelte"
 
-  const {
-    children,
-    class: className,
-    ...props
-  }: HTMLAttributes<HTMLDivElement> = $props()
+  const advancedKeysState = advancedKeysStateContext.get()
+  const { layer, index, create } = $derived(advancedKeysState)
 </script>
 
-<div
-  class={cn("size-full rounded-md border opacity-50 shadow-xs", className)}
-  {...props}
->
-  {@render children?.()}
-</div>
+<KeyboardEditorMenubar>
+  <LayerSelect
+    disabled={index !== null || create !== null}
+    bind:layer={() => layer, (v) => advancedKeysState.setLayer(v)}
+  />
+</KeyboardEditorMenubar>

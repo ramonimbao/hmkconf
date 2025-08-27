@@ -35,7 +35,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       </div>
     </div>
     <div class="mt-16 grid place-items-center">
-      <div class="overflow-hidden rounded-xl border shadow-lg">
+      <div class="overflow-hidden rounded-xl border shadow-md">
         <img
           class="dark:hidden"
           alt="Screenshot"

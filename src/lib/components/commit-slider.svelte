@@ -57,7 +57,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       {title}: {display?.(value) ?? value}
     </span>
     {#if description}
-      <span class="text-muted-foreground text-pretty">{description}</span>
+      <span class="text-pretty text-muted-foreground">{description}</span>
     {/if}
   </div>
   <Slider

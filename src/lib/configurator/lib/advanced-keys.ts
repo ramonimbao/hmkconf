@@ -21,7 +21,15 @@ import {
   ToggleLeftIcon,
 } from "@lucide/svelte"
 import { displayUInt8 } from "$lib/integer"
-import { HMK_AKType } from "$lib/libhmk/advanced-keys"
+import {
+  DEFAULT_BOTTOM_OUT_POINT,
+  DEFAULT_TAPPING_TERM,
+  defaultAdvancedKey,
+  HMK_AKType,
+  HMK_DKSAction,
+  HMK_NullBindBehavior,
+  type HMK_AdvancedKey,
+} from "$lib/libhmk/advanced-keys"
 import { Keycode } from "$lib/libhmk/keycodes"
 import type { Component } from "svelte"
 
@@ -80,9 +88,124 @@ export function getAdvancedKeyMetadata(type: HMK_AKType): AdvancedKeyMetadata {
       type,
       icon: FileQuestionIcon,
       title: `Unknown ${displayUInt8(type)}`,
-      description: "This advanced key type is not recognized.",
+      description: "This Advanced Key type is not recognized.",
       numKeys: 0,
       keycodes: [],
     }
   )
+}
+
+export type NullBindBehaviorMetadata = {
+  behavior: HMK_NullBindBehavior
+  title: string
+  description: string
+}
+
+export const nullBindBehaviorMetadata: NullBindBehaviorMetadata[] = [
+  {
+    behavior: HMK_NullBindBehavior.LAST,
+    title: "Last Input Priority",
+    description: "Activate the key that was pressed last.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.PRIMARY,
+    title: "Absolute Priority (Key 1)",
+    description: "Key 1 will take priority over Key 2.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.SECONDARY,
+    title: "Absolute Priority (Key 2)",
+    description: "Key 2 will take priority over Key 1.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.NEUTRAL,
+    title: "Neutral",
+    description: "Neither key will be activated.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.DISTANCE,
+    title: "Distance Priority (Rappy Snappy)",
+    description: "Activate whichever key is pressed down further.",
+  },
+]
+
+export function getNullBindBehaviorMetadata(
+  behavior: HMK_NullBindBehavior,
+): NullBindBehaviorMetadata {
+  const metadata = nullBindBehaviorMetadata.find((m) => m.behavior === behavior)
+  return (
+    metadata ?? {
+      behavior,
+      title: `Unknown ${displayUInt8(behavior)}`,
+      description: "This Null Bind behavior is not recognized.",
+    }
+  )
+}
+
+export function createAdvancedKey(options: {
+  layer: number
+  type: HMK_AKType
+  keys: number[]
+  keycodes: Keycode[]
+}): HMK_AdvancedKey {
+  const { layer, type, keys, keycodes } = options
+
+  switch (type) {
+    case HMK_AKType.NULL_BIND:
+      return {
+        layer,
+        key: keys[0],
+        action: {
+          type,
+          secondaryKey: keys[1],
+          behavior: HMK_NullBindBehavior.LAST,
+          bottomOutPoint: DEFAULT_BOTTOM_OUT_POINT,
+        },
+      }
+    case HMK_AKType.DYNAMIC_KEYSTROKE:
+      return {
+        layer,
+        key: keys[0],
+        action: {
+          type,
+          keycodes: [keycodes[0], Keycode.KC_NO, Keycode.KC_NO, Keycode.KC_NO],
+          bitmap: [
+            [
+              HMK_DKSAction.PRESS,
+              HMK_DKSAction.HOLD,
+              HMK_DKSAction.HOLD,
+              HMK_DKSAction.RELEASE,
+            ],
+            Array(4).fill(HMK_DKSAction.HOLD),
+            Array(4).fill(HMK_DKSAction.HOLD),
+            Array(4).fill(HMK_DKSAction.HOLD),
+          ],
+          bottomOutPoint: DEFAULT_BOTTOM_OUT_POINT,
+        },
+      }
+    case HMK_AKType.TAP_HOLD:
+      return {
+        layer,
+        key: keys[0],
+        action: {
+          type,
+          tapKeycode: keycodes[0],
+          holdKeycode: Keycode.KC_NO,
+          tappingTerm: DEFAULT_TAPPING_TERM,
+          holdOnOtherKeyPress: false,
+        },
+      }
+    case HMK_AKType.TOGGLE:
+      return {
+        layer,
+        key: keys[0],
+        action: {
+          type,
+          keycode: keycodes[0],
+          tappingTerm: DEFAULT_TAPPING_TERM,
+        },
+      }
+    default:
+      return defaultAdvancedKey
+  }
 }
