@@ -32,6 +32,23 @@ export function numberNullable(v: string) {
   return v === "" ? null : Number(v)
 }
 
+export function optMap<T, U>(v: T | null | undefined, f: (v: T) => U) {
+  return v === null || v === undefined ? undefined : f(v)
+}
+
+export function setToIntervals(set: Set<number>) {
+  const arr = [...set].toSorted()
+  const ret: [number, number][] = []
+
+  for (const x of arr) {
+    const back = ret[ret.length - 1]
+    if (back && back[0] + back[1] === x) back[1]++
+    else ret.push([x, 1])
+  }
+
+  return ret
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

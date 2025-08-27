@@ -18,25 +18,27 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import KeycodeAccordion from "$lib/components/keycode-accordion.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { remapStateContext } from "../context.svelte"
-  import { remapQueryContext } from "../queries/remap-query.svelte"
+  import { keymapQueryContext } from "../queries/keymap-query.svelte"
 
-  const { layout } = keyboardContext.get().metadata
-  const keys = layout.flat().map(({ key }) => key)
+  const allKeys = keyboardContext
+    .get()
+    .metadata.layout.flat()
+    .map(({ key }) => key)
 
   const remapState = remapStateContext.get()
   const { layer, key } = $derived(remapState)
 
-  const remapQuery = remapQueryContext.get()
+  const keymapQuery = keymapQueryContext.get()
 </script>
 
 <FixedScrollArea class="p-4">
   <KeycodeAccordion
     onKeycodeSelected={(keycode) => {
       if (key === null) return
-      remapQuery.set({ layer, offset: key, data: [keycode] })
-      const index = keys.indexOf(key)
+      keymapQuery.set({ layer, offset: key, data: [keycode] })
+      const index = allKeys.indexOf(key)
       remapState.key =
-        index !== -1 && index + 1 < keys.length ? keys[index + 1] : null
+        index !== -1 && index + 1 < allKeys.length ? allKeys[index + 1] : null
     }}
   />
 </FixedScrollArea>

@@ -17,6 +17,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import type { WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
+  import PerformanceKeyboard from "./performance-keyboard.svelte"
+  import PerformanceMenu from "./performance-menu.svelte"
+  import PerformanceMenubar from "./performance-menubar.svelte"
 
   const {
     ...props
@@ -24,9 +27,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <KeyboardEditor.Root {...props}>
-  <KeyboardEditor.Pane></KeyboardEditor.Pane>
+  <KeyboardEditor.Pane>
+    <PerformanceKeyboard />
+    <PerformanceMenubar />
+  </KeyboardEditor.Pane>
   <KeyboardEditor.Handle />
   <KeyboardEditor.Pane>
-    <KeyboardEditor.Container></KeyboardEditor.Container>
+    <KeyboardEditor.Container>
+      <PerformanceMenu />
+    </KeyboardEditor.Container>
   </KeyboardEditor.Pane>
 </KeyboardEditor.Root>

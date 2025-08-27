@@ -13,6 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import type { HMK_Actuation } from "$lib/libhmk/actuation"
 import { Context } from "runed"
 import type { KeyboardMetadata } from "./metadata"
 
@@ -21,6 +22,9 @@ type SetProfileParams<T> = { profile: number; offset: number; data: T[] }
 
 export type GetKeymapParams = GetProfileParams
 export type SetKeymapParams = SetProfileParams<number> & { layer: number }
+
+export type GetActuationMapParams = GetProfileParams
+export type SetActuationMapParams = SetProfileParams<HMK_Actuation>
 
 export type KeyboardState = {
   id: string
@@ -36,6 +40,8 @@ export type KeyboardAction = {
 
   getKeymap(params: GetKeymapParams): Promise<number[][]>
   setKeymap(params: SetKeymapParams): Promise<void>
+  getActuationMap(params: GetActuationMapParams): Promise<HMK_Actuation[]>
+  setActuationMap(params: SetActuationMapParams): Promise<void>
 }
 
 export type Keyboard = KeyboardState & KeyboardAction

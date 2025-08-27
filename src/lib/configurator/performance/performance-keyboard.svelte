@@ -16,44 +16,57 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { KeyboardEditorKeyboard } from "$lib/components/keyboard-editor"
   import * as KeycodeButton from "$lib/components/keycode-button"
-  import { Keycode } from "$lib/libhmk/keycodes"
-  import { numberNullable, stringNullable } from "$lib/utils"
   import { ToggleGroup } from "bits-ui"
-  import { remapStateContext } from "../context.svelte"
+  import { performanceStateContext } from "../context.svelte"
+  import { actuationQueryContext } from "../queries/actuation-query.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
+  import PerformanceKeyButton from "./performance-key-button.svelte"
 
-  const remapState = remapStateContext.get()
-  const { layer, key } = $derived(remapState)
+  const performanceState = performanceStateContext.get()
+  const { keys, showKeymap } = $derived(performanceState)
 
-  const keymapQuery = keymapQueryContext.get()
-  const { current: keymap } = $derived(keymapQuery.keymap)
+  const { current: keymap } = $derived(keymapQueryContext.get().keymap)
+  const { current: actuationMap } = $derived(
+    actuationQueryContext.get().actuationMap,
+  )
+
+  let isDragging = $state(false)
 </script>
 
+<svelte:document onmouseup={() => (isDragging = false)} />
+
 <ToggleGroup.Root
-  bind:value={
-    () => stringNullable(key), (v) => (remapState.key = numberNullable(v))
-  }
-  type="single"
+  bind:value={() => [...keys].map(String), () => {}}
+  type="multiple"
 >
   {#snippet child({ props })}
     <KeyboardEditorKeyboard {...props}>
       {#snippet keyGenerator(key)}
-        {#if !keymap}
+        {#if !keymap || !actuationMap}
           <KeycodeButton.Skeleton />
         {:else}
           <ToggleGroup.Item
-            oncontextmenu={(e) => {
-              e.preventDefault()
-              keymapQuery.set({ layer, offset: key, data: [Keycode.KC_NO] })
+            onmousedown={(e) => {
+              e.stopPropagation()
+              isDragging = true
+              if (keys.has(key)) performanceState.keys.delete(key)
+              else performanceState.keys.add(key)
+            }}
+            onmouseenter={(e) => {
+              e.stopPropagation()
+              if (isDragging) performanceState.keys.add(key)
             }}
             value={String(key)}
           >
             {#snippet child({ props })}
-              <KeycodeButton.Root
-                keycode={keymap[layer][key]}
-                showTooltip
-                {...props}
-              />
+              {#if showKeymap}
+                <KeycodeButton.Root keycode={keymap[0][key]} {...props} />
+              {:else}
+                <PerformanceKeyButton
+                  actuation={actuationMap[key]}
+                  {...props}
+                />
+              {/if}
             {/snippet}
           </ToggleGroup.Item>
         {/if}

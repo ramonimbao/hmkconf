@@ -13,12 +13,24 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-export const HMK_FIRMWARE_VERSION = 0x0102
+import { uint8Schema } from "$lib/integer"
+import z from "zod"
 
-export const HMK_MAX_NUM_PROFILES = 8
-export const HMK_MAX_NUM_LAYERS = 8
-export const HMK_MAX_NUM_KEYS = 256
-export const HMK_MAX_NUM_ADVANCED_KEYS = 64
+export const hmkActuationSchema = z.object({
+  actuationPoint: uint8Schema,
+  rtDown: uint8Schema,
+  rtUp: uint8Schema,
+  continuous: z.boolean(),
+})
 
-export const HMK_MIN_SWITCH_DISTANCE = 4
-export const HMK_MAX_SWITCH_DISTANCE = 255
+export type HMK_Actuation = z.infer<typeof hmkActuationSchema>
+
+export const DEFAULT_ACTUATION_POINT = 128
+export const DEFAULT_RT_SENSITIVITY = 32
+
+export const defaultActuation: HMK_Actuation = {
+  actuationPoint: DEFAULT_ACTUATION_POINT,
+  rtDown: 0,
+  rtUp: 0,
+  continuous: false,
+}

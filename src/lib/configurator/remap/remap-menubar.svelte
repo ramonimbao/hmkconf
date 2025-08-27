@@ -19,20 +19,20 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import { keyboardContext } from "$lib/keyboard"
   import { remapStateContext } from "../context.svelte"
-  import { remapQueryContext } from "../queries/remap-query.svelte"
+  import { keymapQueryContext } from "../queries/keymap-query.svelte"
 
   const remapState = remapStateContext.get()
   const { layer } = $derived(remapState)
   const { defaultKeymap } = keyboardContext.get().metadata
 
-  const remapQuery = remapQueryContext.get()
+  const keymapQuery = keymapQueryContext.get()
 </script>
 
 <KeyboardEditorMenubar>
   <LayerSelect bind:layer={() => layer, (v) => remapState.setLayer(v)} />
   <Button
     onclick={() =>
-      remapQuery.set({ layer, offset: 0, data: defaultKeymap[layer] })}
+      keymapQuery.set({ layer, offset: 0, data: defaultKeymap[layer] })}
     size="sm"
     variant="destructive"
   >

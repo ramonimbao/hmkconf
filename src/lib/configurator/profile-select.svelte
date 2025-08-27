@@ -19,14 +19,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as Tooltip from "$lib/components/ui/tooltip"
   import { keyboardContext } from "$lib/keyboard"
   import { globalStateContext } from "./context.svelte"
-  import { globalQueryContext } from "./queries/global-query.svelte"
+  import { profileQueryContext } from "./queries/profile-query.svelte"
 
   const globalState = globalStateContext.get()
   const { profile } = $derived(globalState)
   const { numProfiles } = keyboardContext.get().metadata
 
   const { current: keyboardProfile } = $derived(
-    globalQueryContext.get().profile,
+    profileQueryContext.get().profile,
   )
 </script>
 

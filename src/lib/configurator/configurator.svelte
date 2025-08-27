@@ -21,7 +21,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import GamepadTab from "./gamepad/gamepad-tab.svelte"
   import ConfiguratorLayout from "./layout.svelte"
   import PerformanceTab from "./performance/performance-tab.svelte"
-  import { setConfiguratorQueryContext } from "./queries/global-query.svelte"
+  import { setConfiguratorQueryContext } from "./queries"
   import RemapTab from "./remap/remap-tab.svelte"
 
   setConfiguratorStateContext()

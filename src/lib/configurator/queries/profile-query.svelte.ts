@@ -15,34 +15,11 @@
 
 import { keyboardContext } from "$lib/keyboard"
 import { Context, resource, useInterval, type ResourceReturn } from "runed"
-import { RemapQuery, remapQueryContext } from "./remap-query.svelte"
-
-export async function optimisticUpdate<T>(options: {
-  resource: ResourceReturn<T>
-  optimisticFn: (current: T) => T
-  updateFn: () => Promise<void>
-}) {
-  const { resource, optimisticFn, updateFn } = options
-
-  const current = resource.current
-  if (current) resource.mutate(optimisticFn(current))
-
-  try {
-    await updateFn()
-  } catch (err) {
-    if (current !== undefined) resource.mutate(current)
-    console.error(err)
-  } finally {
-    resource.refetch()
-  }
-}
 
 const PROFILE_REFETCH_INTERVAL = 1000
 
-class GlobalQuery {
+export class ProfileQuery {
   profile: ResourceReturn<number>
-
-  remapQuery = remapQueryContext.get()
 
   #keyboard = keyboardContext.get()
 
@@ -55,9 +32,6 @@ class GlobalQuery {
   }
 }
 
-export const globalQueryContext = new Context<GlobalQuery>("hmk-global-query")
-
-export function setConfiguratorQueryContext() {
-  remapQueryContext.set(new RemapQuery())
-  globalQueryContext.set(new GlobalQuery())
-}
+export const profileQueryContext = new Context<ProfileQuery>(
+  "hmk-profile-query",
+)

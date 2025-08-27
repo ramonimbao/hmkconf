@@ -13,13 +13,23 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { GetKeymapParams, Keyboard, SetKeymapParams } from "."
+import { defaultActuation, type HMK_Actuation } from "$lib/libhmk/actuation"
+import type {
+  GetActuationMapParams,
+  GetKeymapParams,
+  Keyboard,
+  SetActuationMapParams,
+  SetKeymapParams,
+} from "."
 import { demoMetadata } from "./metadata"
 
-const { numProfiles, defaultKeymap } = demoMetadata
+const { numProfiles, numKeys, defaultKeymap } = demoMetadata
 
 type DemoKeyboardState = {
-  profiles: { keymap: number[][] }[]
+  profiles: {
+    keymap: number[][]
+    actuationMap: HMK_Actuation[]
+  }[]
 }
 
 export class DemoKeyboard implements Keyboard {
@@ -30,6 +40,7 @@ export class DemoKeyboard implements Keyboard {
   #state: DemoKeyboardState = {
     profiles: [...Array(numProfiles)].map(() => ({
       keymap: defaultKeymap.map((row) => [...row]),
+      actuationMap: [...Array(numKeys)].map(() => ({ ...defaultActuation })),
     })),
   }
 
@@ -46,6 +57,14 @@ export class DemoKeyboard implements Keyboard {
   async setKeymap({ profile, layer, offset, data }: SetKeymapParams) {
     for (let i = 0; i < data.length; i++) {
       this.#state.profiles[profile].keymap[layer][offset + i] = data[i]
+    }
+  }
+  async getActuationMap({ profile }: GetActuationMapParams) {
+    return this.#state.profiles[profile].actuationMap
+  }
+  async setActuationMap({ profile, offset, data }: SetActuationMapParams) {
+    for (let i = 0; i < data.length; i++) {
+      this.#state.profiles[profile].actuationMap[offset + i] = data[i]
     }
   }
 }

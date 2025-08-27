@@ -13,39 +13,42 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { keyboardContext, type SetKeymapParams } from "$lib/keyboard"
+import { keyboardContext, type SetActuationMapParams } from "$lib/keyboard"
+import type { HMK_Actuation } from "$lib/libhmk/actuation"
 import { Context, resource, type ResourceReturn } from "runed"
+import { optimisticUpdate } from "."
 import { globalStateContext } from "../context.svelte"
-import { optimisticUpdate } from "./global-query.svelte"
 
-export class RemapQuery {
-  keymap: ResourceReturn<number[][]>
+export class ActuationQuery {
+  actuationMap: ResourceReturn<HMK_Actuation[]>
 
-  #profile = $derived(globalStateContext.get().profile)
   #keyboard = keyboardContext.get()
+  #profile = $derived(globalStateContext.get().profile)
 
   constructor() {
-    this.keymap = resource(
+    this.actuationMap = resource(
       () => ({ profile: this.#profile }),
-      (p) => this.#keyboard.getKeymap(p),
+      (p) => this.#keyboard.getActuationMap(p),
     )
   }
 
-  async set(params: Omit<SetKeymapParams, "profile">) {
-    const { layer, offset, data } = params
+  async set(params: Omit<SetActuationMapParams, "profile">) {
+    const { offset, data } = params
     await optimisticUpdate({
-      resource: this.keymap,
+      resource: this.actuationMap,
       optimisticFn: (current) => {
-        const ret = current.map((row) => [...row])
+        const ret = [...current]
         for (let i = 0; i < data.length; i++) {
-          ret[layer][offset + i] = data[i]
+          ret[offset + i] = data[i]
         }
         return ret
       },
       updateFn: () =>
-        this.#keyboard.setKeymap({ ...params, profile: this.#profile }),
+        this.#keyboard.setActuationMap({ ...params, profile: this.#profile }),
     })
   }
 }
 
-export const remapQueryContext = new Context<RemapQuery>("hmk-remap-query")
+export const actuationQueryContext = new Context<ActuationQuery>(
+  "hmk-actuation-query",
+)
