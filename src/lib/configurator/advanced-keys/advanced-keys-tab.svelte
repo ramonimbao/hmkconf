@@ -22,6 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import AdvancedKeysKeyboard from "./advanced-keys-keyboard.svelte"
   import AdvancedKeysMainMenu from "./advanced-keys-main-menu.svelte"
   import AdvancedKeysMenubar from "./advanced-keys-menubar.svelte"
+  import AdvancedKeysConfigMenu from "./config-menu/config-menu.svelte"
 
   const {
     ...props
@@ -40,7 +41,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <KeyboardEditor.Container>
       {#if create !== null}
         <AdvancedKeysCreateMenu />
-      {:else if index !== null}{:else}
+      {:else if index !== null}
+        <AdvancedKeysConfigMenu />
+      {:else}
         <AdvancedKeysMainMenu />
       {/if}
     </KeyboardEditor.Container>

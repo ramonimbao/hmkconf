@@ -159,7 +159,7 @@ export function createAdvancedKey(options: {
           type,
           secondaryKey: keys[1],
           behavior: HMK_NullBindBehavior.LAST,
-          bottomOutPoint: DEFAULT_BOTTOM_OUT_POINT,
+          bottomOutPoint: 0,
         },
       }
     case HMK_AKType.DYNAMIC_KEYSTROKE:

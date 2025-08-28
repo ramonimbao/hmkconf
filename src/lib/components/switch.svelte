@@ -44,7 +44,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   } = $props()
 </script>
 
-<div class={cn("grid gap-2", className)} {...props}>
+<div class={cn("grid gap-1", className)} {...props}>
   <div class="flex items-center gap-2">
     <Switch bind:checked bind:ref {disabled} {id} {onCheckedChange} />
     <Label for={id}>{title}</Label>

@@ -14,33 +14,24 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import {
-    displayUnitDistance,
-    distanceToUnit,
-    SWITCH_DISTANCE_UNIT,
-    unitToDistance,
-  } from "$lib/distance"
-  import { optMap } from "$lib/utils"
+  import { cn, type WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
-  import CommitSlider from "./commit-slider.svelte"
+  import { Badge } from "../ui/badge"
+  import { ScrollArea } from "../ui/scroll-area"
+  import { keyTesterStateContext } from "./context.svelte"
 
-  let {
-    committed = $bindable(),
-    min = 1,
-    max = SWITCH_DISTANCE_UNIT,
-    onCommit,
+  const {
+    class: className,
     ...props
-  }: ComponentProps<typeof CommitSlider> = $props()
+  }: WithoutChildren<ComponentProps<typeof ScrollArea>> = $props()
+
+  const { keyEvents } = $derived(keyTesterStateContext.get())
 </script>
 
-<CommitSlider
-  bind:committed={
-    () => optMap(committed, distanceToUnit),
-    (v) => (committed = optMap(v, unitToDistance))
-  }
-  display={(v) => `${displayUnitDistance(v)}mm`}
-  {min}
-  {max}
-  onCommit={(v) => onCommit?.(unitToDistance(v))}
-  {...props}
-/>
+<ScrollArea class={cn("rounded-md border", className)} {...props}>
+  <div class="flex flex-wrap gap-2 p-2">
+    {#each keyEvents.filter(({ pressed }) => !pressed) as { display }, i (i)}
+      <Badge>{display}</Badge>
+    {/each}
+  </div>
+</ScrollArea>
