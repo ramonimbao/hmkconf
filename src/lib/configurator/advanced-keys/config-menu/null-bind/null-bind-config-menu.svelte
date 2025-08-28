@@ -86,10 +86,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="performance">
-        <NullBindPerformanceTab />
+        {#snippet child({ props })}
+          <NullBindPerformanceTab {...props} />
+        {/snippet}
       </Tabs.Content>
       <Tabs.Content value="key-tester">
-        <KeyTesterTab />
+        {#snippet child({ props })}
+          <KeyTesterTab {...props} />
+        {/snippet}
       </Tabs.Content>
     </div>
   </Tabs.Root>

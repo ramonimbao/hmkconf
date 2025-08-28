@@ -18,6 +18,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
   import { ConfigMenuState, configMenuStateContext } from "./context.svelte"
+  import DynamicKeystrokeConfigMenu from "./dynamic-keystroke/dynamic-keystroke-config-menu.svelte"
   import NullBindConfigMenu from "./null-bind/null-bind-config-menu.svelte"
 
   const {
@@ -45,5 +46,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 >
   {#if type === HMK_AKType.NULL_BIND}
     <NullBindConfigMenu />
+  {:else if type === HMK_AKType.DYNAMIC_KEYSTROKE}
+    <DynamicKeystrokeConfigMenu />
   {/if}
 </div>

@@ -19,16 +19,20 @@ import { Context } from "runed"
 import type { KeyboardMetadata } from "./metadata"
 
 type GetProfileParams = { profile: number }
-type SetProfileParams<T> = { profile: number; offset: number; data: T[] }
+type SetProfileParams<T> = { profile: number; data: T }
+type SetProfileArrayParams<T> = { profile: number; offset: number; data: T[] }
 
 export type GetKeymapParams = GetProfileParams
-export type SetKeymapParams = SetProfileParams<number> & { layer: number }
+export type SetKeymapParams = SetProfileArrayParams<number> & { layer: number }
 
 export type GetActuationMapParams = GetProfileParams
-export type SetActuationMapParams = SetProfileParams<HMK_Actuation>
+export type SetActuationMapParams = SetProfileArrayParams<HMK_Actuation>
 
 export type GetAdvancedKeysParams = GetProfileParams
-export type SetAdvancedKeysParams = SetProfileParams<HMK_AdvancedKey>
+export type SetAdvancedKeysParams = SetProfileArrayParams<HMK_AdvancedKey>
+
+export type GetTickRateParams = GetProfileParams
+export type SetTickRateParams = SetProfileParams<number>
 
 export type KeyboardState = {
   id: string
@@ -48,6 +52,8 @@ export type KeyboardAction = {
   setActuationMap(params: SetActuationMapParams): Promise<void>
   getAdvancedKeys(params: GetAdvancedKeysParams): Promise<HMK_AdvancedKey[]>
   setAdvancedKeys(params: SetAdvancedKeysParams): Promise<void>
+  getTickRate(params: GetTickRateParams): Promise<number>
+  setTickRate(params: SetTickRateParams): Promise<void>
 }
 
 export type Keyboard = KeyboardState & KeyboardAction

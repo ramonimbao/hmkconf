@@ -14,6 +14,10 @@
  */
 
 import {
+  ArrowDownFromLineIcon,
+  ArrowDownToLineIcon,
+  ArrowUpFromLineIcon,
+  ArrowUpToLineIcon,
   FileQuestionIcon,
   LayersIcon,
   LayoutTemplateIcon,
@@ -95,53 +99,6 @@ export function getAdvancedKeyMetadata(type: HMK_AKType): AdvancedKeyMetadata {
   )
 }
 
-export type NullBindBehaviorMetadata = {
-  behavior: HMK_NullBindBehavior
-  title: string
-  description: string
-}
-
-export const nullBindBehaviorMetadata: NullBindBehaviorMetadata[] = [
-  {
-    behavior: HMK_NullBindBehavior.LAST,
-    title: "Last Input Priority",
-    description: "Activate the key that was pressed last.",
-  },
-  {
-    behavior: HMK_NullBindBehavior.PRIMARY,
-    title: "Absolute Priority (Key 1)",
-    description: "Key 1 will take priority over Key 2.",
-  },
-  {
-    behavior: HMK_NullBindBehavior.SECONDARY,
-    title: "Absolute Priority (Key 2)",
-    description: "Key 2 will take priority over Key 1.",
-  },
-  {
-    behavior: HMK_NullBindBehavior.NEUTRAL,
-    title: "Neutral",
-    description: "Neither key will be activated.",
-  },
-  {
-    behavior: HMK_NullBindBehavior.DISTANCE,
-    title: "Distance Priority (Rappy Snappy)",
-    description: "Activate whichever key is pressed down further.",
-  },
-]
-
-export function getNullBindBehaviorMetadata(
-  behavior: HMK_NullBindBehavior,
-): NullBindBehaviorMetadata {
-  const metadata = nullBindBehaviorMetadata.find((m) => m.behavior === behavior)
-  return (
-    metadata ?? {
-      behavior,
-      title: `Unknown ${displayUInt8(behavior)}`,
-      description: "This Null Bind behavior is not recognized.",
-    }
-  )
-}
-
 export function createAdvancedKey(options: {
   layer: number
   type: HMK_AKType
@@ -208,4 +165,114 @@ export function createAdvancedKey(options: {
     default:
       return defaultAdvancedKey
   }
+}
+
+export type NullBindBehaviorMetadata = {
+  behavior: HMK_NullBindBehavior
+  title: string
+  description: string
+}
+
+export const nullBindBehaviorMetadata: NullBindBehaviorMetadata[] = [
+  {
+    behavior: HMK_NullBindBehavior.LAST,
+    title: "Last Input Priority",
+    description: "Activate the key that was pressed last.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.PRIMARY,
+    title: "Absolute Priority (Key 1)",
+    description: "Key 1 will take priority over Key 2.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.SECONDARY,
+    title: "Absolute Priority (Key 2)",
+    description: "Key 2 will take priority over Key 1.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.NEUTRAL,
+    title: "Neutral",
+    description: "Neither key will be activated.",
+  },
+  {
+    behavior: HMK_NullBindBehavior.DISTANCE,
+    title: "Distance Priority (Rappy Snappy)",
+    description: "Activate whichever key is pressed down further.",
+  },
+]
+
+export function getNullBindBehaviorMetadata(
+  behavior: HMK_NullBindBehavior,
+): NullBindBehaviorMetadata {
+  const metadata = nullBindBehaviorMetadata.find((m) => m.behavior === behavior)
+  return (
+    metadata ?? {
+      behavior,
+      title: `Unknown ${displayUInt8(behavior)}`,
+      description: "This Null Bind behavior is not recognized.",
+    }
+  )
+}
+
+export const DKS_BIT_COLUMN_WIDTH = 90
+export const DKS_ROW_PADDING = 8
+export const DKS_ACTION_SIZE = 32
+
+export type DynamicKeystrokeHeader = {
+  icon: Component
+  tooltip: string
+}
+
+export const dynamicKeystrokeHeaders: DynamicKeystrokeHeader[] = [
+  { icon: ArrowDownFromLineIcon, tooltip: "Key press" },
+  { icon: ArrowDownToLineIcon, tooltip: "Key fully pressed" },
+  { icon: ArrowUpFromLineIcon, tooltip: "Key release from fully pressed" },
+  { icon: ArrowUpToLineIcon, tooltip: "Key release" },
+]
+
+export function bitmapToIntervals(bitmap: HMK_DKSAction[]) {
+  const ret: [number, number][] = []
+
+  let left = null
+  for (let i = 0; i < 4; i++) {
+    if (bitmap[i] === HMK_DKSAction.HOLD) continue
+
+    if (left !== null) {
+      ret.push([left, i])
+      left = null
+    }
+
+    if (bitmap[i] === HMK_DKSAction.PRESS) {
+      left = i
+    } else if (bitmap[i] === HMK_DKSAction.TAP) {
+      ret.push([i, i])
+    }
+  }
+
+  return ret
+}
+
+export function intervalsToBitmap(intervals: [number, number][]) {
+  const bitmap: HMK_DKSAction[] = Array(4).fill(HMK_DKSAction.HOLD)
+
+  for (const [l, r] of intervals) {
+    if (l === r) {
+      bitmap[l] = HMK_DKSAction.TAP
+    } else {
+      bitmap[l] = HMK_DKSAction.PRESS
+      if (r < 4) bitmap[r] = HMK_DKSAction.RELEASE
+    }
+  }
+
+  return bitmap
+}
+
+export function getDKSIntervalLeft([l]: [number, number]) {
+  return l * DKS_BIT_COLUMN_WIDTH + DKS_ROW_PADDING
+}
+
+export function getDKSIntervalWidth([l, r]: [number, number]) {
+  return l === r
+    ? DKS_ACTION_SIZE
+    : (r - l) * DKS_BIT_COLUMN_WIDTH - DKS_ROW_PADDING
 }

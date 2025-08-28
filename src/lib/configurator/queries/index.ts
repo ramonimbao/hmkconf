@@ -21,6 +21,7 @@ import {
 } from "./advanced-keys-query.svelte"
 import { KeymapQuery, keymapQueryContext } from "./keymap-query.svelte"
 import { ProfileQuery, profileQueryContext } from "./profile-query.svelte"
+import { TickRateQuery, tickRateQueryContext } from "./tick-rate-query.svelte"
 
 export async function optimisticUpdate<T>(options: {
   resource: ResourceReturn<T>
@@ -47,4 +48,5 @@ export function setConfiguratorQueryContext() {
   keymapQueryContext.set(new KeymapQuery())
   actuationQueryContext.set(new ActuationQuery())
   advancedKeysQueryContext.set(new AdvancedKeysQuery())
+  tickRateQueryContext.set(new TickRateQuery())
 }

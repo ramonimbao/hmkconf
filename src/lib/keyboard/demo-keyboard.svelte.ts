@@ -15,6 +15,7 @@
 
 import { defaultActuation, type HMK_Actuation } from "$lib/libhmk/actuation"
 import {
+  DEFAULT_TICK_RATE,
   defaultAdvancedKey,
   type HMK_AdvancedKey,
 } from "$lib/libhmk/advanced-keys"
@@ -22,10 +23,12 @@ import type {
   GetActuationMapParams,
   GetAdvancedKeysParams,
   GetKeymapParams,
+  GetTickRateParams,
   Keyboard,
   SetActuationMapParams,
   SetAdvancedKeysParams,
   SetKeymapParams,
+  SetTickRateParams,
 } from "."
 import { demoMetadata } from "./metadata"
 
@@ -36,6 +39,7 @@ type DemoKeyboardState = {
     keymap: number[][]
     actuationMap: HMK_Actuation[]
     advancedKeys: HMK_AdvancedKey[]
+    tickRate: number
   }[]
 }
 
@@ -51,6 +55,7 @@ export class DemoKeyboard implements Keyboard {
       advancedKeys: [...Array(numAdvancedKeys)].map(() => ({
         ...defaultAdvancedKey,
       })),
+      tickRate: DEFAULT_TICK_RATE,
     })),
   }
 
@@ -84,5 +89,11 @@ export class DemoKeyboard implements Keyboard {
     for (let i = 0; i < data.length; i++) {
       this.#state.profiles[profile].advancedKeys[offset + i] = data[i]
     }
+  }
+  async getTickRate({ profile }: GetTickRateParams) {
+    return this.#state.profiles[profile].tickRate
+  }
+  async setTickRate({ profile, data }: SetTickRateParams) {
+    this.#state.profiles[profile].tickRate = data
   }
 }

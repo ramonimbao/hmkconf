@@ -15,10 +15,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as KeyTester from "$lib/components/key-tester"
+  import { cn, type WithoutChildren } from "$lib/utils"
+  import type { HTMLAttributes } from "svelte/elements"
+
+  const {
+    class: className,
+    ...props
+  }: WithoutChildren<HTMLAttributes<HTMLDivElement>> = $props()
 </script>
 
 <KeyTester.Root>
-  <div class="flex flex-col gap-4">
+  <div class={cn("flex flex-col gap-4", className)} {...props}>
     <div class="flex flex-col gap-2">
       <div class="text-sm font-medium">Pressed Keys</div>
       <KeyTester.Press class="h-24 max-w-72" />

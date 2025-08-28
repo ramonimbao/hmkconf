@@ -23,12 +23,15 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     DEFAULT_RT_SENSITIVITY,
     type HMK_Actuation,
   } from "$lib/libhmk/actuation"
-  import {
-    DEFAULT_BOTTOM_OUT_POINT,
-    type HMK_AKNullBind,
-  } from "$lib/libhmk/advanced-keys"
-  import { optMap, setToIntervals } from "$lib/utils"
+  import type { HMK_AKNullBind } from "$lib/libhmk/advanced-keys"
+  import { cn, optMap, setToIntervals, type WithoutChildren } from "$lib/utils"
+  import type { HTMLAttributes } from "svelte/elements"
   import { configMenuStateContext } from "../context.svelte"
+
+  const {
+    class: className,
+    ...props
+  }: WithoutChildren<HTMLAttributes<HTMLDivElement>> = $props()
 
   const configMenuState = configMenuStateContext.get()
   const { key } = $derived(configMenuState.advancedKey)
@@ -60,7 +63,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     )
 </script>
 
-<div class="flex flex-col gap-4">
+<div class={cn("flex flex-col gap-4", className)} {...props}>
   <Switch
     bind:checked={
       () => rtEnabled ?? false,
