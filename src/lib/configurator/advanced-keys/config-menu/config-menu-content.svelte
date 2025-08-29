@@ -20,6 +20,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { ConfigMenuState, configMenuStateContext } from "./context.svelte"
   import DynamicKeystrokeConfigMenu from "./dynamic-keystroke/dynamic-keystroke-config-menu.svelte"
   import NullBindConfigMenu from "./null-bind/null-bind-config-menu.svelte"
+  import TapHoldConfigMenu from "./tap-hold/tap-hold-config-menu.svelte"
+  import ToggleConfigMenu from "./toggle/toggle-config-menu.svelte"
 
   const {
     class: className,
@@ -48,5 +50,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <NullBindConfigMenu />
   {:else if type === HMK_AKType.DYNAMIC_KEYSTROKE}
     <DynamicKeystrokeConfigMenu />
+  {:else if type === HMK_AKType.TAP_HOLD}
+    <TapHoldConfigMenu />
+  {:else if type === HMK_AKType.TOGGLE}
+    <ToggleConfigMenu />
   {/if}
 </div>

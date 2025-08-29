@@ -19,6 +19,8 @@ import { HMK_MAX_NUM_KEYS, HMK_MAX_NUM_LAYERS } from "."
 
 export const DEFAULT_BOTTOM_OUT_POINT = 230
 export const DEFAULT_TAPPING_TERM = 200
+export const MIN_TAPPING_TERM = 10
+export const MAX_TAPPING_TERM = 1000
 export const DEFAULT_TICK_RATE = 30
 
 export enum HMK_AKType {

@@ -14,6 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import { InfoIcon } from "@lucide/svelte"
   import CommitSlider from "$lib/components/commit-slider.svelte"
   import { tickRateQueryContext } from "$lib/configurator/queries/tick-rate-query.svelte"
   import { DEFAULT_TICK_RATE } from "$lib/libhmk/advanced-keys"
@@ -41,4 +42,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     step={5}
     title="Tick Rate"
   />
+  <div class="flex items-center gap-2 text-muted-foreground">
+    <InfoIcon class="size-4" />
+    <p class="text-sm text-pretty">
+      The tick rate is per profile and only affects Dynamic Keystroke and
+      Tap-Hold keys.
+    </p>
+  </div>
 </div>
