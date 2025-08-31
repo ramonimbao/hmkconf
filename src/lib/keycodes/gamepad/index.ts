@@ -24,6 +24,7 @@ import {
   StepBackIcon,
   StepForwardIcon,
 } from "@lucide/svelte"
+import { HMK_GamepadButton } from "$lib/libhmk/gamepad"
 import { Keycode } from "$lib/libhmk/keycodes"
 import type { KeycodeMetadata } from ".."
 import LeftJoystickIcon from "./left-joystick-icon.svelte"
@@ -259,3 +260,11 @@ export const gamepadKeycodes = [
   Keycode.GP_BUTTON_RB,
   Keycode.GP_BUTTON_RT,
 ]
+
+export function gamepadButtonToKeycode(button: number) {
+  return button - HMK_GamepadButton.A + Keycode.GP_BUTTON_A
+}
+
+export function gamepadKeycodeToButton(keycode: number) {
+  return keycode - Keycode.GP_BUTTON_A + HMK_GamepadButton.A
+}

@@ -13,10 +13,16 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import type { HMK_Options } from "$lib/libhmk"
 import type { HMK_Actuation } from "$lib/libhmk/actuation"
 import type { HMK_AdvancedKey } from "$lib/libhmk/advanced-keys"
+import type { HMK_GamepadOptions } from "$lib/libhmk/gamepad"
 import { Context } from "runed"
 import type { KeyboardMetadata } from "./metadata"
+
+type SetParams<T> = { data: T }
+
+export type SetOptionsParams = SetParams<HMK_Options>
 
 type GetProfileParams = { profile: number }
 type SetProfileParams<T> = { profile: number; data: T }
@@ -30,6 +36,11 @@ export type SetActuationMapParams = SetProfileArrayParams<HMK_Actuation>
 
 export type GetAdvancedKeysParams = GetProfileParams
 export type SetAdvancedKeysParams = SetProfileArrayParams<HMK_AdvancedKey>
+
+export type GetGamepadButtonsParams = GetProfileParams
+export type SetGamepadButtonsParams = SetProfileArrayParams<number>
+export type GetGamepadOptionsParams = GetProfileParams
+export type SetGamepadOptionsParams = SetProfileParams<HMK_GamepadOptions>
 
 export type GetTickRateParams = GetProfileParams
 export type SetTickRateParams = SetProfileParams<number>
@@ -45,6 +56,8 @@ export type KeyboardAction = {
   forget(): Promise<void>
 
   getProfile(): Promise<number>
+  getOptions(): Promise<HMK_Options>
+  setOptions(params: SetOptionsParams): Promise<void>
 
   getKeymap(params: GetKeymapParams): Promise<number[][]>
   setKeymap(params: SetKeymapParams): Promise<void>
@@ -52,6 +65,12 @@ export type KeyboardAction = {
   setActuationMap(params: SetActuationMapParams): Promise<void>
   getAdvancedKeys(params: GetAdvancedKeysParams): Promise<HMK_AdvancedKey[]>
   setAdvancedKeys(params: SetAdvancedKeysParams): Promise<void>
+  getGamepadButtons(params: GetGamepadButtonsParams): Promise<number[]>
+  setGamepadButtons(params: SetGamepadButtonsParams): Promise<void>
+  getGamepadOptions(
+    params: GetGamepadOptionsParams,
+  ): Promise<HMK_GamepadOptions>
+  setGamepadOptions(params: SetGamepadOptionsParams): Promise<void>
   getTickRate(params: GetTickRateParams): Promise<number>
   setTickRate(params: SetTickRateParams): Promise<void>
 }

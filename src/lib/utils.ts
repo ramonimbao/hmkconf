@@ -36,6 +36,10 @@ export function optMap<T, U>(v: T | null | undefined, f: (v: T) => U) {
   return v === null || v === undefined ? undefined : f(v)
 }
 
+export function clamp(v: number, bound: [number, number]) {
+  return Math.min(Math.max(v, bound[0]), bound[1])
+}
+
 export function setToIntervals(set: Set<number>) {
   const arr = [...set].toSorted()
   const ret: [number, number][] = []

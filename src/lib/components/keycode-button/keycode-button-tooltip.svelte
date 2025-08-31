@@ -15,26 +15,33 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { getKeycodeMetadata } from "$lib/keycodes"
-  import type { WithoutChildren } from "$lib/utils"
-  import type { ComponentProps } from "svelte"
-  import { KeyButton } from "../key-button"
+  import type { Snippet } from "svelte"
+  import * as Tooltip from "../ui/tooltip"
 
   const {
+    children,
     keycode,
-    ...props
-  }: WithoutChildren<ComponentProps<typeof KeyButton>> & {
+    showTooltip,
+  }: {
+    children?: Snippet
     keycode: number
+    showTooltip?: boolean
   } = $props()
 
-  const { name, display } = $derived(getKeycodeMetadata(keycode))
+  const { tooltip } = $derived(getKeycodeMetadata(keycode))
 </script>
 
-<KeyButton {...props}>
-  {#each display ?? [name] as Variant, i (i)}
-    {#if typeof Variant === "string"}
-      <span>{Variant}</span>
-    {:else}
-      <Variant />
-    {/if}
-  {/each}
-</KeyButton>
+{#if !showTooltip || !tooltip}
+  {@render children?.()}
+{:else}
+  <Tooltip.Root>
+    <Tooltip.Trigger class="size-full">
+      {#snippet child({ props })}
+        <div {...props}>
+          {@render children?.()}
+        </div>
+      {/snippet}
+    </Tooltip.Trigger>
+    <Tooltip.Content class="max-w-56 text-pretty">{tooltip}</Tooltip.Content>
+  </Tooltip.Root>
+{/if}

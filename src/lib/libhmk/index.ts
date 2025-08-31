@@ -13,6 +13,8 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import z from "zod"
+
 export const HMK_FIRMWARE_VERSION = 0x0102
 
 export const HMK_MAX_NUM_PROFILES = 8
@@ -20,5 +22,11 @@ export const HMK_MAX_NUM_LAYERS = 8
 export const HMK_MAX_NUM_KEYS = 256
 export const HMK_MAX_NUM_ADVANCED_KEYS = 64
 
-export const HMK_MIN_SWITCH_DISTANCE = 4
-export const HMK_MAX_SWITCH_DISTANCE = 255
+export const HMK_MIN_DISTANCE = 4
+export const HMK_MAX_DISTANCE = 255
+
+export const hmkOptionsSchema = z.object({
+  xInputEnabled: z.boolean(),
+})
+
+export type HMK_Options = z.infer<typeof hmkOptionsSchema>

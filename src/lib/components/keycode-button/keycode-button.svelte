@@ -15,32 +15,31 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { getKeycodeMetadata } from "$lib/keycodes"
+  import type { WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
-  import * as Tooltip from "../ui/tooltip"
-  import KeycodeButtonInner from "./keycode-button-inner.svelte"
+  import { KeyButton } from "../key-button"
+  import KeycodeButtonTooltip from "./keycode-button-tooltip.svelte"
 
   const {
     keycode,
     showTooltip,
     ...props
-  }: ComponentProps<typeof KeycodeButtonInner> & {
+  }: WithoutChildren<ComponentProps<typeof KeyButton>> & {
+    keycode: number
     showTooltip?: boolean
   } = $props()
 
-  const { tooltip } = $derived(getKeycodeMetadata(keycode))
+  const { name, display } = $derived(getKeycodeMetadata(keycode))
 </script>
 
-{#if !showTooltip || !tooltip}
-  <KeycodeButtonInner {keycode} {...props} />
-{:else}
-  <Tooltip.Root>
-    <Tooltip.Trigger class="size-full">
-      {#snippet child({ props: triggerProps })}
-        <div {...triggerProps}>
-          <KeycodeButtonInner {keycode} {...props} />
-        </div>
-      {/snippet}
-    </Tooltip.Trigger>
-    <Tooltip.Content class="max-w-56 text-pretty">{tooltip}</Tooltip.Content>
-  </Tooltip.Root>
-{/if}
+<KeycodeButtonTooltip {keycode} {showTooltip}>
+  <KeyButton {...props}>
+    {#each display ?? [name] as Variant, i (i)}
+      {#if typeof Variant === "string"}
+        <span>{Variant}</span>
+      {:else}
+        <Variant />
+      {/if}
+    {/each}
+  </KeyButton>
+</KeycodeButtonTooltip>

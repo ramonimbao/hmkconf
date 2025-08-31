@@ -13,21 +13,29 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { analogCurvePresets } from "$lib/configurator/lib/gamepad"
+import type { HMK_Options } from "$lib/libhmk"
 import { defaultActuation, type HMK_Actuation } from "$lib/libhmk/actuation"
 import {
   DEFAULT_TICK_RATE,
   defaultAdvancedKey,
   type HMK_AdvancedKey,
 } from "$lib/libhmk/advanced-keys"
+import { HMK_GamepadButton, type HMK_GamepadOptions } from "$lib/libhmk/gamepad"
 import type {
   GetActuationMapParams,
   GetAdvancedKeysParams,
+  GetGamepadButtonsParams,
+  GetGamepadOptionsParams,
   GetKeymapParams,
   GetTickRateParams,
   Keyboard,
   SetActuationMapParams,
   SetAdvancedKeysParams,
+  SetGamepadButtonsParams,
+  SetGamepadOptionsParams,
   SetKeymapParams,
+  SetOptionsParams,
   SetTickRateParams,
 } from "."
 import { demoMetadata } from "./metadata"
@@ -35,10 +43,13 @@ import { demoMetadata } from "./metadata"
 const { numProfiles, numKeys, numAdvancedKeys, defaultKeymap } = demoMetadata
 
 type DemoKeyboardState = {
+  options: HMK_Options
   profiles: {
     keymap: number[][]
     actuationMap: HMK_Actuation[]
     advancedKeys: HMK_AdvancedKey[]
+    gamepadButtons: number[]
+    gamepadOptions: HMK_GamepadOptions
     tickRate: number
   }[]
 }
@@ -49,12 +60,21 @@ export class DemoKeyboard implements Keyboard {
   metadata = demoMetadata
 
   #state: DemoKeyboardState = {
+    options: { xInputEnabled: true },
     profiles: [...Array(numProfiles)].map(() => ({
       keymap: defaultKeymap.map((row) => [...row]),
       actuationMap: [...Array(numKeys)].map(() => ({ ...defaultActuation })),
       advancedKeys: [...Array(numAdvancedKeys)].map(() => ({
         ...defaultAdvancedKey,
       })),
+      gamepadButtons: Array(numKeys).fill(HMK_GamepadButton.NONE),
+      gamepadOptions: {
+        analogCurve: analogCurvePresets[0].curve,
+        keyboardEnabled: true,
+        gamepadOverride: false,
+        squareJoystick: false,
+        snappyJoystick: true,
+      },
       tickRate: DEFAULT_TICK_RATE,
     })),
   }
@@ -64,6 +84,12 @@ export class DemoKeyboard implements Keyboard {
 
   async getProfile() {
     return 0
+  }
+  async getOptions() {
+    return this.#state.options
+  }
+  async setOptions({ data }: SetOptionsParams) {
+    this.#state.options = data
   }
 
   async getKeymap({ profile }: GetKeymapParams) {
@@ -89,6 +115,20 @@ export class DemoKeyboard implements Keyboard {
     for (let i = 0; i < data.length; i++) {
       this.#state.profiles[profile].advancedKeys[offset + i] = data[i]
     }
+  }
+  async getGamepadButtons(params: GetGamepadButtonsParams): Promise<number[]> {
+    return this.#state.profiles[params.profile].gamepadButtons
+  }
+  async setGamepadButtons({ profile, offset, data }: SetGamepadButtonsParams) {
+    for (let i = 0; i < data.length; i++) {
+      this.#state.profiles[profile].gamepadButtons[offset + i] = data[i]
+    }
+  }
+  async getGamepadOptions({ profile }: GetGamepadOptionsParams) {
+    return this.#state.profiles[profile].gamepadOptions
+  }
+  async setGamepadOptions({ profile, data }: SetGamepadOptionsParams) {
+    this.#state.profiles[profile].gamepadOptions = data
   }
   async getTickRate({ profile }: GetTickRateParams) {
     return this.#state.profiles[profile].tickRate

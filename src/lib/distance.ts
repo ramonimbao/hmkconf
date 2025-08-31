@@ -13,20 +13,20 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { HMK_MAX_SWITCH_DISTANCE, HMK_MIN_SWITCH_DISTANCE } from "./libhmk"
+import { HMK_MAX_DISTANCE, HMK_MIN_DISTANCE } from "./libhmk"
 
 export const SWITCH_DISTANCE_UNIT = 80
 export const SWITCH_DISTANCE_MM = 4
 
 export function unitToDistance(v: number) {
   return Math.max(
-    HMK_MIN_SWITCH_DISTANCE,
-    Math.round((v * HMK_MAX_SWITCH_DISTANCE) / SWITCH_DISTANCE_UNIT),
+    HMK_MIN_DISTANCE,
+    Math.round((v * HMK_MAX_DISTANCE) / SWITCH_DISTANCE_UNIT),
   )
 }
 
 export function distanceToUnit(v: number) {
-  return Math.round((v * SWITCH_DISTANCE_UNIT) / HMK_MAX_SWITCH_DISTANCE)
+  return Math.round((v * SWITCH_DISTANCE_UNIT) / HMK_MAX_DISTANCE)
 }
 
 export function displayUnitDistance(v: number, decimal = 2) {

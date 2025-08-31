@@ -51,7 +51,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     {#if tooltip}
       <Tooltip.Root>
         <Tooltip.Trigger>
-          <InfoIcon />
+          <InfoIcon class="size-4" />
           <span class="sr-only">Info</span>
         </Tooltip.Trigger>
         <Tooltip.Content class="max-w-56 text-pretty">
