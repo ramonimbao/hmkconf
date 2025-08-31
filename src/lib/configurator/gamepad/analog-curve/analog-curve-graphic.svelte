@@ -25,7 +25,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div class="border" style="grid-area: curve"></div>
-<div class="relative" style="grid-area: curve">
+<div class="relative z-10" style="grid-area: curve">
   <svg
     class="size-full"
     preserveAspectRatio="none"

@@ -14,25 +14,28 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import * as Tooltip from "$lib/components/ui/tooltip"
   import {
     CURVE_VIEW_HEIGHT,
     CURVE_VIEW_WIDTH,
     viewCurveToAnalog,
   } from "$lib/configurator/lib/gamepad"
   import { gamepadQueryContext } from "$lib/configurator/queries/gamepad-query.svelte"
+  import { displayDistance } from "$lib/distance"
   import { clamp } from "$lib/utils"
-  import AnalogCurveDraggableTooltip from "./analog-curve-draggable-tooltip.svelte"
   import { analogCurveStateContext } from "./context.svelte"
 
   const { index }: { index: number } = $props()
 
   const analogCurveState = analogCurveStateContext.get()
   const { viewCurve } = $derived(analogCurveState)
+  const analogCurve = $derived(viewCurveToAnalog(viewCurve))
 
   const gamepadQuery = gamepadQueryContext.get()
   const { current: options } = $derived(gamepadQuery.gamepadOptions)
 
   let isDragging = $state(false)
+  let tooltipOpen = $state(false)
 
   const onmousemove = (e: MouseEvent) => {
     if (!isDragging) return
@@ -49,30 +52,27 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     if (!isDragging) return
     isDragging = false
     if (options) {
-      gamepadQuery.setOptions({
-        data: { ...options, analogCurve: viewCurveToAnalog(viewCurve) },
-      })
+      gamepadQuery.setOptions({ data: { ...options, analogCurve } })
     }
   }
 </script>
 
 <svelte:document {onmousemove} {onmouseup} />
 
-<AnalogCurveDraggableTooltip {index} showTooltip={!isDragging}>
-  {#snippet child({ props })}
+<Tooltip.Root
+  bind:open={() => tooltipOpen || isDragging, (v) => (tooltipOpen = v)}
+>
+  <Tooltip.Trigger
+    class="absolute z-20 size-4 -translate-1/2 rounded-full"
+    style="left: {viewCurve[index].x}px; top: {viewCurve[index].y}px;"
+  >
     <div
-      class="absolute z-20 size-4 -translate-1/2 rounded-full"
-      style="
-        left: {viewCurve[index].x}px;
-        top: {viewCurve[index].y}px;
-      "
-      {...props}
-    >
-      <div
-        class="size-full rounded-full bg-primary shadow-xs"
-        onmousedown={() => (isDragging = true)}
-        role="none"
-      ></div>
-    </div>
-  {/snippet}
-</AnalogCurveDraggableTooltip>
+      class="size-full rounded-full bg-primary shadow-xs"
+      onmousedown={() => (isDragging = true)}
+      role="none"
+    ></div>
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    ({displayDistance(analogCurve[index].x)}mm, {analogCurve[index].y})
+  </Tooltip.Content>
+</Tooltip.Root>

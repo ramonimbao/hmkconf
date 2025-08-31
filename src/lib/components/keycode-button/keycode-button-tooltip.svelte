@@ -34,7 +34,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 {#if !showTooltip || !tooltip}
   {@render children?.()}
 {:else}
-  <Tooltip.Root>
+  <Tooltip.Root disableHoverableContent>
     <Tooltip.Trigger class="size-full">
       {#snippet child({ props })}
         <div {...props}>
