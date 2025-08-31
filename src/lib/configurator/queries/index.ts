@@ -19,6 +19,14 @@ import {
   AdvancedKeysQuery,
   advancedKeysQueryContext,
 } from "./advanced-keys-query.svelte"
+import {
+  AnalogInfoQuery,
+  analogInfoQueryContext,
+} from "./analog-info-query.svelte"
+import {
+  CalibrationQuery,
+  calibrationQueryContext,
+} from "./calibration.query.svelte"
 import { GamepadQuery, gamepadQueryContext } from "./gamepad-query.svelte"
 import { KeymapQuery, keymapQueryContext } from "./keymap-query.svelte"
 import { OptionsQuery, optionsQueryContext } from "./options-query.svelte"
@@ -47,6 +55,8 @@ export async function optimisticUpdate<T>(options: {
 
 export function setConfiguratorQueryContext() {
   profileQueryContext.set(new ProfileQuery())
+  analogInfoQueryContext.set(new AnalogInfoQuery())
+  calibrationQueryContext.set(new CalibrationQuery())
   optionsQueryContext.set(new OptionsQuery())
   keymapQueryContext.set(new KeymapQuery())
   actuationQueryContext.set(new ActuationQuery())

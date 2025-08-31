@@ -25,7 +25,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div
-  class={cn("size-full rounded-md border opacity-50 shadow-xs", className)}
+  class={cn("size-full rounded-md border border-input shadow-xs", className)}
   {...props}
 >
   {@render children?.()}

@@ -14,7 +14,7 @@
  */
 
 import { analogCurvePresets } from "$lib/configurator/lib/gamepad"
-import type { HMK_Options } from "$lib/libhmk"
+import { HMK_FIRMWARE_VERSION, type HMK_Options } from "$lib/libhmk"
 import { defaultActuation, type HMK_Actuation } from "$lib/libhmk/actuation"
 import {
   DEFAULT_TICK_RATE,
@@ -23,6 +23,7 @@ import {
 } from "$lib/libhmk/advanced-keys"
 import { HMK_GamepadButton, type HMK_GamepadOptions } from "$lib/libhmk/gamepad"
 import type {
+  DuplicateProfileParams,
   GetActuationMapParams,
   GetAdvancedKeysParams,
   GetGamepadButtonsParams,
@@ -30,6 +31,7 @@ import type {
   GetKeymapParams,
   GetTickRateParams,
   Keyboard,
+  ResetProfileParams,
   SetActuationMapParams,
   SetAdvancedKeysParams,
   SetGamepadButtonsParams,
@@ -40,18 +42,36 @@ import type {
 } from "."
 import { demoMetadata } from "./metadata"
 
-const { numProfiles, numKeys, numAdvancedKeys, defaultKeymap } = demoMetadata
+const { adcBits, numProfiles, numKeys, numAdvancedKeys, defaultKeymap } =
+  demoMetadata
+
+type DemoKeyboardProfileState = {
+  keymap: number[][]
+  actuationMap: HMK_Actuation[]
+  advancedKeys: HMK_AdvancedKey[]
+  gamepadButtons: number[]
+  gamepadOptions: HMK_GamepadOptions
+  tickRate: number
+}
+
+const defaultProfile: DemoKeyboardProfileState = {
+  keymap: defaultKeymap,
+  actuationMap: [...Array(numKeys)].fill(defaultActuation),
+  advancedKeys: [...Array(numAdvancedKeys)].fill(defaultAdvancedKey),
+  gamepadButtons: Array(numKeys).fill(HMK_GamepadButton.NONE),
+  gamepadOptions: {
+    analogCurve: analogCurvePresets[0].curve,
+    keyboardEnabled: true,
+    gamepadOverride: false,
+    squareJoystick: false,
+    snappyJoystick: true,
+  },
+  tickRate: DEFAULT_TICK_RATE,
+}
 
 type DemoKeyboardState = {
   options: HMK_Options
-  profiles: {
-    keymap: number[][]
-    actuationMap: HMK_Actuation[]
-    advancedKeys: HMK_AdvancedKey[]
-    gamepadButtons: number[]
-    gamepadOptions: HMK_GamepadOptions
-    tickRate: number
-  }[]
+  profiles: DemoKeyboardProfileState[]
 }
 
 export class DemoKeyboard implements Keyboard {
@@ -61,27 +81,31 @@ export class DemoKeyboard implements Keyboard {
 
   #state: DemoKeyboardState = {
     options: { xInputEnabled: true },
-    profiles: [...Array(numProfiles)].map(() => ({
-      keymap: defaultKeymap.map((row) => [...row]),
-      actuationMap: [...Array(numKeys)].map(() => ({ ...defaultActuation })),
-      advancedKeys: [...Array(numAdvancedKeys)].map(() => ({
-        ...defaultAdvancedKey,
-      })),
-      gamepadButtons: Array(numKeys).fill(HMK_GamepadButton.NONE),
-      gamepadOptions: {
-        analogCurve: analogCurvePresets[0].curve,
-        keyboardEnabled: true,
-        gamepadOverride: false,
-        squareJoystick: false,
-        snappyJoystick: true,
-      },
-      tickRate: DEFAULT_TICK_RATE,
-    })),
+    profiles: [...Array(numProfiles)].map(() =>
+      structuredClone(defaultProfile),
+    ),
   }
 
   async disconnect() {}
   async forget() {}
 
+  async firmwareVersion() {
+    return HMK_FIRMWARE_VERSION
+  }
+  async reboot() {}
+  async bootloader() {}
+  async factoryReset() {}
+  async recalibrate() {}
+  async analogInfo() {
+    return Array(numKeys).fill({ adcValue: 0, distance: 0 })
+  }
+  async getCalibration() {
+    return {
+      initialRestValue: (1 << adcBits) - 1,
+      initialBottomOutThreshold: (1 << adcBits) - 1,
+    }
+  }
+  async setCalibration() {}
   async getProfile() {
     return 0
   }
@@ -90,6 +114,14 @@ export class DemoKeyboard implements Keyboard {
   }
   async setOptions({ data }: SetOptionsParams) {
     this.#state.options = data
+  }
+  async resetProfile({ profile }: ResetProfileParams) {
+    this.#state.profiles[profile] = structuredClone(defaultProfile)
+  }
+  async duplicateProfile({ profile, srcProfile }: DuplicateProfileParams) {
+    this.#state.profiles[profile] = structuredClone(
+      this.#state.profiles[srcProfile],
+    )
   }
 
   async getKeymap({ profile }: GetKeymapParams) {
