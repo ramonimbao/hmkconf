@@ -54,7 +54,6 @@ export async function optimisticUpdate<T>(options: {
 }
 
 export function setConfiguratorQueryContext() {
-  profileQueryContext.set(new ProfileQuery())
   analogInfoQueryContext.set(new AnalogInfoQuery())
   calibrationQueryContext.set(new CalibrationQuery())
   optionsQueryContext.set(new OptionsQuery())
@@ -63,4 +62,6 @@ export function setConfiguratorQueryContext() {
   advancedKeysQueryContext.set(new AdvancedKeysQuery())
   gamepadQueryContext.set(new GamepadQuery())
   tickRateQueryContext.set(new TickRateQuery())
+  // Profile query depends on all other queries.
+  profileQueryContext.set(new ProfileQuery())
 }

@@ -33,7 +33,7 @@ export class DKSActionsState {
     const { bitmap, updateBitmap } = $derived(props())
     this.bitmap = $derived(bitmap)
     this.intervals = $derived(bitmapToIntervals(bitmap))
-    this.currentBitmap = $state(bitmap)
+    this.currentBitmap = $state($state.snapshot(bitmap))
     this.currentIntervals = $derived(bitmapToIntervals(this.currentBitmap))
     this.updateBitmap = $derived(updateBitmap)
 

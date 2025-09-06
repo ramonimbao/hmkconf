@@ -169,6 +169,6 @@ export function setConfiguratorStateContext() {
   performanceStateContext.set(new ConfiguratorPerformanceState())
   advancedKeysStateContext.set(new ConfiguratorAdvancedKeysState())
   gamepadStateContext.set(new ConfiguratorGamepadState())
-  // Global state depends on all other states
+  // Global state depends on all other states.
   globalStateContext.set(new ConfiguratorGlobalState())
 }

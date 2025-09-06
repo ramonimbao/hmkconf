@@ -73,7 +73,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       title="Initial Bottom Out Threshold"
     />
     <div>
-      <Button onclick={analogInfoQuery.recalibrate} size="sm">
+      <Button disabled={demo} onclick={analogInfoQuery.recalibrate} size="sm">
         Recalibrate
       </Button>
     </div>

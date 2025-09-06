@@ -18,7 +18,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import Switch from "$lib/components/switch.svelte"
   import { Badge } from "$lib/components/ui/badge"
   import * as Tooltip from "$lib/components/ui/tooltip"
+  import { keyboardContext } from "$lib/keyboard"
   import { analogInfoQueryContext } from "../queries/analog-info-query.svelte"
+
+  const { demo } = keyboardContext.get()
 
   const { interval } = $derived(analogInfoQueryContext.get())
 </script>
@@ -30,6 +33,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         () => interval.isActive,
         (v) => (v ? interval.resume() : interval.pause())
       }
+      disabled={demo}
       id="show-analog-info"
       title="Show Live Analog Values"
     />

@@ -21,8 +21,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import GamepadTab from "./gamepad/gamepad-tab.svelte"
   import ConfiguratorLayout from "./layout.svelte"
   import PerformanceTab from "./performance/performance-tab.svelte"
+  import ProfilesTab from "./profiles/profiles-tab.svelte"
   import { setConfiguratorQueryContext } from "./queries"
   import RemapTab from "./remap/remap-tab.svelte"
+  import SettingsTab from "./settings/settings-tab.svelte"
 
   setConfiguratorStateContext()
   setConfiguratorQueryContext()
@@ -30,7 +32,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <ConfiguratorLayout>
   <Tabs.Content value="profiles">
-    <!-- {#snippet child({ props })}{/snippet} -->
+    {#snippet child({ props })}
+      <ProfilesTab {...props} />
+    {/snippet}
   </Tabs.Content>
   <Tabs.Content value="remap">
     {#snippet child({ props })}
@@ -58,6 +62,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     {/snippet}
   </Tabs.Content>
   <Tabs.Content value="settings">
-    <!-- {#snippet child({ props })}{/snippet} -->
+    {#snippet child({ props })}
+      <SettingsTab {...props} />
+    {/snippet}
   </Tabs.Content>
 </ConfiguratorLayout>
