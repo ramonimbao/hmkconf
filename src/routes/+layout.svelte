@@ -14,6 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import { Toaster } from "$lib/components/ui/sonner"
   import "../app.css"
   import "@fontsource-variable/geist"
   import "@fontsource-variable/geist-mono"
@@ -40,6 +41,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </svelte:head>
 
 <ModeWatcher />
+<Toaster />
 <div class="relative flex min-h-svh flex-col bg-background font-sans">
   {@render children?.()}
 </div>

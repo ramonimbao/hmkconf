@@ -21,7 +21,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
   import { keyboardContext } from "$lib/keyboard"
   import { cn, type WithoutChildren } from "$lib/utils"
+  import { toast } from "svelte-sonner"
   import type { HTMLAttributes } from "svelte/elements"
+  import z from "zod"
   import { KeyboardConfig } from "../lib/keyboard-config.svelte"
   import { profileQueryContext } from "../queries/profile-query.svelte"
 
@@ -49,8 +51,18 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       try {
         const json = JSON.parse(await file.text())
         await keyboardConfig.setConfig(profile, json)
+        toast.success(`Successfully imported Profile ${profile}.`)
       } catch (err) {
-        console.error(err)
+        if (err instanceof SyntaxError) {
+          toast.error("The selected file is not a valid JSON.")
+        } else if (err instanceof z.ZodError) {
+          toast.error(
+            "The selected file is not a valid keyboard metadata. See console for details.",
+          )
+          console.error(z.treeifyError(err))
+        } else {
+          toast.error(String(err))
+        }
       }
     }
     fileRef.click()
@@ -65,8 +77,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       })
       anchorRef.href = URL.createObjectURL(blob)
       anchorRef.download = `${name}-profile-${profile}.json`
+      toast.success(`Successfully exported Profile ${profile}.`)
     } catch (err) {
-      console.error(err)
+      if (err instanceof z.ZodError) {
+        toast.error(
+          "Unexpected keyboard configuration schema error. See console for details.",
+        )
+        console.error(z.treeifyError(err))
+      } else {
+        toast.error(String(err))
+      }
     }
     anchorRef.click()
   }
