@@ -14,6 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import { keyboardContext, type Keyboard } from "$lib/keyboard"
   import { Tabs } from "bits-ui"
   import AdvancedKeysTab from "./advanced-keys/advanced-keys-tab.svelte"
   import { setConfiguratorStateContext } from "./context.svelte"
@@ -26,6 +27,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import RemapTab from "./remap/remap-tab.svelte"
   import SettingsTab from "./settings/settings-tab.svelte"
 
+  const { keyboard }: { keyboard: Keyboard } = $props()
+
+  keyboardContext.set(keyboard)
   setConfiguratorStateContext()
   setConfiguratorQueryContext()
 </script>

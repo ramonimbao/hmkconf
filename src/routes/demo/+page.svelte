@@ -15,10 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import Configurator from "$lib/configurator/configurator.svelte"
-  import { keyboardContext } from "$lib/keyboard"
   import { DemoKeyboard } from "$lib/keyboard/demo-keyboard.svelte"
-
-  keyboardContext.set(new DemoKeyboard())
 </script>
 
-<Configurator />
+<Configurator keyboard={new DemoKeyboard()} />

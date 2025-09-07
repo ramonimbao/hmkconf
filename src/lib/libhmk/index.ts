@@ -18,6 +18,9 @@ import z from "zod"
 
 export const HMK_FIRMWARE_VERSION = 0x0102
 
+export const HMK_DEVICE_USAGE_PAGE = 0xffab
+export const HMK_DEVICE_USAGE_ID = 0xab
+
 export const HMK_MAX_NUM_PROFILES = 8
 export const HMK_MAX_NUM_LAYERS = 8
 export const HMK_MAX_NUM_KEYS = 256

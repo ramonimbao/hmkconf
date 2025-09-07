@@ -20,6 +20,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function isWebHIDSSupported() {
+  return !!navigator.hid
+}
+
 export function displayVersion(v: number) {
   return `v${v >> 8}.${v & 0xff}`
 }

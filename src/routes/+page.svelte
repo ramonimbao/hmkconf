@@ -17,41 +17,65 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { CableIcon } from "@lucide/svelte"
   import Footer from "$lib/components/footer.svelte"
   import { Button } from "$lib/components/ui/button"
+  import Configurator from "$lib/configurator/configurator.svelte"
+  import type { Keyboard } from "$lib/keyboard"
+  import { connect } from "$lib/keyboard/hmk-keyboard.svelte"
+  import { toast } from "svelte-sonner"
+
+  let keyboard: Keyboard | null = $state(null)
+
+  const handleConnect = async () => {
+    try {
+      keyboard = await connect(({ metadata: { name } }) => {
+        toast.success(`${name} disconnected.`)
+        keyboard = null
+      })
+      if (keyboard) {
+        toast.success(`Successfully connected to ${keyboard.metadata.name}.`)
+      }
+    } catch (err) {
+      toast.error(String(err))
+    }
+  }
 </script>
 
-<main class="py-24">
-  <div class="mx-auto max-w-7xl px-6">
-    <div class="mx-auto max-w-2xl text-center">
-      <h1 class="text-5xl font-semibold tracking-tight">hmkconf</h1>
-      <p class="mt-4 text-lg font-medium text-pretty text-muted-foreground">
-        A web-based configurator for libhmk keyboards. Customize keyboard
-        bindings, adjust actuation points, enable Rapid Trigger, and more.
-      </p>
-      <div class="mt-6 flex items-center justify-center gap-4">
-        <Button size="lg">
-          <CableIcon /> Connect Keyboard
-        </Button>
-        <Button href="/demo" size="lg" variant="outline">Try Demo</Button>
+{#if keyboard}
+  <Configurator {keyboard} />
+{:else}
+  <main class="py-24">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <h1 class="text-5xl font-semibold tracking-tight">hmkconf</h1>
+        <p class="mt-4 text-lg font-medium text-pretty text-muted-foreground">
+          A web-based configurator for libhmk keyboards. Customize keyboard
+          bindings, adjust actuation points, enable Rapid Trigger, and more.
+        </p>
+        <div class="mt-6 flex items-center justify-center gap-4">
+          <Button onclick={() => handleConnect()} size="lg">
+            <CableIcon /> Connect Keyboard
+          </Button>
+          <Button href="/demo" size="lg" variant="outline">Try Demo</Button>
+        </div>
+      </div>
+      <div class="mt-16 grid place-items-center">
+        <div class="overflow-hidden rounded-xl border shadow-md">
+          <img
+            class="dark:hidden"
+            alt="Screenshot"
+            src="/screenshots/screenshot.png"
+            width="1024"
+            height="768"
+          />
+          <img
+            class="not-dark:hidden"
+            alt="Screenshot"
+            src="/screenshots/screenshot-dark.png"
+            width="1024"
+            height="768"
+          />
+        </div>
       </div>
     </div>
-    <div class="mt-16 grid place-items-center">
-      <div class="overflow-hidden rounded-xl border shadow-md">
-        <img
-          class="dark:hidden"
-          alt="Screenshot"
-          src="/screenshots/screenshot.png"
-          width="1024"
-          height="768"
-        />
-        <img
-          class="not-dark:hidden"
-          alt="Screenshot"
-          src="/screenshots/screenshot-dark.png"
-          width="1024"
-          height="768"
-        />
-      </div>
-    </div>
-  </div>
-</main>
-<Footer />
+  </main>
+  <Footer />
+{/if}

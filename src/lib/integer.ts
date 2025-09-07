@@ -30,3 +30,11 @@ export function displayUInt16(v: number) {
 export function displayUInt32(v: number) {
   return `0x${v.toString(16).padStart(8, "0")}`
 }
+
+export function uint16ToUInt8s(v: number) {
+  return [v & 0xff, (v >> 8) & 0xff]
+}
+
+export function uint32ToUInt8s(v: number) {
+  return [v & 0xff, (v >> 8) & 0xff, (v >> 16) & 0xff, (v >> 24) & 0xff]
+}

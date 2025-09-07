@@ -18,7 +18,7 @@ import {
   type DuplicateProfileParams,
   type ResetProfileParams,
 } from "$lib/keyboard"
-import { Context, resource, useInterval, type ResourceReturn } from "runed"
+import { Context, resource, type ResourceReturn } from "runed"
 import { globalStateContext } from "../context.svelte"
 import { actuationQueryContext } from "./actuation-query.svelte"
 import { advancedKeysQueryContext } from "./advanced-keys-query.svelte"
@@ -47,9 +47,12 @@ export class ProfileQuery {
   constructor() {
     this.profile = resource(
       () => {},
-      () => this.#keyboard.getProfile(),
+      async () => {
+        const ret = await this.#keyboard.getProfile()
+        setTimeout(() => this.profile.refetch(), PROFILE_REFETCH_INTERVAL)
+        return ret
+      },
     )
-    useInterval(() => this.profile.refetch(), PROFILE_REFETCH_INTERVAL)
   }
 
   #refetchProfile() {

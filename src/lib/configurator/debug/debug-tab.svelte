@@ -15,8 +15,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
+  import { keyboardContext } from "$lib/keyboard"
   import type { WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
+  import { globalStateContext } from "../context.svelte"
+  import { analogInfoQueryContext } from "../queries/analog-info-query.svelte"
   import DebugKeyboard from "./debug-keyboard.svelte"
   import DebugMenu from "./debug-menu.svelte"
   import DebugMenubar from "./debug-menubar.svelte"
@@ -24,6 +27,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const {
     ...props
   }: WithoutChildren<ComponentProps<typeof KeyboardEditor.Root>> = $props()
+
+  const { tab } = $derived(globalStateContext.get())
+  const { demo } = keyboardContext.get()
+
+  const analogInfoQuery = analogInfoQueryContext.get()
+
+  $effect(() => {
+    if (demo) return
+    analogInfoQuery.enabled = tab === "debug"
+  })
 </script>
 
 <KeyboardEditor.Root {...props}>

@@ -25,10 +25,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { displayUInt16 } from "$lib/integer"
   import { keyboardContext } from "$lib/keyboard"
 
+  const keyboard = keyboardContext.get()
   const {
     demo,
     metadata: { name, vendorId, productId },
-  } = keyboardContext.get()
+  } = keyboard
 </script>
 
 <Sidebar.Menu>
@@ -71,7 +72,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             {/snippet}
           </DropdownMenu.Item>
         {:else}
-          <DropdownMenu.Item class="gap-2 p-2">
+          <DropdownMenu.Item
+            class="gap-2 p-2"
+            onSelect={() => keyboard.forget()}
+          >
             <CableIcon class="size-4" />
             Disconnect
           </DropdownMenu.Item>
