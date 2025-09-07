@@ -38,8 +38,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const { current: currentProfile } = $derived(profileQuery.profile)
   const keyboardConfig = new KeyboardConfig()
 
-  let fileRef = $state<HTMLInputElement | null>(null)
-  let anchorRef = $state<HTMLAnchorElement | null>(null)
+  let fileRef: HTMLInputElement | null = $state(null)
+  let anchorRef: HTMLAnchorElement | null = $state(null)
 
   const importProfile = async (profile: number) => {
     if (!fileRef) return

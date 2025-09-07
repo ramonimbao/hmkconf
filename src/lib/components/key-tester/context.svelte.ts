@@ -26,7 +26,7 @@ export class KeyTesterState {
 
   constructor() {
     useEventListener(
-      document.body,
+      () => document.body,
       "keydown",
       (e) =>
         !e.repeat &&
@@ -36,23 +36,31 @@ export class KeyTesterState {
           pressed: true,
         }),
     )
-    useEventListener(document.body, "keyup", (e) => {
-      const index = this.keyEvents.findIndex(
-        ({ webCode, pressed }) => webCode === e.code && pressed,
-      )
-      if (index !== -1) {
-        this.keyEvents[index].pressed = false
-      }
-      setTimeout(() => {
+    useEventListener(
+      () => document.body,
+      "keyup",
+      (e) => {
         const index = this.keyEvents.findIndex(
-          ({ webCode, pressed }) => webCode === e.code && !pressed,
+          ({ webCode, pressed }) => webCode === e.code && pressed,
         )
         if (index !== -1) {
-          this.keyEvents.splice(index, 1)
+          this.keyEvents[index].pressed = false
         }
-      }, KEY_UP_TIMEOUT)
-    })
-    useEventListener(window, "blur", () => (this.keyEvents.length = 0))
+        setTimeout(() => {
+          const index = this.keyEvents.findIndex(
+            ({ webCode, pressed }) => webCode === e.code && !pressed,
+          )
+          if (index !== -1) {
+            this.keyEvents.splice(index, 1)
+          }
+        }, KEY_UP_TIMEOUT)
+      },
+    )
+    useEventListener(
+      () => window,
+      "blur",
+      () => (this.keyEvents.length = 0),
+    )
   }
 }
 

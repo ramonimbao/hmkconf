@@ -14,6 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import AreaSelect from "$lib/components/area-select.svelte"
   import { KeyboardEditorKeyboard } from "$lib/components/keyboard-editor"
   import * as KeycodeButton from "$lib/components/keycode-button"
   import { ToggleGroup } from "bits-ui"
@@ -40,37 +41,45 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   type="multiple"
 >
   {#snippet child({ props })}
-    <KeyboardEditorKeyboard {...props}>
-      {#snippet keyGenerator(key)}
-        {#if !keymap || !actuationMap}
-          <KeycodeButton.Skeleton />
-        {:else}
-          <ToggleGroup.Item
-            onmousedown={(e) => {
-              e.stopPropagation()
-              isDragging = true
-              if (keys.has(key)) performanceState.keys.delete(key)
-              else performanceState.keys.add(key)
-            }}
-            onmouseenter={(e) => {
-              e.stopPropagation()
-              if (isDragging) performanceState.keys.add(key)
-            }}
-            value={String(key)}
-          >
-            {#snippet child({ props })}
-              {#if showKeymap}
-                <KeycodeButton.Root keycode={keymap[0][key]} {...props} />
-              {:else}
-                <PerformanceKeyButton
-                  actuation={actuationMap[key]}
-                  {...props}
-                />
-              {/if}
-            {/snippet}
-          </ToggleGroup.Item>
-        {/if}
-      {/snippet}
-    </KeyboardEditorKeyboard>
+    <AreaSelect
+      bind:selections={performanceState.keys}
+      class="flex flex-1 flex-col"
+      {...props}
+    >
+      <KeyboardEditorKeyboard {...props}>
+        {#snippet keyGenerator(key)}
+          {#if !keymap || !actuationMap}
+            <KeycodeButton.Skeleton />
+          {:else}
+            <ToggleGroup.Item
+              data-selectable
+              data-selectable-index={key}
+              onmousedown={(e) => {
+                e.stopPropagation()
+                isDragging = true
+                if (keys.has(key)) performanceState.keys.delete(key)
+                else performanceState.keys.add(key)
+              }}
+              onmouseenter={(e) => {
+                e.stopPropagation()
+                if (isDragging) performanceState.keys.add(key)
+              }}
+              value={String(key)}
+            >
+              {#snippet child({ props })}
+                {#if showKeymap}
+                  <KeycodeButton.Root keycode={keymap[0][key]} {...props} />
+                {:else}
+                  <PerformanceKeyButton
+                    actuation={actuationMap[key]}
+                    {...props}
+                  />
+                {/if}
+              {/snippet}
+            </ToggleGroup.Item>
+          {/if}
+        {/snippet}
+      </KeyboardEditorKeyboard>
+    </AreaSelect>
   {/snippet}
 </ToggleGroup.Root>
