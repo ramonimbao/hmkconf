@@ -16,18 +16,19 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { keyboardContext, type Keyboard } from "$lib/keyboard"
   import { Tabs } from "bits-ui"
-  import AdvancedKeysTab from "./advanced-keys/advanced-keys-tab.svelte"
   import { setConfiguratorStateContext } from "./context.svelte"
-  import DebugTab from "./debug/debug-tab.svelte"
-  import GamepadTab from "./gamepad/gamepad-tab.svelte"
   import ConfiguratorLayout from "./layout.svelte"
-  import PerformanceTab from "./performance/performance-tab.svelte"
-  import ProfilesTab from "./profiles/profiles-tab.svelte"
   import { setConfiguratorQueryContext } from "./queries"
-  import RemapTab from "./remap/remap-tab.svelte"
-  import SettingsTab from "./settings/settings-tab.svelte"
 
   const { keyboard }: { keyboard: Keyboard } = $props()
+  
+  const profilesTab = import("./profiles/profiles-tab.svelte")
+  const remapTab = import("./remap/remap-tab.svelte")
+  const performanceTab = import("./performance/performance-tab.svelte")
+  const advancedKeysTab = import("./advanced-keys/advanced-keys-tab.svelte")
+  const gamepadTab = import("./gamepad/gamepad-tab.svelte")
+  const debugTab = import("./debug/debug-tab.svelte")
+  const settingsTab = import("./settings/settings-tab.svelte")
 
   keyboardContext.set(keyboard)
   setConfiguratorStateContext()
@@ -35,39 +36,53 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <ConfiguratorLayout>
-  <Tabs.Content value="profiles">
-    {#snippet child({ props })}
-      <ProfilesTab {...props} />
-    {/snippet}
-  </Tabs.Content>
-  <Tabs.Content value="remap">
-    {#snippet child({ props })}
-      <RemapTab {...props} />
-    {/snippet}
-  </Tabs.Content>
-  <Tabs.Content value="performance">
-    {#snippet child({ props })}
-      <PerformanceTab {...props} />
-    {/snippet}
-  </Tabs.Content>
-  <Tabs.Content value="advanced-keys">
-    {#snippet child({ props })}
-      <AdvancedKeysTab {...props} />
-    {/snippet}
-  </Tabs.Content>
-  <Tabs.Content value="gamepad">
-    {#snippet child({ props })}
-      <GamepadTab {...props} />
-    {/snippet}
-  </Tabs.Content>
-  <Tabs.Content value="debug">
-    {#snippet child({ props })}
-      <DebugTab {...props} />
-    {/snippet}
-  </Tabs.Content>
-  <Tabs.Content value="settings">
-    {#snippet child({ props })}
-      <SettingsTab {...props} />
-    {/snippet}
-  </Tabs.Content>
+  {#await profilesTab then { default: ProfilesTab }}
+    <Tabs.Content value="profiles">
+      {#snippet child({ props })}
+        <ProfilesTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await remapTab then { default: RemapTab }}
+    <Tabs.Content value="remap">
+      {#snippet child({ props })}
+        <RemapTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await performanceTab then { default: PerformanceTab }}
+    <Tabs.Content value="performance">
+      {#snippet child({ props })}
+        <PerformanceTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await advancedKeysTab then { default: AdvancedKeysTab }}
+    <Tabs.Content value="advanced-keys">
+      {#snippet child({ props })}
+        <AdvancedKeysTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await gamepadTab then { default: GamepadTab }}
+    <Tabs.Content value="gamepad">
+      {#snippet child({ props })}
+        <GamepadTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await debugTab then { default: DebugTab }}
+    <Tabs.Content value="debug">
+      {#snippet child({ props })}
+        <DebugTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await settingsTab then { default: SettingsTab }}
+    <Tabs.Content value="settings">
+      {#snippet child({ props })}
+        <SettingsTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
 </ConfiguratorLayout>

@@ -15,6 +15,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { CableIcon } from "@lucide/svelte"
+  import screenshotDark from "$lib/assets/screenshot-dark.png"
+  import screenshot from "$lib/assets/screenshot.png"
   import Footer from "$lib/components/footer.svelte"
   import { Button } from "$lib/components/ui/button"
   import Configurator from "$lib/configurator/configurator.svelte"
@@ -62,14 +64,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <img
             class="dark:hidden"
             alt="Screenshot"
-            src="/screenshots/screenshot.png"
+            src={screenshot}
             width="1024"
             height="768"
           />
           <img
             class="not-dark:hidden"
             alt="Screenshot"
-            src="/screenshots/screenshot-dark.png"
+            src={screenshotDark}
             width="1024"
             height="768"
           />
