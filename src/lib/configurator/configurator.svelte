@@ -21,7 +21,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { setConfiguratorQueryContext } from "./queries"
 
   const { keyboard }: { keyboard: Keyboard } = $props()
-  
+
   const profilesTab = import("./profiles/profiles-tab.svelte")
   const remapTab = import("./remap/remap-tab.svelte")
   const performanceTab = import("./performance/performance-tab.svelte")

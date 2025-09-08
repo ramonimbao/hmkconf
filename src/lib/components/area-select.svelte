@@ -90,7 +90,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
       switch (selectionMode) {
         case "normal":
-          intersect ? selections.add(index) : selections.delete(index)
+          if (intersect) {
+            selections.add(index)
+          } else {
+            selections.delete(index)
+          }
           break
         case "add":
           if (intersect) {
@@ -100,9 +104,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           }
           break
         case "subtract":
-          intersect === previousSelections.has(index)
-            ? selections.delete(index)
-            : selections.add(index)
+          if (intersect === previousSelections.has(index)) {
+            selections.delete(index)
+          } else {
+            selections.add(index)
+          }
           break
       }
     })
