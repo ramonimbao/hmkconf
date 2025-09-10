@@ -42,7 +42,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   >
     <MonitorIcon class="size-24" />
     <div class="mx-auto max-w-2xl text-center">
-      <p class="mt-4 text-lg font-medium text-pretty">
+      <p class="mt-4 text-lg font-medium text-wrap">
         Your window is too small. Please resize your window, or zoom out.
       </p>
     </div>

@@ -53,7 +53,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <Tooltip.Trigger class="m-2 text-sm text-muted-foreground">
         Key Start Deadzone
       </Tooltip.Trigger>
-      <Tooltip.Content class="max-w-sm text-pretty">
+      <Tooltip.Content class="max-w-sm text-wrap">
         No gamepad analog input will be sent.
       </Tooltip.Content>
     </Tooltip.Root>
@@ -66,7 +66,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <Tooltip.Trigger class="m-2 text-sm text-muted-foreground">
         Key End Deadzone
       </Tooltip.Trigger>
-      <Tooltip.Content class="max-w-sm text-pretty">
+      <Tooltip.Content class="max-w-sm text-wrap">
         Maximum gamepad analog input will be sent. For joysticks, the angle will
         snap to the nearest 45 degree, functioning similar to a D-Pad.
       </Tooltip.Content>

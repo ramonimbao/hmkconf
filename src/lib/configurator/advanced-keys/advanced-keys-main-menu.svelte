@@ -49,9 +49,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           variant="outline"
         >
           <Icon class="size-6" />
-          <div class="grid text-left text-sm">
+          <div class="grid text-left text-sm text-wrap">
             <span class="font-medium">{title}</span>
-            <span class="font-normal text-pretty text-muted-foreground">
+            <span class="font-normal text-muted-foreground">
               {description}
             </span>
           </div>

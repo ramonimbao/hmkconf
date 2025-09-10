@@ -52,12 +52,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div class={cn("flex flex-col", className)} {...props}>
-  <div class={cn("grid text-sm", disabled && "opacity-50")}>
+  <div class={cn("grid text-sm text-wrap", disabled && "opacity-50")}>
     <span class="font-medium">
       {title}: {display?.(value) ?? value}
     </span>
     {#if description}
-      <span class="text-pretty text-muted-foreground">{description}</span>
+      <span class="text-muted-foreground">{description}</span>
     {/if}
   </div>
   <Slider

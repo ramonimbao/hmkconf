@@ -24,7 +24,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tooltip.Trigger>
       <Badge variant="destructive">Warning</Badge>
     </Tooltip.Trigger>
-    <Tooltip.Content class="max-w-sm text-pretty">
+    <Tooltip.Content class="max-w-sm text-wrap">
       This tab requests data from the keyboard at a high frequency, which may
       impact performance. Please close this tab or switch to another one when
       performing other performance-sensitive tasks with your keyboard.

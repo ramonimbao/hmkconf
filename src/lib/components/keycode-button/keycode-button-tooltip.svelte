@@ -42,6 +42,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
       {/snippet}
     </Tooltip.Trigger>
-    <Tooltip.Content class="max-w-56 text-pretty">{tooltip}</Tooltip.Content>
+    <Tooltip.Content class="max-w-56 text-wrap">{tooltip}</Tooltip.Content>
   </Tooltip.Root>
 {/if}

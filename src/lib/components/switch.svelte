@@ -54,20 +54,20 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <InfoIcon class="size-4" />
           <span class="sr-only">Info</span>
         </Tooltip.Trigger>
-        <Tooltip.Content class="max-w-56 text-pretty">
+        <Tooltip.Content class="max-w-56 text-wrap">
           {tooltip}
         </Tooltip.Content>
       </Tooltip.Root>
     {/if}
   </div>
   {#if description}
-    <span
+    <p
       class={cn(
-        "text-sm text-pretty text-muted-foreground",
+        "text-sm text-wrap text-muted-foreground",
         disabled && "opacity-50",
       )}
     >
       {description}
-    </span>
+    </p>
   {/if}
 </div>

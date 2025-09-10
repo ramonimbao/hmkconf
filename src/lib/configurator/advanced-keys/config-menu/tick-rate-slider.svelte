@@ -44,7 +44,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   />
   <div class="flex items-center gap-2 text-muted-foreground">
     <InfoIcon class="size-4" />
-    <p class="text-sm text-pretty">
+    <p class="text-sm text-wrap">
       The tick rate is per profile and only affects Dynamic Keystroke and
       Tap-Hold keys.
     </p>

@@ -39,9 +39,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 >
   <FixedScrollArea class="flex flex-col gap-4 p-4">
     <div class="flex flex-col gap-2">
-      <div class="grid text-sm">
+      <div class="grid text-sm text-wrap">
         <span class="font-semibold">Restart Keyboard</span>
-        <span class="text-pretty text-muted-foreground">
+        <span class="text-muted-foreground">
           The keyboard will disconnect and reconnect. No changes will be made to
           your keyboard settings.
         </span>
@@ -58,9 +58,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       </div>
     </div>
     <div class="flex flex-col gap-2">
-      <div class="grid text-sm">
+      <div class="grid text-sm text-wrap">
         <span class="font-semibold">Enter Bootloader Mode</span>
-        <span class="text-pretty text-muted-foreground">
+        <span class="text-muted-foreground">
           The keyboard will restart and enter bootloader mode if it is supported
           by the firmware. No changes will be made to your keyboard settings.
         </span>
@@ -77,9 +77,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       </div>
     </div>
     <div class="flex flex-col gap-2">
-      <div class="grid text-sm">
+      <div class="grid text-sm text-wrap">
         <span class="font-semibold">Factory Reset</span>
-        <span class="text-pretty text-muted-foreground">
+        <span class="text-muted-foreground">
           Revert the keyboard to its factory settings defined by the firmware.
           All user data and settings will be lost.
         </span>
