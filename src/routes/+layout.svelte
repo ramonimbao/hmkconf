@@ -38,6 +38,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     type="image/png"
     sizes="180x180"
   />
+  <link rel="manifest" href="/manifest.json" />
 </svelte:head>
 
 <ModeWatcher />
