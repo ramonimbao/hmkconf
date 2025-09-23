@@ -44,7 +44,7 @@ export async function setCalibration(
   }: SetCalibrationParams,
 ) {
   await commander.sendCommand({
-    command: HMK_Command.GET_CALIBRATION,
+    command: HMK_Command.SET_CALIBRATION,
     payload: [
       ...uint16ToUInt8s(initialRestValue),
       ...uint16ToUInt8s(initialBottomOutThreshold),
