@@ -73,7 +73,7 @@ export const keyboardMetadataSchema = z
     vendorId: uint16HexSchema,
     productId: uint16HexSchema,
 
-    adcBits: z.int().min(1).max(16),
+    adcResolution: z.int().min(1).max(16),
     numProfiles: z.int().min(1).max(HMK_MAX_NUM_PROFILES),
     numLayers: z.int().min(1).max(HMK_MAX_NUM_LAYERS),
     numKeys: z.int().min(1).max(HMK_MAX_NUM_KEYS),
@@ -105,7 +105,7 @@ export const demoMetadata = keyboardMetadataSchema.parse({
   vendorId: "0xAB50",
   productId: "0xAB60",
 
-  adcBits: 12,
+  adcResolution: 12,
   numProfiles: 4,
   numLayers: 4,
   numKeys: 67,

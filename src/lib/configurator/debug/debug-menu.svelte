@@ -24,7 +24,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const {
     demo,
-    metadata: { adcBits },
+    metadata: { adcResolution },
   } = keyboardContext.get()
 
   const analogInfoQuery = analogInfoQueryContext.get()
@@ -49,13 +49,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       description="The initial noise floor represents the estimated analog value when a key is at rest. It should be set slightly higher than the actual analog readings of all keys in their resting position to prevent deadzones. Recalibrate the keyboard to apply changes. This setting applies globally across all profiles."
       disabled={demo || !calibration}
       min={0}
-      max={(1 << adcBits) - 1}
+      max={(1 << adcResolution) - 1}
       step={10}
       title="Initial Noise Floor"
     />
     <CommitSlider
       bind:committed={
-        () => calibration?.initialBottomOutThreshold ?? (1 << adcBits) - 1,
+        () =>
+          calibration?.initialBottomOutThreshold ?? (1 << adcResolution) - 1,
         (v) =>
           calibration &&
           calibrationQuery.set({
@@ -68,7 +69,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       description="The initial bottom out threshold represents the estimated change in analog value when a key is fully pressed. It should be set slightly lower than the actual change in analog readings when keys are fully pressed to prevent deadzones. Recalibrate the keyboard to apply changes. This setting applies globally across all profiles."
       disabled={demo || !calibration}
       min={0}
-      max={(1 << adcBits) - 1}
+      max={(1 << adcResolution) - 1}
       step={10}
       title="Initial Bottom Out Threshold"
     />

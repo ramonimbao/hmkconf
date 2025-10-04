@@ -42,7 +42,7 @@ import type {
 } from "."
 import { demoMetadata } from "./metadata"
 
-const { adcBits, numProfiles, numKeys, numAdvancedKeys, defaultKeymap } =
+const { adcResolution, numProfiles, numKeys, numAdvancedKeys, defaultKeymap } =
   demoMetadata
 
 type DemoKeyboardProfileState = {
@@ -101,8 +101,8 @@ export class DemoKeyboard implements Keyboard {
   }
   async getCalibration() {
     return {
-      initialRestValue: (1 << adcBits) - 1,
-      initialBottomOutThreshold: (1 << adcBits) - 1,
+      initialRestValue: (1 << adcResolution) - 1,
+      initialBottomOutThreshold: (1 << adcResolution) - 1,
     }
   }
   async setCalibration() {}
