@@ -225,6 +225,7 @@ export async function connect(
     }
 
     const metadata = await getMetadata(commander)
+    console.log(metadata)
     const keyboard = new HMKKeyboard({ metadata, commander, onDisconnect })
 
     navigator.hid.addEventListener("disconnect", async function handler() {

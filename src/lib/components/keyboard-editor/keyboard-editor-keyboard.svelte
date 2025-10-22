@@ -38,17 +38,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     const ret = {
       keyboardWidth: 0,
       keyboardHeight: 0,
-      coordinates: {} as Record<number, { x: number; y: number }>,
+      coordinates: [] as { x: number; y: number }[],
     }
     const position = { x: 0, y: 0 }
 
     for (const row of layout) {
-      for (const { key, w, h, x, y } of row) {
+      for (const { w, h, x, y } of row) {
         position.x += x
         position.y += y
         ret.keyboardWidth = Math.max(ret.keyboardWidth, position.x + w)
         ret.keyboardHeight = Math.max(ret.keyboardHeight, position.y + h)
-        ret.coordinates[key] = { ...position }
+        ret.coordinates.push({ ...position })
         position.x += w
       }
       position.x = 0
@@ -81,7 +81,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           {#each layout.flat() as { key, w, h }, i (i)}
             <div
               class="absolute p-0.5"
-              style={unitToStyle(w, h, coordinates[key].x, coordinates[key].y)}
+              style={unitToStyle(w, h, coordinates[i].x, coordinates[i].y)}
             >
               {@render keyGenerator?.(key)}
             </div>
