@@ -18,7 +18,7 @@ import {
   ArrowDownToLineIcon,
   ArrowUpFromLineIcon,
   ArrowUpToLineIcon,
-  FileQuestionIcon,
+  FileQuestionMarkIcon,
   LayersIcon,
   LayoutTemplateIcon,
   MoveHorizontalIcon,
@@ -90,7 +90,7 @@ export function getAdvancedKeyMetadata(type: HMK_AKType): AdvancedKeyMetadata {
   return (
     metadata ?? {
       type,
-      icon: FileQuestionIcon,
+      icon: FileQuestionMarkIcon,
       title: `Unknown ${displayUInt8(type)}`,
       description: "This Advanced Key type is not recognized.",
       numKeys: 0,

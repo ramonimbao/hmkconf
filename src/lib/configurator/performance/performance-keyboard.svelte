@@ -42,7 +42,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 >
   {#snippet child({ props })}
     <AreaSelect
-      bind:selections={performanceState.keys}
+      bind:selections={
+        () => performanceState.keys, (v) => (performanceState.keys = v)
+      }
       class="flex flex-1 flex-col"
       {...props}
     >

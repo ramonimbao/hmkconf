@@ -13,6 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { displayUInt16 } from "$lib/integer"
 import {
   HMK_DEVICE_USAGE_ID,
   HMK_DEVICE_USAGE_PAGE,
@@ -52,9 +53,9 @@ import {
   resetProfile,
 } from "$lib/libhmk/commands/profile"
 import { reboot } from "$lib/libhmk/commands/reboot"
+import { getSerial } from "$lib/libhmk/commands/serial"
 import { getTickRate, setTickRate } from "$lib/libhmk/commands/tick-rate"
 import { displayVersion, isWebHIDSSupported } from "$lib/utils"
-import { v4 as uuidv4 } from "uuid"
 import type {
   DuplicateProfileParams,
   GetActuationMapParams,
@@ -78,6 +79,7 @@ import { Commander } from "./commander"
 import type { KeyboardMetadata } from "./metadata"
 
 type HMKKeyboardProps = {
+  id: string
   metadata: KeyboardMetadata
   commander: Commander
   onDisconnect?: (keyboard: Keyboard) => void
@@ -90,8 +92,8 @@ class HMKKeyboard implements Keyboard {
   commander: Commander
   onDisconnect?: (keyboard: Keyboard) => void
 
-  constructor({ metadata, commander, onDisconnect }: HMKKeyboardProps) {
-    this.id = uuidv4()
+  constructor({ id, metadata, commander, onDisconnect }: HMKKeyboardProps) {
+    this.id = id
     this.metadata = metadata
     this.commander = commander
     this.onDisconnect = onDisconnect
@@ -224,9 +226,14 @@ export async function connect(
       )
     }
 
+    const serial = await getSerial(commander)
     const metadata = await getMetadata(commander)
-    console.log(metadata)
-    const keyboard = new HMKKeyboard({ metadata, commander, onDisconnect })
+    const keyboard = new HMKKeyboard({
+      id: `${displayUInt16(commander.hidDevice.vendorId)}-${displayUInt16(commander.hidDevice.productId)}-${serial}`,
+      metadata,
+      commander,
+      onDisconnect,
+    })
 
     navigator.hid.addEventListener("disconnect", async function handler() {
       navigator.hid.removeEventListener("disconnect", handler)
