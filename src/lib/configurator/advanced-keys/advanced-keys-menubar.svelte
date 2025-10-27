@@ -14,7 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { KeyboardEditorMenubar } from "$lib/components/keyboard-editor"
+  import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import LayerSelect from "$lib/components/layer-select.svelte"
   import { advancedKeysStateContext } from "../context.svelte"
 
@@ -22,9 +22,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const { layer, index, create } = $derived(advancedKeysState)
 </script>
 
-<KeyboardEditorMenubar>
+<KeyboardEditor.Menubar>
   <LayerSelect
     disabled={index !== null || create !== null}
     bind:layer={() => layer, (v) => advancedKeysState.setLayer(v)}
   />
-</KeyboardEditorMenubar>
+  <KeyboardEditor.LayoutDialog />
+</KeyboardEditor.Menubar>

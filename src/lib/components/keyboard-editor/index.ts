@@ -16,6 +16,7 @@
 import { ResizableHandle as Handle } from "../ui/resizable"
 import Container from "./keyboard-editor-container.svelte"
 import Keyboard from "./keyboard-editor-keyboard.svelte"
+import LayoutDialog from "./keyboard-editor-layout-dialog.svelte"
 import Menubar from "./keyboard-editor-menubar.svelte"
 import Pane from "./keyboard-editor-pane.svelte"
 import Root from "./keyboard-editor.svelte"
@@ -27,6 +28,7 @@ export {
   Handle,
   Keyboard,
   Menubar,
+  LayoutDialog,
   //
   Root as KeyboardEditor,
   Pane as KeyboardEditorPane,
@@ -34,4 +36,5 @@ export {
   Handle as KeyboardEditorHandle,
   Keyboard as KeyboardEditorKeyboard,
   Menubar as KeyboardEditorMenubar,
+  LayoutDialog as KeyboardEditorLayoutDialog,
 }

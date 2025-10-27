@@ -13,9 +13,12 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { keyboardContext } from "$lib/keyboard"
+import type { KeyboardLayout } from "$lib/keyboard/metadata"
 import { HMK_AKType } from "$lib/libhmk/advanced-keys"
-import { Context } from "runed"
+import { Context, PersistedState } from "runed"
 import { SvelteSet } from "svelte/reactivity"
+import z from "zod"
 import { getAdvancedKeyMetadata } from "./lib/advanced-keys"
 
 export class ConfiguratorRemapState {
@@ -164,6 +167,136 @@ export const globalStateContext = new Context<ConfiguratorGlobalState>(
   "hmk-configurator-state",
 )
 
+export const persistedStateSchema = z.object({
+  layoutOptions: z.array(z.int().min(0)),
+})
+
+export type ConfiguratorPersistedState = z.infer<typeof persistedStateSchema>
+
+export const persistedStateContext = new Context<
+  PersistedState<ConfiguratorPersistedState>
+>("hmk-persisted-state")
+
+function setConfiguratorPersistedState() {
+  const { id, metadata } = keyboardContext.get()
+  const defaultPersistedState: ConfiguratorPersistedState = {
+    layoutOptions: Array(metadata.layout.labels.length).fill(0),
+  }
+  persistedStateContext.set(
+    new PersistedState(id, defaultPersistedState, {
+      serializer: {
+        serialize: JSON.stringify,
+        deserialize: (val) => {
+          try {
+            return persistedStateSchema
+              .refine(({ layoutOptions }) => {
+                const { layout } = metadata
+                const optionMaxValues = layout.labels.map((l) =>
+                  typeof l === "string" ? 2 : l.length - 1,
+                )
+                return (
+                  layoutOptions.length === layout.labels.length &&
+                  layoutOptions.every((o, i) => o < optionMaxValues[i])
+                )
+              })
+              .parse(JSON.parse(val))
+          } catch (err) {
+            console.error(err)
+            return defaultPersistedState
+          }
+        },
+      },
+    }),
+  )
+}
+
+export type DisplayLayoutKey = {
+  key: number
+  w: number
+  h: number
+  x: number
+  y: number
+}
+
+function getKeyCoordinates({ keymap }: KeyboardLayout) {
+  const coordinates: [number, number][] = []
+  const position = [0, 0]
+
+  for (const row of keymap) {
+    for (const { w, x, y } of row) {
+      position[0] += x
+      position[1] += y
+      coordinates.push([position[0], position[1]])
+      position[0] += w
+    }
+    position[0] = 0
+    position[1]++
+  }
+
+  return coordinates
+}
+
+export class DisplayLayout {
+  width: number
+  height: number
+  displayKeys: DisplayLayoutKey[]
+
+  #layout = keyboardContext.get().metadata.layout
+  #layoutOptions = $derived(persistedStateContext.get().current.layoutOptions)
+
+  constructor() {
+    const keys = this.#layout.keymap.flat()
+    const coordinates = getKeyCoordinates(this.#layout)
+    const [width, height] = keys.reduce(
+      (acc, { w, h, option }, i) => {
+        if (option !== undefined && option[1] !== 0) return acc
+        acc[0] = Math.max(acc[0], coordinates[i][0] + w)
+        acc[1] = Math.max(acc[1], coordinates[i][1] + h)
+        return acc
+      },
+      [0, 0],
+    )
+    const optionAnchors = keys.reduce(
+      (acc, { option }, i) => {
+        if (option === undefined) return acc
+        const [k, v] = option
+        acc[k][v][0] = Math.min(acc[k][v][0], coordinates[i][0])
+        acc[k][v][1] = Math.min(acc[k][v][1], coordinates[i][1])
+        return acc
+      },
+      this.#layout.labels.map((l) =>
+        [...Array(typeof l === "string" ? 2 : l.length - 1)].map(() => [
+          Number.MAX_SAFE_INTEGER,
+          Number.MAX_SAFE_INTEGER,
+        ]),
+      ),
+    )
+
+    this.width = width
+    this.height = height
+    this.displayKeys = $derived.by(() =>
+      keys.reduce((acc, { key, w, h, option }, i) => {
+        let [x, y] = coordinates[i]
+        if (option !== undefined) {
+          const [k, v] = option
+          if (v !== this.#layoutOptions[k]) {
+            return acc
+          } else {
+            x += optionAnchors[k][0][0] - optionAnchors[k][v][0]
+            y += optionAnchors[k][0][1] - optionAnchors[k][v][1]
+          }
+        }
+        acc.push({ key, w, h, x, y })
+        return acc
+      }, [] as DisplayLayoutKey[]),
+    )
+  }
+}
+
+export const displayLayoutContext = new Context<DisplayLayout>(
+  "hmk-display-layout",
+)
+
 export function setConfiguratorStateContext() {
   remapStateContext.set(new ConfiguratorRemapState())
   performanceStateContext.set(new ConfiguratorPerformanceState())
@@ -171,4 +304,6 @@ export function setConfiguratorStateContext() {
   gamepadStateContext.set(new ConfiguratorGamepadState())
   // Global state depends on all other states.
   globalStateContext.set(new ConfiguratorGlobalState())
+  setConfiguratorPersistedState()
+  displayLayoutContext.set(new DisplayLayout())
 }

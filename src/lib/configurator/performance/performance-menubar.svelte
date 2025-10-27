@@ -14,26 +14,27 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { KeyboardEditorMenubar } from "$lib/components/keyboard-editor"
+  import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import { Button } from "$lib/components/ui/button"
   import { Toggle } from "$lib/components/ui/toggle"
-  import { keyboardContext } from "$lib/keyboard"
   import { defaultActuation } from "$lib/libhmk/actuation"
   import { setToIntervals } from "$lib/utils"
-  import { performanceStateContext } from "../context.svelte"
+  import {
+    displayLayoutContext,
+    performanceStateContext,
+  } from "../context.svelte"
   import { actuationQueryContext } from "../queries/actuation-query.svelte"
 
   const performanceState = performanceStateContext.get()
   const { keys } = $derived(performanceState)
-  const allKeys = keyboardContext
-    .get()
-    .metadata.layout.flat()
-    .map(({ key }) => key)
+  const allKeys = $derived(
+    displayLayoutContext.get().displayKeys.map(({ key }) => key),
+  )
 
   const actuationQuery = actuationQueryContext.get()
 </script>
 
-<KeyboardEditorMenubar>
+<KeyboardEditor.Menubar>
   <div class="flex items-center gap-2">
     <Button
       disabled={allKeys.every((key) => keys.has(key))}
@@ -57,20 +58,23 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       Show Keymap
     </Toggle>
   </div>
-  <Button
-    disabled={keys.size === 0}
-    onclick={() => {
-      setToIntervals(keys).map(([offset, len]) =>
-        actuationQuery.set({
-          offset,
-          data: [...Array(len)].map(() => ({ ...defaultActuation })),
-        }),
-      )
-      performanceState.keys.clear()
-    }}
-    size="sm"
-    variant="destructive"
-  >
-    Reset Selected
-  </Button>
-</KeyboardEditorMenubar>
+  <div class="flex items-center gap-2">
+    <Button
+      disabled={keys.size === 0}
+      onclick={() => {
+        setToIntervals(keys).map(([offset, len]) =>
+          actuationQuery.set({
+            offset,
+            data: [...Array(len)].map(() => ({ ...defaultActuation })),
+          }),
+        )
+        performanceState.keys.clear()
+      }}
+      size="sm"
+      variant="destructive"
+    >
+      Reset Selected
+    </Button>
+    <KeyboardEditor.LayoutDialog />
+  </div>
+</KeyboardEditor.Menubar>

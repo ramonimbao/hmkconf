@@ -16,14 +16,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
   import KeycodeAccordion from "$lib/components/keycode-accordion.svelte"
-  import { keyboardContext } from "$lib/keyboard"
-  import { remapStateContext } from "../context.svelte"
+  import { displayLayoutContext, remapStateContext } from "../context.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
 
-  const allKeys = keyboardContext
-    .get()
-    .metadata.layout.flat()
-    .map(({ key }) => key)
+  const allKeys = $derived(
+    displayLayoutContext.get().displayKeys.map(({ key }) => key),
+  )
 
   const remapState = remapStateContext.get()
   const { layer, key } = $derived(remapState)

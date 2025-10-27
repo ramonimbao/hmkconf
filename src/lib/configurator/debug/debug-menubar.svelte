@@ -14,12 +14,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { KeyboardEditorMenubar } from "$lib/components/keyboard-editor"
+  import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import { Badge } from "$lib/components/ui/badge"
   import * as Tooltip from "$lib/components/ui/tooltip"
 </script>
 
-<KeyboardEditorMenubar>
+<KeyboardEditor.Menubar>
   <Tooltip.Root>
     <Tooltip.Trigger>
       <Badge variant="destructive">Warning</Badge>
@@ -30,4 +30,5 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       performing other performance-sensitive tasks with your keyboard.
     </Tooltip.Content>
   </Tooltip.Root>
-</KeyboardEditorMenubar>
+  <KeyboardEditor.LayoutDialog />
+</KeyboardEditor.Menubar>

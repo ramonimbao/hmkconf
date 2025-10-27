@@ -14,7 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { KeyboardEditorMenubar } from "$lib/components/keyboard-editor"
+  import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import Switch from "$lib/components/switch.svelte"
   import { optionsQueryContext } from "../queries/options-query.svelte"
 
@@ -22,7 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const { current: options } = $derived(optionsQuery.options)
 </script>
 
-<KeyboardEditorMenubar>
+<KeyboardEditor.Menubar>
   <Switch
     bind:checked={
       () => options?.xInputEnabled ?? false,
@@ -34,4 +34,5 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     title="Enable XInput Interface"
     tooltip="Allow your keyboard to be recognized as an Xbox controller for gamepad input. Restart the keyboard to apply changes. This setting applies globally across all profiles."
   />
-</KeyboardEditorMenubar>
+  <KeyboardEditor.LayoutDialog />
+</KeyboardEditor.Menubar>

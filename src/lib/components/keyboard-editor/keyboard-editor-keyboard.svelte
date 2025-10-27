@@ -14,8 +14,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { keyboardContext } from "$lib/keyboard"
-  import type { KeyboardLayout } from "$lib/keyboard/metadata"
+  import {
+    displayLayoutContext,
+    type DisplayLayout,
+  } from "$lib/configurator/context.svelte"
   import { unitToEM, unitToStyle } from "$lib/ui"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { Snippet } from "svelte"
@@ -23,44 +25,21 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const {
     class: className,
-    layout = keyboardContext.get().metadata.layout,
+    displayLayout = displayLayoutContext.get(),
     keyGenerator,
     ...props
   }: WithoutChildren<HTMLAttributes<HTMLDivElement>> & {
-    layout?: KeyboardLayout
+    displayLayout?: DisplayLayout
     keyGenerator?: Snippet<[number]>
   } = $props()
 
   let containerWidth = $state(0)
   let containerHeight = $state(0)
 
-  const { keyboardWidth, keyboardHeight, coordinates } = $derived.by(() => {
-    const ret = {
-      keyboardWidth: 0,
-      keyboardHeight: 0,
-      coordinates: [] as { x: number; y: number }[],
-    }
-    const position = { x: 0, y: 0 }
-
-    for (const row of layout) {
-      for (const { w, h, x, y } of row) {
-        position.x += x
-        position.y += y
-        ret.keyboardWidth = Math.max(ret.keyboardWidth, position.x + w)
-        ret.keyboardHeight = Math.max(ret.keyboardHeight, position.y + h)
-        ret.coordinates.push({ ...position })
-        position.x += w
-      }
-      position.x = 0
-      position.y++
-    }
-
-    return ret
-  })
   const fontSize = $derived(
     Math.min(
-      containerWidth / unitToEM(keyboardWidth),
-      containerHeight / unitToEM(keyboardHeight),
+      containerWidth / unitToEM(displayLayout.width),
+      containerHeight / unitToEM(displayLayout.height),
     ),
   )
 </script>
@@ -76,13 +55,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <div class="absolute inset-0 grid place-items-center">
         <div
           class="relative"
-          style={unitToStyle(keyboardWidth, keyboardHeight)}
+          style={unitToStyle(displayLayout.width, displayLayout.height)}
         >
-          {#each layout.flat() as { key, w, h }, i (i)}
-            <div
-              class="absolute p-0.5"
-              style={unitToStyle(w, h, coordinates[i].x, coordinates[i].y)}
-            >
+          {#each displayLayout.displayKeys as { key, w, h, x, y }, i (i)}
+            <div class="absolute p-0.5" style={unitToStyle(w, h, x, y)}>
               {@render keyGenerator?.(key)}
             </div>
           {/each}
