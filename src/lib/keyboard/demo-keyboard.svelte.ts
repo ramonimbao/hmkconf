@@ -80,7 +80,7 @@ export class DemoKeyboard implements Keyboard {
   metadata = demoMetadata
 
   #state: DemoKeyboardState = {
-    options: { xInputEnabled: true },
+    options: { xInputEnabled: true, saveBottomOutThreshold: true },
     profiles: [...Array(numProfiles)].map(() =>
       structuredClone(defaultProfile),
     ),

@@ -38,6 +38,7 @@ export type HMK_Calibration = z.infer<typeof hmkCalibrationSchema>
 
 export const hmkOptionsSchema = z.object({
   xInputEnabled: z.boolean(),
+  saveBottomOutThreshold: z.boolean(),
 })
 
 export type HMK_Options = z.infer<typeof hmkOptionsSchema>

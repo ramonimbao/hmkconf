@@ -17,10 +17,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import CommitSlider from "$lib/components/commit-slider.svelte"
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
   import * as KeyTester from "$lib/components/key-tester"
+  import Switch from "$lib/components/switch.svelte"
   import { Button } from "$lib/components/ui/button"
   import { keyboardContext } from "$lib/keyboard"
   import { analogInfoQueryContext } from "../queries/analog-info-query.svelte"
   import { calibrationQueryContext } from "../queries/calibration.query.svelte"
+  import { optionsQueryContext } from "../queries/options-query.svelte"
 
   const {
     demo,
@@ -29,11 +31,25 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const analogInfoQuery = analogInfoQueryContext.get()
   const calibrationQuery = calibrationQueryContext.get()
+  const optionsQuery = optionsQueryContext.get()
   const { current: calibration } = $derived(calibrationQuery.calibration)
+  const { current: options } = $derived(optionsQuery.options)
 </script>
 
 <div class="grid size-full grid-cols-[minmax(0,1fr)_24rem]">
   <FixedScrollArea class="flex flex-col gap-4 p-4">
+    <Switch
+      bind:checked={
+        () => options?.saveBottomOutThreshold ?? false,
+        (v) =>
+          options &&
+          optionsQuery.set({ data: { ...options, saveBottomOutThreshold: v } })
+      }
+      disabled={demo || !options}
+      id="save-bottom-out-threshold"
+      title="Save Bottom Out Threshold"
+      description="Periodically save the per-key bottom-out threshold values after some inactivity to be restored on next boot. The saved values will only be cleared on recalibration. This setting applies globally across all profiles."
+    />
     <CommitSlider
       bind:committed={
         () => calibration?.initialRestValue ?? 0,
