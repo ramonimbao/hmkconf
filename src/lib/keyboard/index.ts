@@ -53,6 +53,7 @@ export type SetGamepadOptionsParams = SetProfileParams<HMK_GamepadOptions>
 
 export type KeyboardState = {
   id: string
+  version: number
   metadata: KeyboardMetadata
   demo: boolean
 }
@@ -61,7 +62,6 @@ export type KeyboardAction = {
   disconnect(): Promise<void>
   forget(): Promise<void>
 
-  firmwareVersion(): Promise<number>
   reboot(): Promise<void>
   bootloader(): Promise<void>
   factoryReset(): Promise<void>

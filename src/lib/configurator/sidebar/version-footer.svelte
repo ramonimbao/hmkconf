@@ -15,14 +15,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as Sidebar from "$lib/components/ui/sidebar"
-  import { HMK_FIRMWARE_VERSION } from "$lib/libhmk"
+  import { keyboardContext } from "$lib/keyboard"
   import { displayVersion } from "$lib/utils"
+
+  const { version } = keyboardContext.get()
 </script>
 
 <Sidebar.Menu>
   <Sidebar.MenuItem>
     <Sidebar.GroupLabel class="truncate text-sm">
-      hmkconf {displayVersion(HMK_FIRMWARE_VERSION)}
+      hmkconf {displayVersion(version)}
     </Sidebar.GroupLabel>
   </Sidebar.MenuItem>
 </Sidebar.Menu>

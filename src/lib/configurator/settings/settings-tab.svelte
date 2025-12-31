@@ -15,11 +15,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
+  import Switch from "$lib/components/switch.svelte"
   import { Button } from "$lib/components/ui/button"
   import * as Dialog from "$lib/components/ui/dialog"
   import { keyboardContext } from "$lib/keyboard"
-  import { cn, type WithoutChildren } from "$lib/utils"
+  import { cn, isFeatureAvailable, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
+  import { optionsQueryContext } from "../queries/options-query.svelte"
   import { profileQueryContext } from "../queries/profile-query.svelte"
 
   const {
@@ -28,9 +30,15 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   }: WithoutChildren<HTMLAttributes<HTMLDivElement>> = $props()
 
   const keyboard = keyboardContext.get()
-  const { demo } = keyboard
+  const {
+    demo,
+    version,
+    metadata: { usbHighSpeed },
+  } = keyboard
 
   const profileQuery = profileQueryContext.get()
+  const optionsQuery = optionsQueryContext.get()
+  const { current: options } = $derived(optionsQuery.options)
 </script>
 
 <div
@@ -38,6 +46,21 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   {...props}
 >
   <FixedScrollArea class="flex flex-col gap-4 p-4">
+    {#if usbHighSpeed && isFeatureAvailable("pollingRateSwitch", version)}
+      <Switch
+        bind:checked={
+          () => options?.highPollingRateEnabled ?? false,
+          (v) =>
+            options &&
+            optionsQuery.set({
+              data: { ...options, highPollingRateEnabled: v },
+            })
+        }
+        id="8000hz-polling-rate"
+        title="8000Hz Polling Rate"
+        description="Enable the 8000Hz polling rate for faster response times, but may increase the CPU usage of the host device. Restart the keyboard to apply changes. This setting applies globally across all profiles."
+      />
+    {/if}
     <div class="flex flex-col gap-2">
       <div class="grid text-sm text-wrap">
         <span class="font-semibold">Restart Keyboard</span>

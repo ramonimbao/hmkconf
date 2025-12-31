@@ -17,7 +17,7 @@ import { displayUInt16 } from "$lib/integer"
 import {
   HMK_DEVICE_USAGE_ID,
   HMK_DEVICE_USAGE_PAGE,
-  HMK_FIRMWARE_VERSION,
+  HMK_FIRMWARE_MIN_VERSION,
 } from "$lib/libhmk"
 import {
   getActuationMap,
@@ -80,6 +80,7 @@ import type { KeyboardMetadata } from "./metadata"
 
 type HMKKeyboardProps = {
   id: string
+  version: number
   metadata: KeyboardMetadata
   commander: Commander
   onDisconnect?: (keyboard: Keyboard) => void
@@ -88,12 +89,20 @@ type HMKKeyboardProps = {
 class HMKKeyboard implements Keyboard {
   id: string
   demo = false
+  version: number
   metadata: KeyboardMetadata
   commander: Commander
   onDisconnect?: (keyboard: Keyboard) => void
 
-  constructor({ id, metadata, commander, onDisconnect }: HMKKeyboardProps) {
+  constructor({
+    id,
+    version,
+    metadata,
+    commander,
+    onDisconnect,
+  }: HMKKeyboardProps) {
     this.id = id
+    this.version = version
     this.metadata = metadata
     this.commander = commander
     this.onDisconnect = onDisconnect
@@ -110,9 +119,6 @@ class HMKKeyboard implements Keyboard {
     this.onDisconnect?.(this)
   }
 
-  firmwareVersion() {
-    return firmwareVersion(this.commander)
-  }
   reboot() {
     return reboot(this.commander)
   }
@@ -220,9 +226,9 @@ export async function connect(
 
   try {
     const version = await firmwareVersion(commander)
-    if (version < HMK_FIRMWARE_VERSION) {
+    if (version < HMK_FIRMWARE_MIN_VERSION) {
       throw new Error(
-        `Device firmware version ${displayVersion(version)} is outdated. Please update the firmware to ${displayVersion(HMK_FIRMWARE_VERSION)} or later.`,
+        `Device firmware version ${displayVersion(version)} is outdated. Please update the firmware to ${displayVersion(HMK_FIRMWARE_MIN_VERSION)} or later.`,
       )
     }
 
@@ -230,6 +236,7 @@ export async function connect(
     const metadata = await getMetadata(commander)
     const keyboard = new HMKKeyboard({
       id: `${displayUInt16(commander.hidDevice.vendorId)}-${displayUInt16(commander.hidDevice.productId)}-${serial}`,
+      version,
       metadata,
       commander,
       onDisconnect,

@@ -15,7 +15,7 @@
 
 import { keyboardContext } from "$lib/keyboard"
 import { keyboardConfigSchema } from "$lib/keyboard/config"
-import { HMK_FIRMWARE_VERSION } from "$lib/libhmk"
+import { HMK_FIRMWARE_MAX_VERSION } from "$lib/libhmk"
 import { SvelteDate } from "svelte/reactivity"
 import { globalStateContext } from "../context.svelte"
 import { actuationQueryContext } from "../queries/actuation-query.svelte"
@@ -34,7 +34,7 @@ export class KeyboardConfig {
       profile: { keymap, actuationMap, advancedKeys, gamepadButtons },
     } = val
 
-    if (metadata.version > HMK_FIRMWARE_VERSION) {
+    if (metadata.version > HMK_FIRMWARE_MAX_VERSION) {
       ctx.addIssue({
         code: "custom",
         message: "Unsupported firmware version",
@@ -95,15 +95,12 @@ export class KeyboardConfig {
   #tickRateQuery = tickRateQueryContext.get()
 
   async getConfig(profile: number) {
+    const version = this.#keyboard.version
     const { vendorId, productId } = this.#keyboard.metadata
 
     return this.#schema.parse({
       timestamp: new SvelteDate().toISOString(),
-      metadata: {
-        version: await this.#keyboard.firmwareVersion(),
-        vendorId,
-        productId,
-      },
+      metadata: { version, vendorId, productId },
       profile: {
         keymap: await this.#keyboard.getKeymap({ profile }),
         actuationMap: await this.#keyboard.getActuationMap({ profile }),

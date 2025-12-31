@@ -16,7 +16,10 @@
 import { uint16Schema } from "$lib/integer"
 import z from "zod"
 
-export const HMK_FIRMWARE_VERSION = 0x0105
+export const HMK_FIRMWARE_MIN_VERSION = 0x0104
+export const HMK_FIRMWARE_MAX_VERSION = 0x0105
+export const featureVersionMap = { pollingRateSwitch: 0x0105 } as const
+export type Feature = keyof typeof featureVersionMap
 
 export const HMK_DEVICE_USAGE_PAGE = 0xffab
 export const HMK_DEVICE_USAGE_ID = 0xab
@@ -39,6 +42,7 @@ export type HMK_Calibration = z.infer<typeof hmkCalibrationSchema>
 export const hmkOptionsSchema = z.object({
   xInputEnabled: z.boolean(),
   saveBottomOutThreshold: z.boolean(),
+  highPollingRateEnabled: z.boolean(),
 })
 
 export type HMK_Options = z.infer<typeof hmkOptionsSchema>

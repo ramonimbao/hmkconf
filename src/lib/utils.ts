@@ -15,6 +15,7 @@
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { featureVersionMap, type Feature } from "./libhmk"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -55,6 +56,10 @@ export function setToIntervals(set: Set<number>) {
   }
 
   return ret
+}
+
+export function isFeatureAvailable(feature: Feature, version: number) {
+  return featureVersionMap[feature] <= version
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -14,7 +14,7 @@
  */
 
 import { analogCurvePresets } from "$lib/configurator/lib/gamepad"
-import { HMK_FIRMWARE_VERSION, type HMK_Options } from "$lib/libhmk"
+import { HMK_FIRMWARE_MAX_VERSION, type HMK_Options } from "$lib/libhmk"
 import { defaultActuation, type HMK_Actuation } from "$lib/libhmk/actuation"
 import {
   DEFAULT_TICK_RATE,
@@ -77,10 +77,15 @@ type DemoKeyboardState = {
 export class DemoKeyboard implements Keyboard {
   id = "demo"
   demo = true
+  version = HMK_FIRMWARE_MAX_VERSION
   metadata = demoMetadata
 
   #state: DemoKeyboardState = {
-    options: { xInputEnabled: true, saveBottomOutThreshold: true },
+    options: {
+      xInputEnabled: true,
+      saveBottomOutThreshold: true,
+      highPollingRateEnabled: true,
+    },
     profiles: [...Array(numProfiles)].map(() =>
       structuredClone(defaultProfile),
     ),
@@ -89,9 +94,6 @@ export class DemoKeyboard implements Keyboard {
   async disconnect() {}
   async forget() {}
 
-  async firmwareVersion() {
-    return HMK_FIRMWARE_VERSION
-  }
   async reboot() {}
   async bootloader() {}
   async factoryReset() {}

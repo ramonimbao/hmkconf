@@ -97,6 +97,7 @@ export const keyboardMetadataSchema = z
     name: z.string(),
     vendorId: uint16HexSchema,
     productId: uint16HexSchema,
+    usbHighSpeed: z.boolean().default(false),
 
     adcResolution: z.int().min(1).max(16),
     numProfiles: z.int().min(1).max(HMK_MAX_NUM_PROFILES),
@@ -129,6 +130,7 @@ export const demoMetadata = keyboardMetadataSchema.parse({
   name: "HE60",
   vendorId: "0xAB50",
   productId: "0xAB60",
+  usbHighSpeed: true,
 
   adcResolution: 12,
   numProfiles: 4,
