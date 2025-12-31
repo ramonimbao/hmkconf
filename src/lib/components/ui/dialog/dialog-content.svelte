@@ -2,7 +2,8 @@
   import XIcon from "@lucide/svelte/icons/x"
   import { cn, type WithoutChildrenOrChild } from "$lib/utils.js"
   import { Dialog as DialogPrimitive } from "bits-ui"
-  import type { Snippet } from "svelte"
+  import type { ComponentProps, Snippet } from "svelte"
+  import DialogPortal from "./dialog-portal.svelte"
   import * as Dialog from "./index.js"
 
   let {
@@ -13,13 +14,13 @@
     showCloseButton = true,
     ...restProps
   }: WithoutChildrenOrChild<DialogPrimitive.ContentProps> & {
-    portalProps?: DialogPrimitive.PortalProps
+    portalProps?: WithoutChildrenOrChild<ComponentProps<typeof DialogPortal>>
     children: Snippet
     showCloseButton?: boolean
   } = $props()
 </script>
 
-<Dialog.Portal {...portalProps}>
+<DialogPortal {...portalProps}>
   <Dialog.Overlay />
   <DialogPrimitive.Content
     bind:ref
@@ -40,4 +41,4 @@
       </DialogPrimitive.Close>
     {/if}
   </DialogPrimitive.Content>
-</Dialog.Portal>
+</DialogPortal>
