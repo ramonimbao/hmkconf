@@ -135,7 +135,7 @@ export type ConfiguratorTabs =
   | "performance"
   | "advanced-keys"
   | "gamepad"
-  | "debug"
+  | "calibration"
   | "settings"
 
 export class ConfiguratorGlobalState {

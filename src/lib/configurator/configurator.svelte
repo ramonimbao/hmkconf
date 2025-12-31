@@ -27,9 +27,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const performanceTab = import("./performance/performance-tab.svelte")
   const advancedKeysTab = import("./advanced-keys/advanced-keys-tab.svelte")
   const gamepadTab = import("./gamepad/gamepad-tab.svelte")
-  const debugTab = import("./debug/debug-tab.svelte")
+  const calibrationTab = import("./calibration/calibration-tab.svelte")
   const settingsTab = import("./settings/settings-tab.svelte")
 
+  // svelte-ignore state_referenced_locally
   keyboardContext.set(keyboard)
   setConfiguratorStateContext()
   setConfiguratorQueryContext()
@@ -71,10 +72,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       {/snippet}
     </Tabs.Content>
   {/await}
-  {#await debugTab then { default: DebugTab }}
-    <Tabs.Content value="debug">
+  {#await calibrationTab then { default: CalibrationTab }}
+    <Tabs.Content value="calibration">
       {#snippet child({ props })}
-        <DebugTab {...props} />
+        <CalibrationTab {...props} />
       {/snippet}
     </Tabs.Content>
   {/await}

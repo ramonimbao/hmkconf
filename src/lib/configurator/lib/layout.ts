@@ -14,7 +14,7 @@
  */
 
 import {
-  BugIcon,
+  CrosshairIcon,
   Gamepad2Icon,
   GaugeIcon,
   Grid2X2Icon,
@@ -53,7 +53,7 @@ export const sidebarTabGroups: SidebarTabGroup[] = [
         icon: SquareChevronUpIcon,
       },
       { label: "Gamepad", value: "gamepad", icon: Gamepad2Icon },
-      { label: "Debug", value: "debug", icon: BugIcon },
+      { label: "Calibration", value: "calibration", icon: CrosshairIcon },
     ],
   },
   {

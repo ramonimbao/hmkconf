@@ -20,9 +20,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import type { ComponentProps } from "svelte"
   import { globalStateContext } from "../context.svelte"
   import { analogInfoQueryContext } from "../queries/analog-info-query.svelte"
-  import DebugKeyboard from "./debug-keyboard.svelte"
-  import DebugMenu from "./debug-menu.svelte"
-  import DebugMenubar from "./debug-menubar.svelte"
+  import CalibrationKeyboard from "./calibration-keyboard.svelte"
+  import CalibrationMenu from "./calibration-menu.svelte"
+  import CalibrationMenubar from "./calibration-menubar.svelte"
 
   const {
     ...props
@@ -35,19 +35,19 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   $effect(() => {
     if (demo) return
-    analogInfoQuery.enabled = tab === "debug"
+    analogInfoQuery.enabled = tab === "calibration"
   })
 </script>
 
 <KeyboardEditor.Root {...props}>
   <KeyboardEditor.Pane>
-    <DebugKeyboard />
-    <DebugMenubar />
+    <CalibrationKeyboard />
+    <CalibrationMenubar />
   </KeyboardEditor.Pane>
   <KeyboardEditor.Handle />
   <KeyboardEditor.Pane>
     <KeyboardEditor.Container>
-      <DebugMenu />
+      <CalibrationMenu />
     </KeyboardEditor.Container>
   </KeyboardEditor.Pane>
 </KeyboardEditor.Root>
