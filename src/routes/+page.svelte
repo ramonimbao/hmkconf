@@ -22,6 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import Configurator from "$lib/configurator/configurator.svelte"
   import type { Keyboard } from "$lib/keyboard"
   import { connect } from "$lib/keyboard/hmk-keyboard.svelte"
+  import { HMK_FIRMWARE_MAX_VERSION } from "$lib/libhmk"
   import { toast } from "svelte-sonner"
 
   let keyboard: Keyboard | null = $state(null)
@@ -33,7 +34,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         keyboard = null
       })
       if (keyboard) {
-        toast.success(`Successfully connected to ${keyboard.metadata.name}.`)
+        let message = `Successfully connected to ${keyboard.metadata.name}.`
+        if (keyboard.version < HMK_FIRMWARE_MAX_VERSION) {
+          message += " Newer version of the firmware is available."
+        }
+        toast.success(message)
       }
     } catch (err) {
       toast.error(String(err))
