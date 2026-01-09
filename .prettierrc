@@ -1,17 +1,10 @@
 {
   "semi": false,
   "plugins": [
-    "@ianvs/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss"
+    "prettier-plugin-svelte",
+    "prettier-plugin-tailwindcss",
+    "@ianvs/prettier-plugin-sort-imports"
   ],
-  "tailwindStylesheet": "app/globals.css",
-  "importOrder": [
-    "<BUILTIN_MODULES>",
-    "",
-    "<THIRD_PARTY_MODULES>",
-    "",
-    "^@/(.*)$",
-    "",
-    "^[.]"
-  ]
+  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
+  "tailwindStylesheet": "./src/app.css"
 }
